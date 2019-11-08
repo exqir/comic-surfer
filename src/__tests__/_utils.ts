@@ -30,6 +30,16 @@ export function createMockReaderWithReturnValue<T>(value: T | T[], isFailure?: b
 export const foldOptionPromise = <T>(res: Option<Promise<Either<MongoError, T>>>, onLeft: (l: MongoError) => void, onRight: (r: T) => void) =>
   map<Promise<Either<MongoError, T>>, {}>(promise => promise.then(fold(onLeft, onRight)))(res)
 
+export function createMockOptionWithReturnValue<T>(value: T, isFailure?: boolean): Option<Promise<Either<MongoError, T>>>
+export function createMockOptionWithReturnValue<T>(value: T[], isFailure?: boolean): Option<Promise<Either<MongoError, T[]>>>
+export function createMockOptionWithReturnValue<T>(value: T | T[], isFailure?: boolean) {
+  return some(new Promise<Either<MongoError, T | T[]>>((resolve, reject) => {
+    const either = isFailure ? left(new MongoError('TestError')) : right(value)
+    resolve(either)
+  }))
+}
+
+
 const mockLogger = {
   error: jest.fn(),
   info: jest.fn(),
