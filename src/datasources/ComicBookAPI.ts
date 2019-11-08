@@ -1,26 +1,29 @@
-import { DataSource } from 'apollo-datasource'
+import { DataSource, DataSourceConfig } from 'apollo-datasource'
 import { pipe } from 'fp-ts/lib/pipeable';
 import { map } from 'fp-ts/lib/Option';
 import { mapLeft } from 'fp-ts/lib/ReaderTaskEither';
-import { findOne, findMany, insertOne } from 'mongad'
 import { ComicBook } from 'types/schema'
-import { GraphQLContext } from 'types/app'
+import { GraphQLContext, DataLayer } from 'types/app'
 import { logError, partialRun } from '../lib';
 
-export class ComicBookSource extends DataSource<GraphQLContext> {
+export const collection = 'comicBook'
+export class ComicBookAPI extends DataSource<GraphQLContext> {
   private collection: string;
-  private context: GraphQLContext;
+  private context?: GraphQLContext;
+  private dataLayer?: DataLayer;
   public constructor() {
     super()
-    this.collection = 'comicBook'
+    this.collection = collection
   }
 
-  public initialize({ context } = {}) {
+  public initialize({ context }: DataSourceConfig<GraphQLContext>) {
     this.context = context
+    this.dataLayer = context.dataLayer
   }
 
-  public getOne(id: string) {
-    const { logger, db } = this.context
+  public getById(id: string) {
+    const { findOne } = this.dataLayer!
+    const { logger, db } = this.context!
     return map(
       pipe(
         findOne<ComicBook>(this.collection, { _id: id }),
@@ -30,8 +33,9 @@ export class ComicBookSource extends DataSource<GraphQLContext> {
     )(db)
   }
 
-  public getMany(ids: string[]) {
-    const { logger, db } = this.context
+  public getByIds(ids: string[]) {
+    const { findMany } = this.dataLayer!
+    const { logger, db } = this.context!
     return map(
       pipe(
         findMany<ComicBook>(this.collection, { _id: { $in: ids } }),

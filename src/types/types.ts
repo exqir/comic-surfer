@@ -1,8 +1,9 @@
 import { GraphQLFieldResolver } from 'graphql'
 import { NextApiRequest } from 'next'
-import { Db } from 'mongodb';
+import { Db, MongoError, FilterQuery } from 'mongodb';
 import { Option } from 'fp-ts/lib/Option'
-import { ComicBookSource } from '../datasources/ComicBookSource'
+import { ComicBookAPI } from '../datasources/ComicBookSource'
+import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither';
 
 export interface Logger {
   log: (...args: any[]) => void;
@@ -10,8 +11,19 @@ export interface Logger {
   error: (...args: any[]) => void;
 }
 
-interface DataSources {
-  comicBook: ComicBookSource;
+export interface DataLayer {
+  findOne: <T>(collection: string, query: FilterQuery<T>) => ReaderTaskEither<Db, MongoError, T>;
+  findMany: <T>(collection: string, query: FilterQuery<T>) => ReaderTaskEither<Db, MongoError, T[]>;
+  insertOne: <T>(collection: string, document: T) => ReaderTaskEither<Db, MongoError, T>;
+  insertMany: <T>(collection: string, document: T) => ReaderTaskEither<Db, MongoError, T[]>;
+  updateOne: <T>(collection: string, query: FilterQuery<T>, update: {}) => ReaderTaskEither<Db, MongoError, T>;
+  updateMany: <T>(collection: string, query: FilterQuery<T>, update: {}) => ReaderTaskEither<Db, MongoError, T[]>;
+  deleteOne: <T>(collection: string, query: FilterQuery<T>) => ReaderTaskEither<Db, MongoError, T>;
+  deleteMany: <T>(collection: string, query: FilterQuery<T>) => ReaderTaskEither<Db, MongoError, T[]>;
+}
+
+export interface DataSources {
+  comicBook: ComicBookAPI;
 }
 
 /**
@@ -19,6 +31,7 @@ interface DataSources {
  */
 export interface GraphQLContext {
   req: NextApiRequest;
+  dataLayer: DataLayer;
   dataSources: DataSources;
   logger: Logger;
   db: Option<Db>;
