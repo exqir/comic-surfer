@@ -29,7 +29,7 @@ export const ComicQuery: ComicBookQuery = {
 
 export const ComicResolver: ComicBookResolver = {
   ComicBook: {
-    creators: ({ creators }, _, { }) => ({}),
+    creators: ({ creators }, _, { }) => [{}],
     publisher: ({ publisher }, _, { }) => ({}),
     series: ({ series }, _, { }) => ({})
   },

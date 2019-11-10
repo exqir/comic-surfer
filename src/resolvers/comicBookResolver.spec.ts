@@ -1,4 +1,4 @@
-import { createMockConfig, createMockOptionWithReturnValue, foldOptionPromise } from 'tests/_utils'
+import { createMockConfig, createMockOptionWithReturnValue } from 'tests/_utils'
 import { ComicQuery } from './comicBookResolver'
 import { ComicBook } from 'types/schema'
 import { ComicBookAPI } from 'datasources/ComicBookAPI'
@@ -15,8 +15,10 @@ describe('[Query.getComicBook]', () => {
 
     // GraphQLResolveInfo interface is not matched
     // @ts-ignore
-    const res = await ComicQuery.getComicBook(null, { id: '1' }, context, {});
-    expect(res).toEqual(null);
+    const res = await ComicQuery.getComicBook(null, { id: '1' }, context, {})
+
+    expect(getById).toHaveBeenLastCalledWith('1')
+    expect(res).toEqual(null)
   });
 
   it('should call ComicBookAPI and return its result', async () => {
@@ -26,7 +28,9 @@ describe('[Query.getComicBook]', () => {
 
     // GraphQLResolveInfo interface is not matched
     // @ts-ignore
-    const res = await ComicQuery.getComicBook(null, { id: '1' }, context, {});
-    expect(res).toMatchObject(mockComicBook);
+    const res = await ComicQuery.getComicBook(null, { id: '1' }, context, {})
+
+    expect(getById).toHaveBeenLastCalledWith('1')
+    expect(res).toMatchObject(mockComicBook)
   });
 })

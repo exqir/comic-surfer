@@ -14,8 +14,8 @@ describe('[ComicBookAPI.getById]', () => {
     findOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
     const res = ds.getById('')
-    foldOptionPromise(res, err => expect(err).toBeInstanceOf(MongoError), d => { })
 
+    foldOptionPromise(res, err => expect(err).toBeInstanceOf(MongoError), d => { })
     expect(findOne).toBeCalledWith(collection, { _id: '' })
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
@@ -29,8 +29,8 @@ describe('[ComicBookAPI.getById]', () => {
     findOne.mockReturnValueOnce(createMockReaderWithReturnValue<ComicBook>(mockComicBook))
 
     const res = ds.getById('1')
-    foldOptionPromise(res, err => { throw err }, d => expect(d).toMatchObject(mockComicBook))
 
+    foldOptionPromise(res, err => { throw err }, d => expect(d).toMatchObject(mockComicBook))
     expect(findOne).toBeCalledWith(collection, { _id: '1' })
   });
 });
@@ -41,8 +41,8 @@ describe('[ComicBookAPI.getByIds]', () => {
     findMany.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
     const res = ds.getByIds([''])
-    foldOptionPromise(res, err => expect(err).toBeInstanceOf(MongoError), d => { })
 
+    foldOptionPromise(res, err => expect(err).toBeInstanceOf(MongoError), d => { })
     expect(findMany).toBeCalledWith(collection, { _id: { $in: [''] } })
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
@@ -56,8 +56,8 @@ describe('[ComicBookAPI.getByIds]', () => {
     findMany.mockReturnValueOnce(createMockReaderWithReturnValue<ComicBook>(mockComicBook))
 
     const res = ds.getByIds(['1'])
-    foldOptionPromise(res, err => { throw err }, d => expect(d).toMatchObject(mockComicBook))
 
+    foldOptionPromise(res, err => { throw err }, d => expect(d).toMatchObject(mockComicBook))
     expect(findMany).toBeCalledWith(collection, { _id: { $in: ['1'] } })
   });
 });

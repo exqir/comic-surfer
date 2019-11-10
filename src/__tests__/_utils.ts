@@ -1,9 +1,13 @@
 import { MongoError, Db } from 'mongodb'
 import { some, map, Option } from 'fp-ts/lib/Option'
 import { right, left, Either, fold, } from 'fp-ts/lib/Either'
-import { DataSources } from 'types/app'
 import { NextApiRequest } from 'next'
 import { KeyValueCache } from 'apollo-server-core'
+import { ApolloServer } from 'apollo-server-micro'
+import { DataSources } from 'types/app'
+import typeDefs from '../schema'
+import { resolvers } from '../resolvers'
+import { ComicBookAPI } from '../datasources'
 
 /**
  * Creates a `ReaderTaskEither<Db, MongoError, T>` that returns `value` as right
@@ -57,7 +61,7 @@ const mockDataLayer = {
 }
 
 /**
- * Creates a config object to initialize DataSources.
+ * Creates a mock GraphQL config object.
  */
 export const createMockConfig = () => ({
   context: {
@@ -69,3 +73,27 @@ export const createMockConfig = () => ({
   },
   cache: {} as KeyValueCache,
 })
+
+/**
+ * Creates an `ApolloServer` for integration tests.
+ * From: https://github.com/apollographql/fullstack-tutorial/blob/master/final/server/src/__tests__/__utils.js
+ * @param context Context object to be merged with default mock config.
+ * @returns { server: ApolloServer, comicBookAPI: ComicBookAPI }
+ */
+export const constructTestServer = (context: {} = {}) => {
+  const defaultContext = createMockConfig().context
+  delete defaultContext.dataSources
+  const comicBookAPI = new ComicBookAPI()
+
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    dataSources: () => ({ comicBookAPI }),
+    context: () => ({
+      ...defaultContext,
+      ...context
+    }),
+  })
+
+  return { server, comicBookAPI }
+}
