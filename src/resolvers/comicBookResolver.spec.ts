@@ -13,6 +13,7 @@ describe('[Query.getComicBook]', () => {
     const { getById } = context.dataSources.comicBook;
     (getById as jest.Mock).mockReturnValueOnce(createMockOptionWithReturnValue({}, true))
 
+    // GraphQLResolveInfo interface is not matched
     // @ts-ignore
     const res = await ComicQuery.getComicBook(null, { id: '1' }, context, {});
     expect(res).toEqual(null);
@@ -23,6 +24,7 @@ describe('[Query.getComicBook]', () => {
     const { getById } = context.dataSources.comicBook;
     (getById as jest.Mock).mockReturnValueOnce(createMockOptionWithReturnValue<ComicBook>(mockComicBook))
 
+    // GraphQLResolveInfo interface is not matched
     // @ts-ignore
     const res = await ComicQuery.getComicBook(null, { id: '1' }, context, {});
     expect(res).toMatchObject(mockComicBook);
