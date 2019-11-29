@@ -1,4 +1,5 @@
 import { ApolloServer, gql } from 'apollo-server-micro'
+import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb';
 
 const typeDefs = gql`
   type Query {
@@ -17,7 +18,7 @@ const resolvers = {
   }
 }
 
-const apolloServer = new ApolloServer({ typeDefs, resolvers })
+const apolloServer = new ApolloServer({ typeDefs: [DIRECTIVES, typeDefs], resolvers })
 
 export const config = {
   api: {

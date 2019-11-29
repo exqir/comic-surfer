@@ -1,7 +1,7 @@
 import { MongoError } from 'mongodb'
 import { ComicBookAPI, collection } from './ComicBookAPI'
 import { createMockConfig, createMockReaderWithReturnValue, foldOptionPromise } from 'tests/_utils'
-import { ComicBook } from 'types/schema'
+import { ComicBook } from 'types/server-schema'
 
 const config = createMockConfig()
 

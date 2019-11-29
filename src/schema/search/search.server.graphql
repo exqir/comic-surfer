@@ -1,0 +1,10 @@
+extend type Query {
+  getSearch(q: String!): [Search]
+  getSearchByPublishers(q: String!, publishers: [String!]!): [Search]
+}
+
+type Search @entity {
+  title: String! @column
+  url: String! @column
+  publisher: Publisher! @link
+}

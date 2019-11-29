@@ -1,47 +1,9 @@
-import { DataSource, DataSourceConfig } from 'apollo-datasource'
-import { pipe } from 'fp-ts/lib/pipeable';
-import { map } from 'fp-ts/lib/Option';
-import { mapLeft } from 'fp-ts/lib/ReaderTaskEither';
-import { ComicBook } from 'types/schema'
-import { GraphQLContext, DataLayer } from 'types/app'
-import { logError, partialRun } from '../lib';
+import { ComicBookDbObject } from 'types/server-schema'
+import { MongoDataSource } from './MongoDataSource'
 
 export const collection = 'comicBook'
-export class ComicBookAPI extends DataSource<GraphQLContext> {
-  private collection: string;
-  private context?: GraphQLContext;
-  private dataLayer?: DataLayer;
+export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
   public constructor() {
-    super()
-    this.collection = collection
-  }
-
-  public initialize({ context }: DataSourceConfig<GraphQLContext>) {
-    this.context = context
-    this.dataLayer = context.dataLayer
-  }
-
-  public getById(id: string) {
-    const { findOne } = this.dataLayer!
-    const { logger, db } = this.context!
-    return map(
-      pipe(
-        findOne<ComicBook>(this.collection, { _id: id }),
-        mapLeft(logError(logger)),
-        partialRun,
-      )
-    )(db)
-  }
-
-  public getByIds(ids: string[]) {
-    const { findMany } = this.dataLayer!
-    const { logger, db } = this.context!
-    return map(
-      pipe(
-        findMany<ComicBook>(this.collection, { _id: { $in: ids } }),
-        mapLeft(logError(logger)),
-        partialRun,
-      )
-    )(db)
+    super(collection)
   }
 }

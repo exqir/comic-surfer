@@ -1,24 +1,17 @@
-import { gql } from 'apollo-server-micro'
-
-import ComicBook from './comicBook'
-import ComicSeries from './comicSeries'
-import Creator from './creator'
-import Publisher from './publisher'
-import PullList from './pullList'
-import Search from './search'
-
-const Query = gql`
-  type Query {
-    _empty: String
-  }
-
-  type Mutation {
-    _empty: String
-  }
-`
+import Root from './schema.root.graphql'
+import ComicBook from './comicBook/comicBook.server.graphql'
+import {
+  ComicBookQuery,
+  ComicBookResolver,
+} from './comicBook/comicBookResolver'
+import ComicSeries from './comicSeries/comicSeries.server.graphql'
+import Creator from './creator/creator.server.graphql'
+import Publisher from './publisher/publisher.server.graphql'
+import PullList from './pullList/pullList.server.graphql'
+import Search from './search/search.server.graphql'
 
 export default [
-  Query,
+  Root,
   ComicBook,
   ComicSeries,
   Creator,
@@ -26,3 +19,10 @@ export default [
   PullList,
   Search,
 ]
+
+export const resolvers = {
+  Query: {
+    ...ComicBookQuery,
+  },
+  ...ComicBookResolver,
+}

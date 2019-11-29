@@ -1,12 +1,13 @@
+import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
 import { MongoError, Db } from 'mongodb'
 import { some, map, Option } from 'fp-ts/lib/Option'
-import { right, left, Either, fold, } from 'fp-ts/lib/Either'
+import { right, left, Either, fold } from 'fp-ts/lib/Either'
 import { NextApiRequest } from 'next'
 import { KeyValueCache } from 'apollo-server-core'
 import { ApolloServer } from 'apollo-server-micro'
 import { DataSources } from 'types/app'
 import typeDefs from '../schema'
-import { resolvers } from '../resolvers'
+import { resolvers } from '../schema'
 import { ComicBookAPI } from '../datasources'
 
 /**
@@ -16,33 +17,63 @@ import { ComicBookAPI } from '../datasources'
  * @param isFailure {boolean} Defines if a success or failure should be mocked.
  * @returns reader {ReaderTaskEither<Db, MongoError, T>}
  */
-export function createMockReaderWithReturnValue<T>(value: T, isFailure?: boolean): (db: Db) => () => Promise<Either<MongoError, T>>
-export function createMockReaderWithReturnValue<T>(value: T[], isFailure?: boolean): (db: Db) => () => Promise<Either<MongoError, T[]>>
-export function createMockReaderWithReturnValue<T>(value: T | T[], isFailure?: boolean) {
-  return (db: Db) => () => new Promise<Either<MongoError, T | T[]>>((resolve, reject) => {
-    const either = isFailure ? left(new MongoError('TestError')) : right(value)
-    resolve(either)
-  })
+export function createMockReaderWithReturnValue<T>(
+  value: T,
+  isFailure?: boolean,
+): (db: Db) => () => Promise<Either<MongoError, T>>
+export function createMockReaderWithReturnValue<T>(
+  value: T[],
+  isFailure?: boolean,
+): (db: Db) => () => Promise<Either<MongoError, T[]>>
+export function createMockReaderWithReturnValue<T>(
+  value: T | T[],
+  isFailure?: boolean,
+) {
+  return (db: Db) => () =>
+    new Promise<Either<MongoError, T | T[]>>((resolve, reject) => {
+      const either = isFailure
+        ? left(new MongoError('TestError'))
+        : right(value)
+      resolve(either)
+    })
 }
 
 /**
  * Fold for a Type of `Option<Promise<Either<MongoError, T>>>`.
- * @param res 
- * @param onLeft 
- * @param onRight 
+ * @param res
+ * @param onLeft
+ * @param onRight
  */
-export const foldOptionPromise = <T>(res: Option<Promise<Either<MongoError, T>>>, onLeft: (l: MongoError) => void, onRight: (r: T) => void) =>
-  map<Promise<Either<MongoError, T>>, {}>(promise => promise.then(fold(onLeft, onRight)))(res)
+export const foldOptionPromise = <T>(
+  res: Option<Promise<Either<MongoError, T>>>,
+  onLeft: (l: MongoError) => void,
+  onRight: (r: T) => void,
+) =>
+  map<Promise<Either<MongoError, T>>, {}>(promise =>
+    promise.then(fold(onLeft, onRight)),
+  )(res)
 
-export function createMockOptionWithReturnValue<T>(value: T, isFailure?: boolean): Option<Promise<Either<MongoError, T>>>
-export function createMockOptionWithReturnValue<T>(value: T[], isFailure?: boolean): Option<Promise<Either<MongoError, T[]>>>
-export function createMockOptionWithReturnValue<T>(value: T | T[], isFailure?: boolean) {
-  return some(new Promise<Either<MongoError, T | T[]>>((resolve, reject) => {
-    const either = isFailure ? left(new MongoError('TestError')) : right(value)
-    resolve(either)
-  }))
+export function createMockOptionWithReturnValue<T>(
+  value: T,
+  isFailure?: boolean,
+): Option<Promise<Either<MongoError, T>>>
+export function createMockOptionWithReturnValue<T>(
+  value: T[],
+  isFailure?: boolean,
+): Option<Promise<Either<MongoError, T[]>>>
+export function createMockOptionWithReturnValue<T>(
+  value: T | T[],
+  isFailure?: boolean,
+) {
+  return some(
+    new Promise<Either<MongoError, T | T[]>>((resolve, reject) => {
+      const either = isFailure
+        ? left(new MongoError('TestError'))
+        : right(value)
+      resolve(either)
+    }),
+  )
 }
-
 
 const mockLogger = {
   error: jest.fn(),
@@ -69,7 +100,7 @@ export const createMockConfig = () => ({
     dataLayer: mockDataLayer,
     dataSources: {} as DataSources,
     logger: mockLogger,
-    db: some({} as Db)
+    db: some({} as Db),
   },
   cache: {} as KeyValueCache,
 })
@@ -86,12 +117,12 @@ export const constructTestServer = (context: {} = {}) => {
   const comicBookAPI = new ComicBookAPI()
 
   const server = new ApolloServer({
-    typeDefs,
+    typeDefs: [DIRECTIVES, typeDefs],
     resolvers,
     dataSources: () => ({ comicBookAPI }),
     context: () => ({
       ...defaultContext,
-      ...context
+      ...context,
     }),
   })
 

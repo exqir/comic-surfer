@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2016",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,24 +15,13 @@
     "jsx": "preserve",
     "baseUrl": "./src",
     "paths": {
-      "types/schema": [
-        "types/graphql-schema.ts"
-      ],
-      "types/app": [
-        "types/types.ts"
-      ],
-      "tests/*": [
-        "__tests__/*"
-      ]
+      "types/client-schema": ["types/graphql-client-schema.ts"],
+      "types/server-schema": ["types/graphql-server-schema.ts"],
+      "types/app": ["types/types.ts"],
+      "tests/*": ["__tests__/*"],
+      "lib/*": ["lib/*"]
     }
   },
-  "exclude": [
-    "src/types/graphql-schema.ts",
-    "node_modules"
-  ],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx"
-  ]
+  "exclude": ["src/types/graphql-schema.ts", "node_modules"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }

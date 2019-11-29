@@ -1,0 +1,15 @@
+extend type Query {
+  getComicBook(id: ID!): ComicBook
+}
+
+type ComicBook @entity {
+  _id: ID! @id
+  title: String! @column
+  issue: String @column
+  releaseDate: String @column
+  creators: [Creator] @link
+  series: ComicSeries @link
+  publisher: Publisher @link
+  coverUrl: String @column
+  url: String! @column
+}

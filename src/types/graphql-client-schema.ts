@@ -43,10 +43,10 @@ export type Creator = {
 
 export type Mutation = {
    __typename?: 'Mutation',
-  _empty?: Maybe<Scalars['String']>,
   createPullList: PullList,
   pullSeries: PullList,
   removeSeries: PullList,
+  _empty?: Maybe<Scalars['String']>,
 };
 
 
@@ -91,10 +91,10 @@ export type Query = {
    __typename?: 'Query',
   getComicBook?: Maybe<ComicBook>,
   getComicSeries?: Maybe<ComicSeries>,
-  _empty?: Maybe<Scalars['String']>,
   getPublishers?: Maybe<Array<Publisher>>,
   getPublisher?: Maybe<Publisher>,
   getPullList?: Maybe<PullList>,
+  _empty?: Maybe<Scalars['String']>,
   getSearch?: Maybe<Array<Maybe<Search>>>,
   getSearchByPublishers?: Maybe<Array<Maybe<Search>>>,
 };
@@ -142,5 +142,3 @@ export type Search = {
   publisher: Publisher,
 };
 
-
-import gql from 'graphql-tag';
