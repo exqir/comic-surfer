@@ -16,7 +16,8 @@
     "mongodb": "^3.3.3",
     "next": "^9.1.1",
     "react": "^16.11.0",
-    "react-dom": "^16.11.0"
+    "react-dom": "^16.11.0",
+    "scrape-it": "^5.2.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.8.2",
@@ -26,12 +27,14 @@
     "@types/jest": "^24.0.20",
     "@types/mongodb": "^3.3.7",
     "@types/react": "^16.9.11",
+    "@types/serve-handler": "^6.1.0",
     "apollo-server-testing": "^2.9.7",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
     "jest": "^24.9.0",
     "jest-transform-graphql": "^2.1.0",
     "next-plugin-graphql": "0.0.2",
+    "serve-handler": "^6.1.2",
     "ts-jest": "^24.1.0",
     "ts-node": "^8.4.1",
     "typescript": "^3.6.4"
