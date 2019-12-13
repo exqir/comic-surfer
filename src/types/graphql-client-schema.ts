@@ -13,7 +13,7 @@ export type ComicBook = {
   _id: Scalars['ID'],
   title: Scalars['String'],
   issue?: Maybe<Scalars['String']>,
-  releaseDate?: Maybe<Scalars['String']>,
+  releaseDate?: Maybe<Scalars['Int']>,
   creators?: Maybe<Array<Maybe<Creator>>>,
   series?: Maybe<ComicSeries>,
   publisher?: Maybe<Publisher>,

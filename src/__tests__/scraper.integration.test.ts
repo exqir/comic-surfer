@@ -41,3 +41,31 @@ describe('[Scraper.getComicSeries]', () => {
     )()
   })
 })
+
+describe('[Scraper.getComicBookList]', () => {
+  it('should scrap data from comic-book-list page', async () => {
+    expect.assertions(1)
+    return pipe(
+      scraper.getComicBookList(
+        { _id: new ObjectID(), name: 'image', basePath: URL },
+        '/comic-book-list.html',
+      ),
+      map(res => {
+        expect(res).toMatchObject([
+          {
+            title: 'Comic Book #2',
+            url: '/issue-2.html',
+            issue: '2',
+            releaseDate: 1478041200000,
+          },
+          {
+            title: 'Comic Book #1',
+            url: '/issue-1.html',
+            issue: '1',
+            releaseDate: 1473199200000,
+          },
+        ])
+      }),
+    )()
+  })
+})

@@ -6,7 +6,7 @@ type ComicBook {
   _id: ID!
   title: String!
   issue: String
-  releaseDate: String
+  releaseDate: Int
   creators: [Creator]
   series: ComicSeries
   publisher: Publisher

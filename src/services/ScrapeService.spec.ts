@@ -1,7 +1,7 @@
 import { ScrapeService } from './ScrapeService'
 import { ObjectID } from 'mongodb'
 import { isLeft, mapLeft, isRight, map } from 'fp-ts/lib/Either'
-import { comicSeries } from '../config/scraper'
+import { comicSeries, comicBookList } from '../config/scraper'
 
 const mockScraper = jest.fn()
 const scraper = new ScrapeService(mockScraper)
@@ -66,5 +66,59 @@ describe('ScrapeService', () => {
     expect(mockScraper).toHaveBeenCalledWith('/path/series', comicSeries.image)
     expect(isRight(result)).toBe(true)
     map(d => expect(d).toMatchObject(mockResult))(result)
+  })
+})
+
+describe('[ScrapeService.getComicSeries]', () => {
+  it('should return ComicSeries scrape results', async () => {
+    const mockResult = {
+      title: 'Title',
+      collectionUrl: '/collections.html',
+      singleIssuesUrl: '/issues.html',
+    }
+    mockScraper.mockResolvedValueOnce({
+      response: { statusCode: 200 },
+      data: mockResult,
+    })
+    const task = scraper.getComicSeries(
+      { _id: new ObjectID(), name: 'image', basePath: '/path' },
+      '/series',
+    )
+
+    const result = await task()
+
+    expect(mockScraper).toHaveBeenCalledWith('/path/series', comicSeries.image)
+    map(d => expect(d).toMatchObject(mockResult))(result)
+  })
+})
+
+describe('[ScrapeService.getComicBookList]', () => {
+  it('should return ComicBookList scrape results', async () => {
+    const mockResult = {
+      comicBookList: [
+        {
+          title: 'Title',
+          url: '/title-1',
+          issue: '1',
+          releaseDate: '1576244967959',
+        },
+      ],
+    }
+    mockScraper.mockResolvedValueOnce({
+      response: { statusCode: 200 },
+      data: mockResult,
+    })
+    const task = scraper.getComicBookList(
+      { _id: new ObjectID(), name: 'image', basePath: '/path' },
+      '/book-list',
+    )
+
+    const result = await task()
+
+    expect(mockScraper).toHaveBeenCalledWith(
+      '/path/book-list',
+      comicBookList.image,
+    )
+    map(d => expect(d).toMatchObject(mockResult.comicBookList))(result)
   })
 })

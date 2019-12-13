@@ -1,20 +1,21 @@
-import scrapeIt from 'scrape-it'
+import { ScrapeOptionElement, ScrapeOptionList, ScrapeOptions } from 'scrape-it'
 
-type Selector = string | scrapeIt.ScrapeOptionElement
-
-interface ComicSeriesPublisherConfig {
+type Selector = string | ScrapeOptionElement | ScrapeOptionList
+/**
+ * COMIC SERIES
+ */
+interface ComicSeriesConfig extends ScrapeOptions {
   title: Selector
   collectionUrl: Selector
   singleIssuesUrl: Selector
-  [key: string]: Selector
 }
-export interface ComicSeriesScrapeResult {
+export interface ComicSeriesScrapeData {
   title: string
   collectionUrl: string
   singleIssuesUrl: string
 }
 export interface ComicSeriesScraperConfig {
-  [name: string]: ComicSeriesPublisherConfig
+  [name: string]: ComicSeriesConfig
 }
 export const comicSeries: ComicSeriesScraperConfig = {
   image: {
@@ -28,6 +29,56 @@ export const comicSeries: ComicSeriesScraperConfig = {
       selector: '.section__moreLink',
       attr: 'href',
       eq: 1,
+    },
+  },
+}
+
+/**
+ * COMIC BOOK LIST
+ */
+
+interface ComicBookListConfig extends ScrapeOptions {
+  comicBookList: {
+    listItem: string
+    data: {
+      title: Selector
+      url: Selector
+      issue: Selector
+      releaseDate: Selector
+    }
+  }
+}
+export interface ComicBookListScrapeData {
+  comicBookList: {
+    title: string
+    url: string
+    issue: string
+    releaseDate: number
+  }[]
+}
+export interface ComicBookListScraperConfig {
+  [name: string]: ComicBookListConfig
+}
+export const comicBookList: ComicBookListScraperConfig = {
+  image: {
+    comicBookList: {
+      listItem: '.book',
+      data: {
+        title: '.book__headline a',
+        url: {
+          selector: '.book__headline a',
+          attr: 'href',
+        },
+        issue: {
+          selector: '.book__headline a',
+          convert: (title: string) => (title.match(/[0-9]+$/) || [''])[0],
+        },
+        releaseDate: {
+          selector: '.book__text',
+          convert: (dateString: string) =>
+            Date.parse(dateString.replace('Published:', '').trim()),
+        },
+      },
     },
   },
 }

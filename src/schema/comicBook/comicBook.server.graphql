@@ -6,7 +6,7 @@ type ComicBook @entity {
   _id: ID! @id
   title: String! @column
   issue: String @column
-  releaseDate: String @column
+  releaseDate: Int @column
   creators: [Creator] @link
   series: ComicSeries @link
   publisher: Publisher @link

@@ -1,8 +1,14 @@
 import { ScrapeOptions, ScrapeResult } from 'scrape-it'
+import { pipe } from 'fp-ts/lib/pipeable'
 import { left, right } from 'fp-ts/lib/Either'
-import { TaskEither } from 'fp-ts/lib/TaskEither'
+import { TaskEither, map } from 'fp-ts/lib/TaskEither'
 import { PublisherDbObject } from 'types/server-schema'
-import { comicSeries, ComicSeriesScrapeResult } from '../config/scraper'
+import {
+  comicSeries,
+  ComicSeriesScrapeData,
+  comicBookList,
+  ComicBookListScrapeData,
+} from '../config/scraper'
 
 type Scraper = <T>(
   url: string | object,
@@ -34,10 +40,23 @@ export class ScrapeService {
   getComicSeries(
     { name, basePath }: PublisherDbObject,
     path: string,
-  ): TaskEither<Error, ComicSeriesScrapeResult> {
+  ): TaskEither<Error, ComicSeriesScrapeData> {
     const url = `${basePath}${path}`
     const config = comicSeries[name]
 
     return this.scrape(url, config)
+  }
+
+  getComicBookList(
+    { name, basePath }: PublisherDbObject,
+    path: string,
+  ): TaskEither<Error, ComicBookListScrapeData['comicBookList']> {
+    const url = `${basePath}${path}`
+    const config = comicBookList[name]
+
+    return pipe(
+      this.scrape<ComicBookListScrapeData>(url, config),
+      map(({ comicBookList }) => comicBookList),
+    )
   }
 }
