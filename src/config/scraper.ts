@@ -128,3 +128,40 @@ export const comicBook: ComicBookScraperConfig = {
     },
   },
 }
+
+/**
+ * COMIC SERIES SEARCH
+ */
+
+interface ComicSeriesSearchConfig extends ScrapeOptions {
+  searchResults: {
+    listItem: string
+    data: {
+      title: Selector
+      url: Selector
+    }
+  }
+}
+export interface ComicSeriesSearchScrapeData {
+  searchResults: {
+    title: string
+    url: string
+  }[]
+}
+export interface ComicSeriesSearchScraperConfig {
+  [name: string]: ComicSeriesSearchConfig
+}
+export const comicSeriesSearch: ComicSeriesSearchScraperConfig = {
+  image: {
+    searchResults: {
+      listItem: '.news-list li h2',
+      data: {
+        title: 'a',
+        url: {
+          selector: 'a',
+          attr: 'href',
+        },
+      },
+    },
+  },
+}

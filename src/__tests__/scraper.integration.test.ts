@@ -87,3 +87,27 @@ describe('[Scraper.getComicBook]', () => {
     )()
   })
 })
+
+describe('[Scraper.getComicSeriesSearch]', () => {
+  it('should scrap data from comic-series-search page', async () => {
+    expect.assertions(1)
+    return pipe(
+      scraper.getComicSeriesSearch(
+        { _id: new ObjectID(), name: 'image', basePath: URL },
+        '/comic-series-search.html',
+      ),
+      map(res => {
+        expect(res).toMatchObject([
+          {
+            title: 'Title 1',
+            url: '/title-1.html',
+          },
+          {
+            title: 'Title 2',
+            url: '/title-2.html',
+          },
+        ])
+      }),
+    )()
+  })
+})

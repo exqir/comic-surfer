@@ -10,6 +10,8 @@ import {
   ComicBookListScrapeData,
   comicBook,
   ComicBookScrapeData,
+  comicSeriesSearch,
+  ComicSeriesSearchScrapeData,
 } from '../config/scraper'
 
 type Scraper = <T>(
@@ -70,5 +72,18 @@ export class ScrapeService {
     const config = comicBook[name]
 
     return pipe(this.scrape(url, config))
+  }
+
+  getComicSeriesSearch(
+    { name, basePath }: PublisherDbObject,
+    path: string,
+  ): TaskEither<Error, ComicSeriesSearchScrapeData['searchResults']> {
+    const url = `${basePath}${path}`
+    const config = comicSeriesSearch[name]
+
+    return pipe(
+      this.scrape<ComicSeriesSearchScrapeData>(url, config),
+      map(({ searchResults }) => searchResults),
+    )
   }
 }
