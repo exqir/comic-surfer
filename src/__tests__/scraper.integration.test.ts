@@ -69,3 +69,21 @@ describe('[Scraper.getComicBookList]', () => {
     )()
   })
 })
+
+describe('[Scraper.getComicBook]', () => {
+  it('should scrap data from comic-book page', async () => {
+    expect.assertions(1)
+    return pipe(
+      scraper.getComicBook(
+        { _id: new ObjectID(), name: 'image', basePath: URL },
+        '/comic-book.html',
+      ),
+      map(res => {
+        expect(res).toMatchObject({
+          creators: [{ author: 'Joshua Williamson', artist: 'Mike Henderson' }],
+          imageUrl: '/cover.png',
+        })
+      }),
+    )()
+  })
+})

@@ -1,7 +1,7 @@
 import { ScrapeService } from './ScrapeService'
 import { ObjectID } from 'mongodb'
 import { isLeft, mapLeft, isRight, map } from 'fp-ts/lib/Either'
-import { comicSeries, comicBookList } from '../config/scraper'
+import { comicSeries, comicBookList, comicBook } from '../config/scraper'
 
 const mockScraper = jest.fn()
 const scraper = new ScrapeService(mockScraper)
@@ -120,5 +120,35 @@ describe('[ScrapeService.getComicBookList]', () => {
       comicBookList.image,
     )
     map(d => expect(d).toMatchObject(mockResult.comicBookList))(result)
+  })
+})
+
+describe('[ScrapeService.getComicBook]', () => {
+  it('should return ComicBook scrape results', async () => {
+    const mockResult = {
+      creators: [
+        {
+          author: 'Author Name',
+          artist: 'Artist Name',
+        },
+      ],
+      imageUrl: '/image.jpg',
+    }
+    mockScraper.mockResolvedValueOnce({
+      response: { statusCode: 200 },
+      data: mockResult,
+    })
+    const task = scraper.getComicBook(
+      { _id: new ObjectID(), name: 'image', basePath: '/path' },
+      '/comic-book',
+    )
+
+    const result = await task()
+
+    expect(mockScraper).toHaveBeenCalledWith(
+      '/path/comic-book',
+      comicBook.image,
+    )
+    map(d => expect(d).toMatchObject(mockResult))(result)
   })
 })

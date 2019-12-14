@@ -82,3 +82,49 @@ export const comicBookList: ComicBookListScraperConfig = {
     },
   },
 }
+
+/**
+ * COMIC BOOK
+ */
+
+interface ComicBookConfig extends ScrapeOptions {
+  creators: {
+    listItem: string
+    data: {
+      author: Selector
+      artist: Selector
+    }
+  }
+  imageUrl: Selector
+}
+export interface ComicBookScrapeData {
+  creators: {
+    author: string
+    artist: string
+  }[]
+  imageUrl: string
+}
+export interface ComicBookScraperConfig {
+  [name: string]: ComicBookConfig
+}
+export const comicBook: ComicBookScraperConfig = {
+  image: {
+    creators: {
+      listItem: '.header__title + p',
+      data: {
+        author: {
+          selector: 'a',
+          eq: 0,
+        },
+        artist: {
+          selector: 'a',
+          eq: 1,
+        },
+      },
+    },
+    imageUrl: {
+      selector: '.book-cover img.book',
+      attr: 'src',
+    },
+  },
+}

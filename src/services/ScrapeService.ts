@@ -8,6 +8,8 @@ import {
   ComicSeriesScrapeData,
   comicBookList,
   ComicBookListScrapeData,
+  comicBook,
+  ComicBookScrapeData,
 } from '../config/scraper'
 
 type Scraper = <T>(
@@ -58,5 +60,15 @@ export class ScrapeService {
       this.scrape<ComicBookListScrapeData>(url, config),
       map(({ comicBookList }) => comicBookList),
     )
+  }
+
+  getComicBook(
+    { name, basePath }: PublisherDbObject,
+    path: string,
+  ): TaskEither<Error, ComicBookScrapeData> {
+    const url = `${basePath}${path}`
+    const config = comicBook[name]
+
+    return pipe(this.scrape(url, config))
   }
 }
