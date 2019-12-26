@@ -2,16 +2,10 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import { toNullable } from 'fp-ts/lib/Option'
 import { identity, constNull } from 'fp-ts/lib/function'
 import { fold } from 'fp-ts/lib/Either'
-import { GraphQLResolver, GraphQLContext, Resolver } from 'types/app'
+import { Resolver } from 'types/app'
 import {
   QueryGetComicBookArgs,
-  ComicBook,
-  QueryResolvers,
-  Resolvers,
   ComicBookDbObject,
-  Creator,
-  ComicSeries,
-  Publisher,
   CreatorDbObject,
   PublisherDbObject,
   ComicSeriesDbObject,
@@ -46,20 +40,3 @@ export const ComicBookResolver: ComicBookResolver = {
     series: ({ series }, _, {}) => ({} as ComicSeriesDbObject),
   },
 }
-
-// export const ComicBookQuery: QueryResolvers<GraphQLContext> = {
-//   getComicBook: (_, { id }, { dataSources }) =>
-//     pipe(
-//       dataSources.comicBook.getById(id),
-//       mapPromise(fold(constNull, identity)),
-//       toNullable,
-//     ) as Promise<ComicBookDbObject | null> | null,
-// }
-
-// export const ComicBookResolver: Resolvers<GraphQLContext> = {
-//   ComicBook: {
-//     creators: ({ creators }, _, {}) => [{}] as CreatorDbObject[],
-//     publisher: ({ publisher }, _, {}) => ({} as PublisherDbObject),
-//     series: ({ series }, _, {}) => ({} as ComicSeriesDbObject),
-//   },
-// }
