@@ -2,6 +2,7 @@ import { createMockConfig, createMockOptionWithReturnValue } from 'tests/_utils'
 import { ComicBookQuery } from './comicBookResolver'
 import { ComicBook } from 'types/server-schema'
 import { ComicBookAPI } from 'datasources/ComicBookAPI'
+import { GraphQLResolveInfo } from 'graphql'
 
 describe('[Query.getComicBook]', () => {
   const { context } = createMockConfig()
@@ -15,12 +16,11 @@ describe('[Query.getComicBook]', () => {
       createMockOptionWithReturnValue({}, true),
     )
 
-    // @ts-ignore
     const res = await ComicBookQuery.getComicBook(
-      null,
+      {},
       { id: '1' },
       context,
-      {},
+      {} as GraphQLResolveInfo,
     )
 
     expect(getById).toHaveBeenLastCalledWith('1')
@@ -34,12 +34,11 @@ describe('[Query.getComicBook]', () => {
       createMockOptionWithReturnValue<ComicBook>(mockComicBook),
     )
 
-    // @ts-ignore
     const res = await ComicBookQuery.getComicBook(
-      null,
+      {},
       { id: '1' },
       context,
-      {},
+      {} as GraphQLResolveInfo,
     )
 
     expect(getById).toHaveBeenLastCalledWith('1')
