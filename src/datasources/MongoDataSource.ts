@@ -1,9 +1,9 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { map } from 'fp-ts/lib/Option'
-import { ObjectID } from 'mongodb'
-import { mapLeft } from 'fp-ts/lib/ReaderTaskEither'
-import { GraphQLContext, DataLayer } from 'types/app'
+import { ObjectID, Db, MongoError } from 'mongodb'
+import { mapLeft, ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
+import { GraphQLContext, DataLayer, Omit } from 'types/app'
 import { logError, partialRun } from '../lib'
 
 interface WithId {
@@ -13,12 +13,17 @@ interface WithId {
 export class MongoDataSource<T extends WithId> extends DataSource<
   GraphQLContext
 > {
-  private collection: string
+  public collection: string
   private context?: GraphQLContext
-  private dataLayer?: DataLayer
+  public dataLayer?: DataLayer
   public constructor(collection: string) {
     super()
     this.collection = collection
+  }
+
+  public execute<D>(rte: ReaderTaskEither<Db, MongoError, D>) {
+    const { logger, db } = this.context!
+    return map(pipe(rte, mapLeft(logError(logger)), partialRun))(db)
   }
 
   public initialize({ context }: DataSourceConfig<GraphQLContext>) {
@@ -26,31 +31,26 @@ export class MongoDataSource<T extends WithId> extends DataSource<
     this.dataLayer = context.dataLayer
   }
 
+  public insert(document: Omit<T, '_id'>) {
+    const { insertOne } = this.dataLayer!
+    return this.execute(insertOne(this.collection, document))
+  }
+
   public getById(id: string) {
     const { findOne } = this.dataLayer!
-    const { logger, db } = this.context!
-    return map(
-      pipe(
-        // TODO: Extending the Generic T  doesn't seem to force the type for
-        // FilterQuery to recognize the property _id to be on type T.
-        // @ts-ignore
-        findOne<T>(this.collection, { _id: id }),
-        mapLeft(logError(logger)),
-        partialRun,
-      ),
-    )(db)
+    return this.execute(
+      // TODO: Extending the Generic T  doesn't seem to force the type for
+      // FilterQuery to recognize the property _id to be on type T.
+      // @ts-ignore
+      findOne<T>(this.collection, { _id: id }),
+    )
   }
 
   public getByIds(ids: string[]) {
     const { findMany } = this.dataLayer!
-    const { logger, db } = this.context!
-    return map(
-      pipe(
-        // @ts-ignore
-        findMany<T>(this.collection, { _id: { $in: ids } }),
-        mapLeft(logError(logger)),
-        partialRun,
-      ),
-    )(db)
+    return this.execute(
+      // @ts-ignore
+      findMany<T>(this.collection, { _id: { $in: ids } }),
+    )
   }
 }

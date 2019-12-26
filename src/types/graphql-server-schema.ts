@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -213,7 +214,8 @@ export type SearchDbObject = {
   publisher: PublisherDbObject['_id'],
 };
 
-
+export type WithIndex<TObject> = TObject & Record<string, any>;
+export type ResolversObject<TObject> = WithIndex<TObject>;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
@@ -283,38 +285,38 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 ) => TResult | Promise<TResult>;
 
 /** Mapping between all available schema types and the resolvers types */
-export type ResolversTypes = {
+export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
-  ComicBook: ResolverTypeWrapper<ComicBook>,
+  ComicBook: ResolverTypeWrapper<ComicBookDbObject>,
   String: ResolverTypeWrapper<Scalars['String']>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
-  Creator: ResolverTypeWrapper<Creator>,
-  ComicSeries: ResolverTypeWrapper<ComicSeries>,
-  Publisher: ResolverTypeWrapper<Publisher>,
-  PullList: ResolverTypeWrapper<PullList>,
-  Search: ResolverTypeWrapper<Search>,
+  Creator: ResolverTypeWrapper<CreatorDbObject>,
+  ComicSeries: ResolverTypeWrapper<ComicSeriesDbObject>,
+  Publisher: ResolverTypeWrapper<PublisherDbObject>,
+  PullList: ResolverTypeWrapper<PullListDbObject>,
+  Search: ResolverTypeWrapper<Omit<Search, 'publisher'> & { publisher: ResolversTypes['Publisher'] }>,
   Mutation: ResolverTypeWrapper<{}>,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   AdditionalEntityFields: AdditionalEntityFields,
-};
+}>;
 
 /** Mapping between all available schema types and the resolvers parents */
-export type ResolversParentTypes = {
+export type ResolversParentTypes = ResolversObject<{
   Query: {},
   ID: Scalars['ID'],
-  ComicBook: ComicBook,
+  ComicBook: ComicBookDbObject,
   String: Scalars['String'],
   Int: Scalars['Int'],
-  Creator: Creator,
-  ComicSeries: ComicSeries,
-  Publisher: Publisher,
-  PullList: PullList,
-  Search: Search,
+  Creator: CreatorDbObject,
+  ComicSeries: ComicSeriesDbObject,
+  Publisher: PublisherDbObject,
+  PullList: PullListDbObject,
+  Search: Omit<Search, 'publisher'> & { publisher: ResolversParentTypes['Publisher'] },
   Mutation: {},
   Boolean: Scalars['Boolean'],
   AdditionalEntityFields: AdditionalEntityFields,
-};
+}>;
 
 export type UnionDirectiveResolver<Result, Parent, ContextType = any, Args = {   discriminatorField?: Maybe<Maybe<Scalars['String']>>,
   additionalFields?: Maybe<Maybe<Array<Maybe<AdditionalEntityFields>>>> }> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
@@ -335,7 +337,7 @@ export type EmbeddedDirectiveResolver<Result, Parent, ContextType = any, Args = 
 
 export type MapDirectiveResolver<Result, Parent, ContextType = any, Args = {   path?: Maybe<Scalars['String']> }> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
-export type ComicBookResolvers<ContextType = any, ParentType extends ResolversParentTypes['ComicBook'] = ResolversParentTypes['ComicBook']> = {
+export type ComicBookResolvers<ContextType = any, ParentType extends ResolversParentTypes['ComicBook'] = ResolversParentTypes['ComicBook']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   issue?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
@@ -345,9 +347,9 @@ export type ComicBookResolvers<ContextType = any, ParentType extends ResolversPa
   publisher?: Resolver<Maybe<ResolversTypes['Publisher']>, ParentType, ContextType>,
   coverUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
-};
+}>;
 
-export type ComicSeriesResolvers<ContextType = any, ParentType extends ResolversParentTypes['ComicSeries'] = ResolversParentTypes['ComicSeries']> = {
+export type ComicSeriesResolvers<ContextType = any, ParentType extends ResolversParentTypes['ComicSeries'] = ResolversParentTypes['ComicSeries']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
@@ -356,23 +358,23 @@ export type ComicSeriesResolvers<ContextType = any, ParentType extends Resolvers
   publisher?: Resolver<Maybe<ResolversTypes['Publisher']>, ParentType, ContextType>,
   collections?: Resolver<Maybe<Array<Maybe<ResolversTypes['ComicBook']>>>, ParentType, ContextType>,
   issues?: Resolver<Maybe<Array<Maybe<ResolversTypes['ComicBook']>>>, ParentType, ContextType>,
-};
+}>;
 
-export type CreatorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Creator'] = ResolversParentTypes['Creator']> = {
+export type CreatorResolvers<ContextType = any, ParentType extends ResolversParentTypes['Creator'] = ResolversParentTypes['Creator']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   firstname?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   lastname?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   series?: Resolver<Maybe<Array<Maybe<ResolversTypes['ComicSeries']>>>, ParentType, ContextType>,
-};
+}>;
 
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createPullList?: Resolver<ResolversTypes['PullList'], ParentType, ContextType, RequireFields<MutationCreatePullListArgs, 'owner'>>,
   pullSeries?: Resolver<ResolversTypes['PullList'], ParentType, ContextType, RequireFields<MutationPullSeriesArgs, 'owner' | 'publisher' | 'seriesUrl'>>,
   removeSeries?: Resolver<ResolversTypes['PullList'], ParentType, ContextType, RequireFields<MutationRemoveSeriesArgs, 'owner' | 'series'>>,
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-};
+}>;
 
-export type PublisherResolvers<ContextType = any, ParentType extends ResolversParentTypes['Publisher'] = ResolversParentTypes['Publisher']> = {
+export type PublisherResolvers<ContextType = any, ParentType extends ResolversParentTypes['Publisher'] = ResolversParentTypes['Publisher']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   iconUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
@@ -382,15 +384,15 @@ export type PublisherResolvers<ContextType = any, ParentType extends ResolversPa
   searchPath?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   searchPathSeries?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   series?: Resolver<Maybe<Array<Maybe<ResolversTypes['ComicSeries']>>>, ParentType, ContextType>,
-};
+}>;
 
-export type PullListResolvers<ContextType = any, ParentType extends ResolversParentTypes['PullList'] = ResolversParentTypes['PullList']> = {
+export type PullListResolvers<ContextType = any, ParentType extends ResolversParentTypes['PullList'] = ResolversParentTypes['PullList']> = ResolversObject<{
   _id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   owner?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   list?: Resolver<Maybe<Array<Maybe<ResolversTypes['ComicSeries']>>>, ParentType, ContextType>,
-};
+}>;
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   getComicBook?: Resolver<Maybe<ResolversTypes['ComicBook']>, ParentType, ContextType, RequireFields<QueryGetComicBookArgs, 'id'>>,
   getComicSeries?: Resolver<Maybe<ResolversTypes['ComicSeries']>, ParentType, ContextType, RequireFields<QueryGetComicSeriesArgs, 'id'>>,
   getPublishers?: Resolver<Maybe<Array<ResolversTypes['Publisher']>>, ParentType, ContextType, RequireFields<QueryGetPublishersArgs, 'names'>>,
@@ -399,15 +401,15 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   getSearch?: Resolver<Maybe<Array<Maybe<ResolversTypes['Search']>>>, ParentType, ContextType, RequireFields<QueryGetSearchArgs, 'q'>>,
   getSearchByPublishers?: Resolver<Maybe<Array<Maybe<ResolversTypes['Search']>>>, ParentType, ContextType, RequireFields<QueryGetSearchByPublishersArgs, 'q' | 'publishers'>>,
-};
+}>;
 
-export type SearchResolvers<ContextType = any, ParentType extends ResolversParentTypes['Search'] = ResolversParentTypes['Search']> = {
+export type SearchResolvers<ContextType = any, ParentType extends ResolversParentTypes['Search'] = ResolversParentTypes['Search']> = ResolversObject<{
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   publisher?: Resolver<ResolversTypes['Publisher'], ParentType, ContextType>,
-};
+}>;
 
-export type Resolvers<ContextType = any> = {
+export type Resolvers<ContextType = any> = ResolversObject<{
   ComicBook?: ComicBookResolvers<ContextType>,
   ComicSeries?: ComicSeriesResolvers<ContextType>,
   Creator?: CreatorResolvers<ContextType>,
@@ -416,7 +418,7 @@ export type Resolvers<ContextType = any> = {
   PullList?: PullListResolvers<ContextType>,
   Query?: QueryResolvers<ContextType>,
   Search?: SearchResolvers<ContextType>,
-};
+}>;
 
 
 /**
@@ -424,7 +426,7 @@ export type Resolvers<ContextType = any> = {
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
 */
 export type IResolvers<ContextType = any> = Resolvers<ContextType>;
-export type DirectiveResolvers<ContextType = any> = {
+export type DirectiveResolvers<ContextType = any> = ResolversObject<{
   union?: UnionDirectiveResolver<any, any, ContextType>,
   abstractEntity?: AbstractEntityDirectiveResolver<any, any, ContextType>,
   entity?: EntityDirectiveResolver<any, any, ContextType>,
@@ -433,7 +435,7 @@ export type DirectiveResolvers<ContextType = any> = {
   link?: LinkDirectiveResolver<any, any, ContextType>,
   embedded?: EmbeddedDirectiveResolver<any, any, ContextType>,
   map?: MapDirectiveResolver<any, any, ContextType>,
-};
+}>;
 
 
 /**

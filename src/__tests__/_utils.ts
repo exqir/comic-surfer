@@ -118,6 +118,9 @@ export const constructTestServer = (context: {} = {}) => {
 
   const server = new ApolloServer({
     typeDefs: [DIRECTIVES, typeDefs],
+    // TODO Check compatibility with GraphQL Code Generator
+    // https://graphql-code-generator.com/docs/plugins/typescript-resolvers#intergration-with-apollo-server
+    // @ts-ignore
     resolvers,
     dataSources: () => ({ comicBookAPI }),
     context: () => ({

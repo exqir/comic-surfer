@@ -15,12 +15,11 @@ describe('[Query.getComicBook]', () => {
       createMockOptionWithReturnValue({}, true),
     )
 
+    // @ts-ignore
     const res = await ComicBookQuery.getComicBook(
       null,
       { id: '1' },
       context,
-      // GraphQLResolveInfo interface is not matched
-      // @ts-ignore
       {},
     )
 
@@ -35,12 +34,11 @@ describe('[Query.getComicBook]', () => {
       createMockOptionWithReturnValue<ComicBook>(mockComicBook),
     )
 
+    // @ts-ignore
     const res = await ComicBookQuery.getComicBook(
       null,
       { id: '1' },
       context,
-      // GraphQLResolveInfo interface is not matched
-      // @ts-ignore
       {},
     )
 

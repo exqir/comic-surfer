@@ -14,3 +14,11 @@ generates:
       - 'typescript-operations'
       - 'typescript-mongodb'
       - 'typescript-resolvers'
+    config:
+      useIndexSignature: true
+      mappers:
+        ComicBook: ComicBookDbObject
+        ComicSeries: ComicSeriesDbObject
+        Creator: CreatorDbObject
+        Publisher: PublisherDbObject
+        PullList: PullListDbObject

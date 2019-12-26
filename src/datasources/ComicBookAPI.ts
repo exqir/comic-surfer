@@ -1,9 +1,21 @@
 import { ComicBookDbObject } from 'types/server-schema'
 import { MongoDataSource } from './MongoDataSource'
+import { ObjectID } from 'mongodb'
 
 export const collection = 'comicBook'
 export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
   public constructor() {
     super(collection)
+  }
+
+  public updateReleaseDate(id: ObjectID, newDate: number) {
+    const { updateOne } = this.dataLayer!
+    return this.execute(
+      updateOne<ComicBookDbObject>(
+        this.collection,
+        { _id: id },
+        { $set: { releaseDate: newDate } },
+      ),
+    )
   }
 }

@@ -1,36 +1,65 @@
 import { pipe } from 'fp-ts/lib/pipeable'
 import { toNullable } from 'fp-ts/lib/Option'
-import { identity } from 'fp-ts/lib/function'
+import { identity, constNull } from 'fp-ts/lib/function'
 import { fold } from 'fp-ts/lib/Either'
-import { GraphQLResolver } from 'types/app'
-import { QueryGetComicBookArgs, ComicBook } from 'types/server-schema'
+import { GraphQLResolver, GraphQLContext, Resolver } from 'types/app'
+import {
+  QueryGetComicBookArgs,
+  ComicBook,
+  QueryResolvers,
+  Resolvers,
+  ComicBookDbObject,
+  Creator,
+  ComicSeries,
+  Publisher,
+  CreatorDbObject,
+  PublisherDbObject,
+  ComicSeriesDbObject,
+} from 'types/server-schema'
 import { mapPromise } from 'lib'
 
-interface ComicBookQuery {
-  getComicBook: GraphQLResolver<any, QueryGetComicBookArgs>
-}
+// interface ComicBookQuery {
+//   getComicBook: Resolver<ComicBookDbObject, QueryGetComicBookArgs>
+// }
 
-interface ComicBookResolver {
-  ComicBook: {
-    creators: GraphQLResolver<ComicBook, any>
-    publisher: GraphQLResolver<ComicBook, any>
-    series: GraphQLResolver<ComicBook, any>
-  }
-}
+// interface ComicBookResolver {
+//   ComicBook: {
+//     creators: Resolver<CreatorDbObject[], {}, ComicBookDbObject>
+//     publisher: Resolver<PublisherDbObject, {}, ComicBookDbObject>
+//     series: Resolver<ComicSeriesDbObject, {}, ComicBookDbObject>
+//   }
+// }
 
-export const ComicBookQuery: ComicBookQuery = {
+// export const ComicBookQuery: ComicBookQuery = {
+//   getComicBook: (_, { id }, { dataSources }) =>
+//     pipe(
+//       dataSources.comicBook.getById(id),
+//       mapPromise(fold(constNull, identity)),
+//       toNullable,
+//     ) as Promise<ComicBookDbObject | null> | null,
+// }
+
+// export const ComicBookResolver: ComicBookResolver = {
+//   ComicBook: {
+//     creators: ({ creators }, _, {}) => [{}] as CreatorDbObject[],
+//     publisher: ({ publisher }, _, {}) => ({} as PublisherDbObject),
+//     series: ({ series }, _, {}) => ({} as ComicSeriesDbObject),
+//   },
+// }
+
+export const ComicBookQuery: QueryResolvers<GraphQLContext> = {
   getComicBook: (_, { id }, { dataSources }) =>
     pipe(
       dataSources.comicBook.getById(id),
-      mapPromise(fold(_ => null, identity)),
+      mapPromise(fold(constNull, identity)),
       toNullable,
-    ),
+    ) as Promise<ComicBookDbObject | null> | null,
 }
 
-export const ComicBookResolver: ComicBookResolver = {
+export const ComicBookResolver: Resolvers<GraphQLContext> = {
   ComicBook: {
-    creators: ({ creators }, _, {}) => [{}],
-    publisher: ({ publisher }, _, {}) => ({}),
-    series: ({ series }, _, {}) => ({}),
+    creators: ({ creators }, _, {}) => [{}] as CreatorDbObject[],
+    publisher: ({ publisher }, _, {}) => ({} as PublisherDbObject),
+    series: ({ series }, _, {}) => ({} as ComicSeriesDbObject),
   },
 }
