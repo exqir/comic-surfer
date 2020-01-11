@@ -28,15 +28,15 @@ describe('Queries', () => {
       issue: '#12',
       coverUrl: '/',
     }
-    const { server, comicBookAPI } = constructTestServer()
-    comicBookAPI.getById = jest
+    const { server, comicBook } = constructTestServer()
+    comicBook.getById = jest
       .fn()
       .mockReturnValueOnce(createMockOptionWithReturnValue(mockComicBook))
 
     const { query } = createTestClient(server)
     const res = await query({ query: GET_COMICBOOK, variables: { id: '1' } })
 
-    expect(comicBookAPI.getById).toHaveBeenCalledWith('1')
+    expect(comicBook.getById).toHaveBeenCalledWith('1')
     expect(res).toMatchObject({ data: { comicBook: mockComicBook } })
   })
 })

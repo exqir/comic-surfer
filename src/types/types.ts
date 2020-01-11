@@ -2,7 +2,7 @@ import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
 import { NextApiRequest } from 'next'
 import { Db, MongoError, FilterQuery } from 'mongodb'
 import { Option } from 'fp-ts/lib/Option'
-import { ComicBookAPI } from '../datasources/ComicBookAPI'
+import { ComicBookAPI, ComicSeriesAPI } from '../datasources'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 
 export interface Logger {
@@ -50,6 +50,7 @@ export interface DataLayer {
 
 export interface DataSources {
   comicBook: ComicBookAPI
+  comicSeries: ComicSeriesAPI
 }
 
 /**

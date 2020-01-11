@@ -2,10 +2,10 @@ import { ComicBookDbObject } from 'types/server-schema'
 import { MongoDataSource } from './MongoDataSource'
 import { ObjectID } from 'mongodb'
 
-export const collection = 'comicBook'
+export const comicBookCollection = 'comicBook'
 export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
   public constructor() {
-    super(collection)
+    super(comicBookCollection)
   }
 
   public updateReleaseDate(id: ObjectID, newDate: number) {

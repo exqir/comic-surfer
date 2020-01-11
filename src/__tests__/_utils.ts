@@ -8,7 +8,7 @@ import { ApolloServer } from 'apollo-server-micro'
 import { DataSources } from 'types/app'
 import typeDefs from '../schema'
 import { resolvers } from '../schema'
-import { ComicBookAPI } from '../datasources'
+import { ComicBookAPI, ComicSeriesAPI } from '../datasources'
 
 /**
  * Creates a `ReaderTaskEither<Db, MongoError, T>` that returns `value` as right
@@ -109,22 +109,23 @@ export const createMockConfig = () => ({
  * Creates an `ApolloServer` for integration tests.
  * From: https://github.com/apollographql/fullstack-tutorial/blob/master/final/server/src/__tests__/__utils.js
  * @param context Context object to be merged with default mock config.
- * @returns { server: ApolloServer, comicBookAPI: ComicBookAPI }
+ * @returns { server: ApolloServer, comicBook: ComicBookAPI, comicSeries: ComicSeriesAPI }
  */
 export const constructTestServer = (context: {} = {}) => {
   const defaultContext = createMockConfig().context
   delete defaultContext.dataSources
-  const comicBookAPI = new ComicBookAPI()
+  const comicBook = new ComicBookAPI()
+  const comicSeries = new ComicSeriesAPI()
 
   const server = new ApolloServer({
     typeDefs: [DIRECTIVES, typeDefs],
     resolvers,
-    dataSources: () => ({ comicBookAPI }),
+    dataSources: () => ({ comicBook, comicSeries }),
     context: () => ({
       ...defaultContext,
       ...context,
     }),
   })
 
-  return { server, comicBookAPI }
+  return { server, comicBook, comicSeries }
 }

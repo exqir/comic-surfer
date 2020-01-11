@@ -37,6 +37,13 @@ export const ComicBookResolver: ComicBookResolver = {
   ComicBook: {
     creators: ({ creators }, _, {}) => [{}] as CreatorDbObject[],
     publisher: ({ publisher }, _, {}) => ({} as PublisherDbObject),
-    series: ({ series }, _, {}) => ({} as ComicSeriesDbObject),
+    series: ({ series }, _, { dataSources }) =>
+      pipe(
+        // TODO: change getById type to ObjectID
+        // @ts-ignore
+        dataSources.comicSeries.getById(series),
+        mapPromise(fold(constNull, identity)),
+        toNullable,
+      ) as Promise<ComicSeriesDbObject | null> | null,
   },
 }
