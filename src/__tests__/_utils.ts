@@ -118,7 +118,7 @@ export const constructTestServer = (context: {} = {}) => {
   const comicSeries = new ComicSeriesAPI()
 
   const server = new ApolloServer({
-    typeDefs: [DIRECTIVES, typeDefs],
+    typeDefs: [DIRECTIVES, ...typeDefs],
     resolvers,
     dataSources: () => ({ comicBook, comicSeries }),
     context: () => ({

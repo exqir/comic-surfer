@@ -1,5 +1,5 @@
 {
-  "name": "comic-app",
+  "name": "comic-surfer",
   "scripts": {
     "dev": "next",
     "build": "next build",
@@ -8,21 +8,21 @@
     "generate-schema": "node scripts/generate-client-schema.js && graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "@graphql-codegen/typescript-mongodb": "^1.9.1",
+    "@graphql-codegen/typescript-mongodb": "^1.13.1",
     "apollo-server-micro": "^2.9.7",
     "fp-ts": "^2.1.1",
     "graphql": "^14.5.8",
     "mongad": "*",
-    "mongodb": "^3.3.3",
-    "next": "^9.1.1",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
+    "mongodb": "^3.5.5",
+    "next": "^9.3.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "scrape-it": "^5.2.0"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^1.8.2",
-    "@graphql-codegen/typescript": "1.8.2",
-    "@graphql-codegen/typescript-operations": "1.8.2",
+    "@graphql-codegen/cli": "^1.13.1",
+    "@graphql-codegen/typescript": "^1.13.1",
+    "@graphql-codegen/typescript-operations": "^1.13.1",
     "@types/jest": "^24.0.20",
     "@types/mongodb": "^3.3.7",
     "@types/react": "^16.9.11",
