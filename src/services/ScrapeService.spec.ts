@@ -1,6 +1,7 @@
 import { ScrapeService } from './ScrapeService'
 import { ObjectID } from 'mongodb'
 import { isLeft, mapLeft, isRight, map } from 'fp-ts/lib/Either'
+import { PublisherDbObject } from 'types/server-schema'
 import {
   comicSeries,
   comicBookList,
@@ -11,13 +12,22 @@ import {
 const mockScraper = jest.fn()
 const scraper = new ScrapeService(mockScraper)
 
+const defaultPublisher: PublisherDbObject = {
+  _id: new ObjectID(),
+  name: 'image',
+  basePath: '/path',
+  iconUrl: null,
+  url: null,
+  searchPath: null,
+  searchPathSeries: null,
+  series: null,
+  seriesPath: null,
+}
+
 describe('ScrapeService', () => {
   it('should return left in case of Error', async () => {
     mockScraper.mockRejectedValueOnce(new Error('Failed'))
-    const task = scraper.getComicSeries(
-      { _id: new ObjectID(), name: 'image', basePath: '/path' },
-      '/series',
-    )
+    const task = scraper.getComicSeries({ ...defaultPublisher }, '/series')
 
     const result = await task()
 
@@ -35,10 +45,7 @@ describe('ScrapeService', () => {
       response: { statusCode: 400 },
       data: {},
     })
-    const task = scraper.getComicSeries(
-      { _id: new ObjectID(), name: 'image', basePath: '/path' },
-      '/series',
-    )
+    const task = scraper.getComicSeries({ ...defaultPublisher }, '/series')
 
     const result = await task()
 
@@ -61,10 +68,7 @@ describe('ScrapeService', () => {
       response: { statusCode: 200 },
       data: mockResult,
     })
-    const task = scraper.getComicSeries(
-      { _id: new ObjectID(), name: 'image', basePath: '/path' },
-      '/series',
-    )
+    const task = scraper.getComicSeries({ ...defaultPublisher }, '/series')
 
     const result = await task()
 
@@ -85,10 +89,7 @@ describe('[ScrapeService.getComicSeries]', () => {
       response: { statusCode: 200 },
       data: mockResult,
     })
-    const task = scraper.getComicSeries(
-      { _id: new ObjectID(), name: 'image', basePath: '/path' },
-      '/series',
-    )
+    const task = scraper.getComicSeries({ ...defaultPublisher }, '/series')
 
     const result = await task()
 
@@ -113,10 +114,7 @@ describe('[ScrapeService.getComicBookList]', () => {
       response: { statusCode: 200 },
       data: mockResult,
     })
-    const task = scraper.getComicBookList(
-      { _id: new ObjectID(), name: 'image', basePath: '/path' },
-      '/book-list',
-    )
+    const task = scraper.getComicBookList({ ...defaultPublisher }, '/book-list')
 
     const result = await task()
 
@@ -143,10 +141,7 @@ describe('[ScrapeService.getComicBook]', () => {
       response: { statusCode: 200 },
       data: mockResult,
     })
-    const task = scraper.getComicBook(
-      { _id: new ObjectID(), name: 'image', basePath: '/path' },
-      '/comic-book',
-    )
+    const task = scraper.getComicBook({ ...defaultPublisher }, '/comic-book')
 
     const result = await task()
 
@@ -173,7 +168,7 @@ describe('[ScrapeService.getComicSeriesSearch]', () => {
       data: mockResult,
     })
     const task = scraper.getComicSeriesSearch(
-      { _id: new ObjectID(), name: 'image', basePath: '/path' },
+      { ...defaultPublisher },
       '/comic-series-search',
     )
 

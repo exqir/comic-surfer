@@ -4,6 +4,9 @@ import { Db, MongoError, FilterQuery } from 'mongodb'
 import { Option } from 'fp-ts/lib/Option'
 import { ComicBookAPI, ComicSeriesAPI } from '../datasources'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
+import { CreatorAPI } from 'datasources/CreatorAPI'
+import { PublisherAPI } from 'datasources/PublisherAPI'
+import { PullListAPI } from 'datasources/PullListAPI'
 
 export interface Logger {
   log: (...args: any[]) => void
@@ -51,6 +54,9 @@ export interface DataLayer {
 export interface DataSources {
   comicBook: ComicBookAPI
   comicSeries: ComicSeriesAPI
+  creator: CreatorAPI
+  publisher: PublisherAPI
+  pullList: PullListAPI
 }
 
 /**

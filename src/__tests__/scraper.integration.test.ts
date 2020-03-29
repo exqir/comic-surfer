@@ -4,6 +4,7 @@ import handler from 'serve-handler'
 import http from 'http'
 import { ObjectID } from 'mongodb'
 import scrapeIt from 'scrape-it'
+import { PublisherDbObject } from 'types/server-schema'
 import { ScrapeService } from '../services/ScrapeService'
 
 const PORT = 9000
@@ -23,12 +24,24 @@ afterAll(() => {
   server.close()
 })
 
+const defaultPublisher: PublisherDbObject = {
+  _id: new ObjectID(),
+  name: 'image',
+  iconUrl: null,
+  url: null,
+  basePath: null,
+  searchPath: null,
+  searchPathSeries: null,
+  series: null,
+  seriesPath: null,
+}
+
 describe('[Scraper.getComicSeries]', () => {
   it('should scrap data from comic-series page', async () => {
     expect.assertions(1)
     return pipe(
       scraper.getComicSeries(
-        { _id: new ObjectID(), name: 'image', basePath: URL },
+        { ...defaultPublisher, basePath: URL },
         '/comic-series.html',
       ),
       map(res => {
@@ -47,7 +60,7 @@ describe('[Scraper.getComicBookList]', () => {
     expect.assertions(1)
     return pipe(
       scraper.getComicBookList(
-        { _id: new ObjectID(), name: 'image', basePath: URL },
+        { ...defaultPublisher, basePath: URL },
         '/comic-book-list.html',
       ),
       map(res => {
@@ -75,7 +88,7 @@ describe('[Scraper.getComicBook]', () => {
     expect.assertions(1)
     return pipe(
       scraper.getComicBook(
-        { _id: new ObjectID(), name: 'image', basePath: URL },
+        { ...defaultPublisher, basePath: URL },
         '/comic-book.html',
       ),
       map(res => {
@@ -93,7 +106,7 @@ describe('[Scraper.getComicSeriesSearch]', () => {
     expect.assertions(1)
     return pipe(
       scraper.getComicSeriesSearch(
-        { _id: new ObjectID(), name: 'image', basePath: URL },
+        { ...defaultPublisher, basePath: URL },
         '/comic-series-search.html',
       ),
       map(res => {

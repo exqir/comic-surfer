@@ -57,17 +57,18 @@ describe('[MongoDataSource.insert]', () => {
 
 describe('[MongoDataSource.getById]', () => {
   it('should query dataLayer for Document with id and return left in case of Error', async () => {
+    const mockDocument = { _id: new ObjectID() }
     const { findOne } = config.context.dataLayer
     findOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
-    const res = ds.getById('')
+    const res = ds.getById(mockDocument._id)
 
     foldOptionPromise(
       res,
       err => expect(err).toBeInstanceOf(MongoError),
       d => {},
     )
-    expect(findOne).toBeCalledWith(collection, { _id: '' })
+    expect(findOne).toBeCalledWith(collection, { _id: mockDocument._id })
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
     // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
@@ -79,7 +80,7 @@ describe('[MongoDataSource.getById]', () => {
     const { findOne } = config.context.dataLayer
     findOne.mockReturnValueOnce(createMockReaderWithReturnValue(mockDocument))
 
-    const res = ds.getById('1')
+    const res = ds.getById(mockDocument._id)
 
     foldOptionPromise(
       res,
@@ -88,23 +89,26 @@ describe('[MongoDataSource.getById]', () => {
       },
       d => expect(d).toMatchObject(mockDocument),
     )
-    expect(findOne).toBeCalledWith(collection, { _id: '1' })
+    expect(findOne).toBeCalledWith(collection, { _id: mockDocument._id })
   })
 })
 
 describe('[MongoDataSource.getByIds]', () => {
   it('should query dataLayer for Document with ids and return left in case of Error', async () => {
+    const mockDocument = { _id: new ObjectID() }
     const { findMany } = config.context.dataLayer
     findMany.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
-    const res = ds.getByIds([''])
+    const res = ds.getByIds([mockDocument._id])
 
     foldOptionPromise(
       res,
       err => expect(err).toBeInstanceOf(MongoError),
       d => {},
     )
-    expect(findMany).toBeCalledWith(collection, { _id: { $in: [''] } })
+    expect(findMany).toBeCalledWith(collection, {
+      _id: { $in: [mockDocument._id] },
+    })
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
     // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
@@ -116,7 +120,7 @@ describe('[MongoDataSource.getByIds]', () => {
     const { findMany } = config.context.dataLayer
     findMany.mockReturnValueOnce(createMockReaderWithReturnValue(mockDocument))
 
-    const res = ds.getByIds(['1'])
+    const res = ds.getByIds([mockDocument[0]._id])
 
     foldOptionPromise(
       res,
@@ -125,6 +129,8 @@ describe('[MongoDataSource.getByIds]', () => {
       },
       d => expect(d).toMatchObject(mockDocument),
     )
-    expect(findMany).toBeCalledWith(collection, { _id: { $in: ['1'] } })
+    expect(findMany).toBeCalledWith(collection, {
+      _id: { $in: [mockDocument[0]._id] },
+    })
   })
 })

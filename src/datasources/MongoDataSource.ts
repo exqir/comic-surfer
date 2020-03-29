@@ -36,7 +36,7 @@ export class MongoDataSource<T extends WithId> extends DataSource<
     return this.execute(insertOne(this.collection, document))
   }
 
-  public getById(id: string) {
+  public getById(id: ObjectID) {
     const { findOne } = this.dataLayer!
     return this.execute(
       // TODO: Extending the Generic T  doesn't seem to force the type for
@@ -46,7 +46,7 @@ export class MongoDataSource<T extends WithId> extends DataSource<
     )
   }
 
-  public getByIds(ids: string[]) {
+  public getByIds(ids: ObjectID[]) {
     const { findMany } = this.dataLayer!
     return this.execute(
       // @ts-ignore

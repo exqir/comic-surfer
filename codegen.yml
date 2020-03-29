@@ -13,3 +13,7 @@ generates:
       - 'typescript'
       - 'typescript-operations'
       - 'typescript-mongodb'
+    config:
+      scalars:
+        ID: ObjectID
+      avoidOptionals: true

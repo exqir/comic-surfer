@@ -8,13 +8,25 @@ import {
 import { PublisherDbObject } from 'types/server-schema'
 
 const config = createMockConfig()
+const defaultPublisher: PublisherDbObject = {
+  _id: new ObjectID(),
+  name: 'Image',
+  iconUrl: null,
+  url: null,
+  basePath: null,
+  searchPath: null,
+  searchPathSeries: null,
+  series: null,
+  seriesPath: null,
+}
 
 const ds = new PublisherAPI()
 ds.initialize(config)
 
 describe('[PublisherAPI.insert]', () => {
   it('should insert Publisher using dataLayer and return left in case of Error', async () => {
-    const mockPublisher = { name: 'Image' }
+    const mockPublisher = { ...defaultPublisher }
+    delete mockPublisher._id
     const { insertOne } = config.context.dataLayer
     insertOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
@@ -33,7 +45,8 @@ describe('[PublisherAPI.insert]', () => {
   })
 
   it('should insert Publisher using dataLayer and return right with result', async () => {
-    const mockPublisher = { name: 'Image' }
+    const mockPublisher = { ...defaultPublisher }
+    delete mockPublisher._id
     const { insertOne } = config.context.dataLayer
     insertOne.mockReturnValueOnce(
       createMockReaderWithReturnValue<PublisherDbObject>({
@@ -57,17 +70,18 @@ describe('[PublisherAPI.insert]', () => {
 
 describe('[PublisherAPI.getById]', () => {
   it('should query dataLayer for Publisher with id and return left in case of Error', async () => {
+    const mockPublisher = { ...defaultPublisher }
     const { findOne } = config.context.dataLayer
     findOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
-    const res = ds.getById('')
+    const res = ds.getById(mockPublisher._id)
 
     foldOptionPromise(
       res,
       err => expect(err).toBeInstanceOf(MongoError),
       d => {},
     )
-    expect(findOne).toBeCalledWith(collection, { _id: '' })
+    expect(findOne).toBeCalledWith(collection, { _id: mockPublisher._id })
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
     // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
@@ -75,16 +89,13 @@ describe('[PublisherAPI.getById]', () => {
   })
 
   it('should query dataLayer for Publisher with id and return right with result', async () => {
-    const mockPublisher = {
-      _id: new ObjectID(),
-      name: 'Image',
-    }
+    const mockPublisher = { ...defaultPublisher }
     const { findOne } = config.context.dataLayer
     findOne.mockReturnValueOnce(
       createMockReaderWithReturnValue<PublisherDbObject>(mockPublisher),
     )
 
-    const res = ds.getById('1')
+    const res = ds.getById(mockPublisher._id)
 
     foldOptionPromise(
       res,
@@ -93,23 +104,26 @@ describe('[PublisherAPI.getById]', () => {
       },
       d => expect(d).toMatchObject(mockPublisher),
     )
-    expect(findOne).toBeCalledWith(collection, { _id: '1' })
+    expect(findOne).toBeCalledWith(collection, { _id: mockPublisher._id })
   })
 })
 
 describe('[PublisherAPI.getByIds]', () => {
   it('should query dataLayer for Publisher with ids and return left in case of Error', async () => {
+    const mockPublisher = { ...defaultPublisher }
     const { findMany } = config.context.dataLayer
     findMany.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
-    const res = ds.getByIds([''])
+    const res = ds.getByIds([mockPublisher._id])
 
     foldOptionPromise(
       res,
       err => expect(err).toBeInstanceOf(MongoError),
       d => {},
     )
-    expect(findMany).toBeCalledWith(collection, { _id: { $in: [''] } })
+    expect(findMany).toBeCalledWith(collection, {
+      _id: { $in: [mockPublisher._id] },
+    })
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
     // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
@@ -117,13 +131,13 @@ describe('[PublisherAPI.getByIds]', () => {
   })
 
   it('should query dataLayer for Publisher with ids and return right with result', async () => {
-    const mockPublisher = [{ _id: new ObjectID(), name: 'Image' }]
+    const mockPublisher = [{ ...defaultPublisher }]
     const { findMany } = config.context.dataLayer
     findMany.mockReturnValueOnce(
       createMockReaderWithReturnValue<PublisherDbObject>(mockPublisher),
     )
 
-    const res = ds.getByIds(['1'])
+    const res = ds.getByIds([mockPublisher[0]._id])
 
     foldOptionPromise(
       res,
@@ -132,7 +146,9 @@ describe('[PublisherAPI.getByIds]', () => {
       },
       d => expect(d).toMatchObject(mockPublisher),
     )
-    expect(findMany).toBeCalledWith(collection, { _id: { $in: ['1'] } })
+    expect(findMany).toBeCalledWith(collection, {
+      _id: { $in: [mockPublisher[0]._id] },
+    })
   })
 })
 
@@ -168,8 +184,7 @@ describe('[PublisherAPI.addComicSeries]', () => {
       url: '/path',
     }
     const mockPublisher = {
-      _id: new ObjectID(),
-      name: 'Comic',
+      ...defaultPublisher,
       series: [mockComicSeries._id],
     }
     const { updateOne } = config.context.dataLayer

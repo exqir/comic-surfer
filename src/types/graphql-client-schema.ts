@@ -1,144 +1,153 @@
 export type Maybe<T> = T | null;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string,
-  String: string,
-  Boolean: boolean,
-  Int: number,
-  Float: number,
+  ID: string;
+  String: string;
+  Boolean: boolean;
+  Int: number;
+  Float: number;
 };
 
 export type ComicBook = {
-   __typename?: 'ComicBook',
-  _id: Scalars['ID'],
-  title: Scalars['String'],
-  issue?: Maybe<Scalars['String']>,
-  releaseDate?: Maybe<Scalars['Int']>,
-  creators?: Maybe<Array<Maybe<Creator>>>,
-  series?: Maybe<ComicSeries>,
-  publisher?: Maybe<Publisher>,
-  coverUrl?: Maybe<Scalars['String']>,
-  url: Scalars['String'],
+   __typename?: 'ComicBook';
+  _id: Scalars['ID'];
+  title: Scalars['String'];
+  issue?: Maybe<Scalars['String']>;
+  releaseDate?: Maybe<Scalars['Int']>;
+  /** TOOD: Check what find returns if no items was found */
+  creators?: Maybe<Array<Creator>>;
+  series?: Maybe<ComicSeries>;
+  publisher?: Maybe<Publisher>;
+  coverUrl?: Maybe<Scalars['String']>;
+  url: Scalars['String'];
 };
 
 export type ComicSeries = {
-   __typename?: 'ComicSeries',
-  _id: Scalars['ID'],
-  title: Scalars['String'],
-  url: Scalars['String'],
-  collectionsUrl?: Maybe<Scalars['String']>,
-  issuesUrl?: Maybe<Scalars['String']>,
-  publisher?: Maybe<Publisher>,
-  collections?: Maybe<Array<Maybe<ComicBook>>>,
-  issues?: Maybe<Array<Maybe<ComicBook>>>,
+   __typename?: 'ComicSeries';
+  _id: Scalars['ID'];
+  title: Scalars['String'];
+  url: Scalars['String'];
+  collectionsUrl?: Maybe<Scalars['String']>;
+  issuesUrl?: Maybe<Scalars['String']>;
+  publisher?: Maybe<Publisher>;
+  collections?: Maybe<Array<Maybe<ComicBook>>>;
+  issues?: Maybe<Array<Maybe<ComicBook>>>;
 };
 
 export type Creator = {
-   __typename?: 'Creator',
-  _id: Scalars['ID'],
-  firstname?: Maybe<Scalars['String']>,
-  lastname: Scalars['String'],
-  series?: Maybe<Array<Maybe<ComicSeries>>>,
+   __typename?: 'Creator';
+  _id: Scalars['ID'];
+  firstname?: Maybe<Scalars['String']>;
+  lastname: Scalars['String'];
+  series?: Maybe<Array<Maybe<ComicSeries>>>;
 };
 
 export type Mutation = {
-   __typename?: 'Mutation',
-  createPullList: PullList,
-  pullSeries: PullList,
-  removeSeries: PullList,
-  _empty?: Maybe<Scalars['String']>,
+   __typename?: 'Mutation';
+  _empty?: Maybe<Scalars['String']>;
+  createPullList: PullList;
+  pullSeries: PullList;
+  removeSeries: PullList;
 };
 
 
 export type MutationCreatePullListArgs = {
-  owner: Scalars['String']
+  owner: Scalars['String'];
 };
 
 
 export type MutationPullSeriesArgs = {
-  owner: Scalars['String'],
-  publisher: Scalars['String'],
-  seriesUrl: Scalars['String']
+  owner: Scalars['String'];
+  publisher: Scalars['String'];
+  seriesUrl: Scalars['String'];
 };
 
 
 export type MutationRemoveSeriesArgs = {
-  owner: Scalars['String'],
-  series: Scalars['ID']
+  owner: Scalars['String'];
+  series: Scalars['ID'];
 };
 
 export type Publisher = {
-   __typename?: 'Publisher',
-  _id: Scalars['String'],
-  name: Scalars['String'],
-  iconUrl?: Maybe<Scalars['String']>,
-  url?: Maybe<Scalars['String']>,
-  basePath?: Maybe<Scalars['String']>,
-  seriesPath?: Maybe<Scalars['String']>,
-  searchPath?: Maybe<Scalars['String']>,
-  searchPathSeries?: Maybe<Scalars['String']>,
-  series?: Maybe<Array<Maybe<ComicSeries>>>,
+   __typename?: 'Publisher';
+  _id: Scalars['String'];
+  name: Scalars['String'];
+  iconUrl?: Maybe<Scalars['String']>;
+  url?: Maybe<Scalars['String']>;
+  basePath?: Maybe<Scalars['String']>;
+  seriesPath?: Maybe<Scalars['String']>;
+  searchPath?: Maybe<Scalars['String']>;
+  searchPathSeries?: Maybe<Scalars['String']>;
+  series?: Maybe<Array<Maybe<ComicSeries>>>;
 };
 
 export type PullList = {
-   __typename?: 'PullList',
-  _id: Scalars['ID'],
-  owner: Scalars['String'],
-  list?: Maybe<Array<Maybe<ComicSeries>>>,
+   __typename?: 'PullList';
+  _id: Scalars['ID'];
+  owner: Scalars['String'];
+  list?: Maybe<Array<Maybe<ComicSeries>>>;
 };
 
+/** TODO: check which of the four paths are really needed */
 export type Query = {
-   __typename?: 'Query',
-  getComicBook?: Maybe<ComicBook>,
-  getComicSeries?: Maybe<ComicSeries>,
-  getPublishers?: Maybe<Array<Publisher>>,
-  getPublisher?: Maybe<Publisher>,
-  getPullList?: Maybe<PullList>,
-  _empty?: Maybe<Scalars['String']>,
-  getSearch?: Maybe<Array<Maybe<Search>>>,
-  getSearchByPublishers?: Maybe<Array<Maybe<Search>>>,
+   __typename?: 'Query';
+  _empty?: Maybe<Scalars['String']>;
+  getComicBook?: Maybe<ComicBook>;
+  getComicSeries?: Maybe<ComicSeries>;
+  getPublisher?: Maybe<Publisher>;
+  getPublishers?: Maybe<Array<Publisher>>;
+  getPullList?: Maybe<PullList>;
+  getSearch?: Maybe<Array<Maybe<Search>>>;
+  getSearchByPublishers?: Maybe<Array<Maybe<Search>>>;
 };
 
 
+/** TODO: check which of the four paths are really needed */
 export type QueryGetComicBookArgs = {
-  id: Scalars['ID']
+  id: Scalars['ID'];
 };
 
 
+/** TODO: check which of the four paths are really needed */
 export type QueryGetComicSeriesArgs = {
-  id: Scalars['ID']
+  id: Scalars['ID'];
 };
 
 
-export type QueryGetPublishersArgs = {
-  names: Array<Scalars['String']>
-};
-
-
+/** TODO: check which of the four paths are really needed */
 export type QueryGetPublisherArgs = {
-  name: Scalars['String']
+  name: Scalars['String'];
 };
 
 
+/** TODO: check which of the four paths are really needed */
+export type QueryGetPublishersArgs = {
+  names: Array<Scalars['String']>;
+};
+
+
+/** TODO: check which of the four paths are really needed */
 export type QueryGetPullListArgs = {
-  owner: Scalars['String']
+  owner: Scalars['String'];
 };
 
 
+/** TODO: check which of the four paths are really needed */
 export type QueryGetSearchArgs = {
-  q: Scalars['String']
+  q: Scalars['String'];
 };
 
 
+/** TODO: check which of the four paths are really needed */
 export type QueryGetSearchByPublishersArgs = {
-  q: Scalars['String'],
-  publishers: Array<Scalars['String']>
+  q: Scalars['String'];
+  publishers: Array<Scalars['String']>;
 };
 
 export type Search = {
-   __typename?: 'Search',
-  title: Scalars['String'],
-  url: Scalars['String'],
-  publisher: Publisher,
+   __typename?: 'Search';
+  title: Scalars['String'];
+  url: Scalars['String'];
+  publisher: Publisher;
 };
 

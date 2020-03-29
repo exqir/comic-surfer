@@ -8,13 +8,25 @@ import {
 import { ComicBookDbObject } from 'types/server-schema'
 
 const config = createMockConfig()
+const defaultComicBook: ComicBookDbObject = {
+  _id: new ObjectID(),
+  title: 'Comic',
+  url: '/path',
+  issue: null,
+  creators: null,
+  coverUrl: null,
+  publisher: null,
+  releaseDate: null,
+  series: null,
+}
 
 const ds = new ComicBookAPI()
 ds.initialize(config)
 
 describe('[ComicBookAPI.insert]', () => {
   it('should insert ComicBook using dataLayer and return left in case of Error', async () => {
-    const mockComicBook = { title: 'Comic', url: '/path' }
+    const mockComicBook = { ...defaultComicBook }
+    delete mockComicBook._id
     const { insertOne } = config.context.dataLayer
     insertOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
@@ -33,7 +45,8 @@ describe('[ComicBookAPI.insert]', () => {
   })
 
   it('should insert ComicBook using dataLayer and return right with result', async () => {
-    const mockComicBook = { title: 'Comic', url: '/path' }
+    const mockComicBook = { ...defaultComicBook }
+    delete mockComicBook._id
     const { insertOne } = config.context.dataLayer
     insertOne.mockReturnValueOnce(
       createMockReaderWithReturnValue<ComicBookDbObject>({
@@ -57,17 +70,18 @@ describe('[ComicBookAPI.insert]', () => {
 
 describe('[ComicBookAPI.getById]', () => {
   it('should query dataLayer for ComicBook with id and return left in case of Error', async () => {
+    const mockComicBook = { ...defaultComicBook }
     const { findOne } = config.context.dataLayer
     findOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
-    const res = ds.getById('')
+    const res = ds.getById(mockComicBook._id)
 
     foldOptionPromise(
       res,
       err => expect(err).toBeInstanceOf(MongoError),
       d => {},
     )
-    expect(findOne).toBeCalledWith(collection, { _id: '' })
+    expect(findOne).toBeCalledWith(collection, { _id: mockComicBook._id })
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
     // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
@@ -75,13 +89,13 @@ describe('[ComicBookAPI.getById]', () => {
   })
 
   it('should query dataLayer for ComicBook with id and return right with result', async () => {
-    const mockComicBook = { _id: new ObjectID(), title: 'Comic', url: '/path' }
+    const mockComicBook = { ...defaultComicBook }
     const { findOne } = config.context.dataLayer
     findOne.mockReturnValueOnce(
       createMockReaderWithReturnValue<ComicBookDbObject>(mockComicBook),
     )
 
-    const res = ds.getById('1')
+    const res = ds.getById(mockComicBook._id)
 
     foldOptionPromise(
       res,
@@ -90,23 +104,26 @@ describe('[ComicBookAPI.getById]', () => {
       },
       d => expect(d).toMatchObject(mockComicBook),
     )
-    expect(findOne).toBeCalledWith(collection, { _id: '1' })
+    expect(findOne).toBeCalledWith(collection, { _id: mockComicBook._id })
   })
 })
 
 describe('[ComicBookAPI.getByIds]', () => {
   it('should query dataLayer for ComicBooks with ids and return left in case of Error', async () => {
+    const mockComicBook = { ...defaultComicBook }
     const { findMany } = config.context.dataLayer
     findMany.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
-    const res = ds.getByIds([''])
+    const res = ds.getByIds([mockComicBook._id])
 
     foldOptionPromise(
       res,
       err => expect(err).toBeInstanceOf(MongoError),
       d => {},
     )
-    expect(findMany).toBeCalledWith(collection, { _id: { $in: [''] } })
+    expect(findMany).toBeCalledWith(collection, {
+      _id: { $in: [mockComicBook._id] },
+    })
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
     // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
@@ -114,15 +131,13 @@ describe('[ComicBookAPI.getByIds]', () => {
   })
 
   it('should query dataLayer for ComicBooks with ids and return right with result', async () => {
-    const mockComicBook = [
-      { _id: new ObjectID(), title: 'Comic', url: '/path' },
-    ]
+    const mockComicBook = [{ ...defaultComicBook }]
     const { findMany } = config.context.dataLayer
     findMany.mockReturnValueOnce(
       createMockReaderWithReturnValue<ComicBookDbObject>(mockComicBook),
     )
 
-    const res = ds.getByIds(['1'])
+    const res = ds.getByIds([mockComicBook[0]._id])
 
     foldOptionPromise(
       res,
@@ -131,7 +146,9 @@ describe('[ComicBookAPI.getByIds]', () => {
       },
       d => expect(d).toMatchObject(mockComicBook),
     )
-    expect(findMany).toBeCalledWith(collection, { _id: { $in: ['1'] } })
+    expect(findMany).toBeCalledWith(collection, {
+      _id: { $in: [mockComicBook[0]._id] },
+    })
   })
 })
 
@@ -161,9 +178,7 @@ describe('[ComicBookAPI.updateReleaseDate]', () => {
 
   it('should update ComicBook using dataLayer and return right with result', async () => {
     const mockComicBook = {
-      _id: new ObjectID(),
-      title: 'Comic',
-      url: '/path',
+      ...defaultComicBook,
       releaseDate: 1473199200000,
     }
     const newDate = mockComicBook.releaseDate + 100
