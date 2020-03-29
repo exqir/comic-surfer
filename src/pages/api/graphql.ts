@@ -1,29 +1,31 @@
 import { ApolloServer, gql } from 'apollo-server-micro'
-import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb';
+import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
+import typeDefs, { resolvers } from '../../schema'
+import {
+  ComicBookAPI,
+  ComicSeriesAPI,
+  CreatorAPI,
+  PublisherAPI,
+  PullListAPI,
+} from '../../datasources'
 
-const typeDefs = gql`
-  type Query {
-    users: [User!]!
-  }
-  type User {
-    name: String
-  }
-`
-
-const resolvers = {
-  Query: {
-    users(parent, args, context) {
-      return [{ name: 'Nextjs' }]
-    }
-  }
-}
-
-const apolloServer = new ApolloServer({ typeDefs: [DIRECTIVES, typeDefs], resolvers })
+const apolloServer = new ApolloServer({
+  typeDefs: [DIRECTIVES, ...typeDefs],
+  resolvers,
+  dataSources: () => ({
+    comicBook: new ComicBookAPI(),
+    comicSeries: new ComicSeriesAPI(),
+    creator: new CreatorAPI(),
+    publisher: new PublisherAPI(),
+    pullList: new PullListAPI(),
+  }),
+  context: () => ({}),
+})
 
 export const config = {
   api: {
-    bodyParser: false
-  }
+    bodyParser: false,
+  },
 }
 
 export default apolloServer.createHandler({ path: '/api/graphql' })
