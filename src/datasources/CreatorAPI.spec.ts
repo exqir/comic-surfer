@@ -3,9 +3,11 @@ import { CreatorAPI, creatorCollection as collection } from './CreatorAPI'
 import {
   createMockConfig,
   createMockReaderWithReturnValue,
-  foldOptionPromise,
+  runRTEwithMockDb,
 } from 'tests/_utils'
 import { CreatorDbObject } from 'types/server-schema'
+import { pipe } from 'fp-ts/lib/pipeable'
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 const config = createMockConfig()
 const defaultCreator: CreatorDbObject = {
@@ -27,10 +29,11 @@ describe('[CreatorAPI.insert]', () => {
 
     const res = ds.insert(mockCreator)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockCreator)
     // TODO: The mock function is actually being called which can be tested by
@@ -52,12 +55,11 @@ describe('[CreatorAPI.insert]', () => {
 
     const res = ds.insert(mockCreator)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockCreator),
+      RTE.map(d => expect(d).toMatchObject(mockCreator)),
+      runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockCreator)
   })
@@ -71,10 +73,11 @@ describe('[CreatorAPI.getById]', () => {
 
     const res = ds.getById(mockCreator._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockCreator._id })
     // TODO: The mock function is actually being called which can be tested by
@@ -92,12 +95,11 @@ describe('[CreatorAPI.getById]', () => {
 
     const res = ds.getById(mockCreator._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockCreator),
+      RTE.map(d => expect(d).toMatchObject(mockCreator)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockCreator._id })
   })
@@ -111,10 +113,11 @@ describe('[CreatorAPI.getByIds]', () => {
 
     const res = ds.getByIds([mockCreator._id])
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockCreator._id] },
@@ -134,12 +137,11 @@ describe('[CreatorAPI.getByIds]', () => {
 
     const res = ds.getByIds([mockCreator[0]._id])
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockCreator),
+      RTE.map(d => expect(d).toMatchObject(mockCreator)),
+      runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockCreator[0]._id] },

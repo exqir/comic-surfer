@@ -2,6 +2,7 @@ import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
 import { MongoError, Db } from 'mongodb'
 import { some, map, Option } from 'fp-ts/lib/Option'
 import { right, left, Either, fold } from 'fp-ts/lib/Either'
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { NextApiRequest } from 'next'
 import { KeyValueCache } from 'apollo-server-core'
 import { ApolloServer } from 'apollo-server-micro'
@@ -79,6 +80,13 @@ export function createMockOptionWithReturnValue<T>(
     }),
   )
 }
+
+/**
+ * Run ReaderTaskEither with an empty Db mock.
+ * @param rte {RTE.ReaderTaskEither} - ReaderTaskEither to be run.
+ */
+export const runRTEwithMockDb = <L, R>(rte: RTE.ReaderTaskEither<Db, L, R>) =>
+  RTE.run(rte, {} as Db)
 
 const mockLogger = {
   error: jest.fn(),

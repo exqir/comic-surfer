@@ -1,11 +1,15 @@
 import { ObjectID } from 'mongodb'
-import { createMockConfig, createMockOptionWithReturnValue } from 'tests/_utils'
+import {
+  createMockConfig,
+  createMockOptionWithReturnValue,
+  createMockReaderWithReturnValue,
+} from 'tests/_utils'
 import { ComicBookQuery } from './comicBookResolver'
-import { ComicBook } from 'types/server-schema'
+import { ComicBook, ComicBookDbObject } from 'types/server-schema'
 import { ComicBookAPI } from 'datasources/ComicBookAPI'
 import { GraphQLResolveInfo } from 'graphql'
 
-const defaultComicBook: ComicBook = {
+const defaultComicBook: ComicBookDbObject = {
   _id: new ObjectID(),
   title: 'Comic',
   url: '/path',
@@ -27,7 +31,7 @@ describe('[Query.getComicBook]', () => {
     const mockComicBook = { ...defaultComicBook }
     const { getById } = context.dataSources.comicBook
     ;(getById as jest.Mock).mockReturnValueOnce(
-      createMockOptionWithReturnValue({}, true),
+      createMockReaderWithReturnValue({}, true),
     )
 
     const res = await ComicBookQuery.getComicBook(
@@ -45,7 +49,7 @@ describe('[Query.getComicBook]', () => {
     const mockComicBook = { ...defaultComicBook }
     const { getById } = context.dataSources.comicBook
     ;(getById as jest.Mock).mockReturnValueOnce(
-      createMockOptionWithReturnValue<ComicBook>(mockComicBook),
+      createMockReaderWithReturnValue<ComicBookDbObject>(mockComicBook),
     )
 
     const res = await ComicBookQuery.getComicBook(

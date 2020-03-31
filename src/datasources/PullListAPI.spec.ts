@@ -3,9 +3,11 @@ import { PullListAPI, pullListCollection as collection } from './PullListAPI'
 import {
   createMockConfig,
   createMockReaderWithReturnValue,
-  foldOptionPromise,
+  runRTEwithMockDb,
 } from 'tests/_utils'
 import { PullListDbObject } from 'types/server-schema'
+import { pipe } from 'fp-ts/lib/pipeable'
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 const config = createMockConfig()
 const defaultPullList: PullListDbObject = {
@@ -26,10 +28,11 @@ describe('[PullListAPI.insert]', () => {
 
     const res = ds.insert(mockPullList)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockPullList)
     // TODO: The mock function is actually being called which can be tested by
@@ -51,12 +54,11 @@ describe('[PullListAPI.insert]', () => {
 
     const res = ds.insert(mockPullList)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockPullList),
+      RTE.map(d => expect(d).toMatchObject(mockPullList)),
+      runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockPullList)
   })
@@ -70,10 +72,11 @@ describe('[PullListAPI.getById]', () => {
 
     const res = ds.getById(mockPullList._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockPullList._id })
     // TODO: The mock function is actually being called which can be tested by
@@ -91,12 +94,11 @@ describe('[PullListAPI.getById]', () => {
 
     const res = ds.getById(mockPullList._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockPullList),
+      RTE.map(d => expect(d).toMatchObject(mockPullList)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockPullList._id })
   })
@@ -110,10 +112,11 @@ describe('[PullListAPI.getByIds]', () => {
 
     const res = ds.getByIds([mockPullList._id])
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockPullList._id] },
@@ -133,12 +136,11 @@ describe('[PullListAPI.getByIds]', () => {
 
     const res = ds.getByIds([mockPullList[0]._id])
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockPullList),
+      RTE.map(d => expect(d).toMatchObject(mockPullList)),
+      runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockPullList[0]._id] },
@@ -153,10 +155,11 @@ describe('[PullListAPI.getByUser]', () => {
 
     const res = ds.getByUser('')
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { owner: '' })
     // TODO: The mock function is actually being called which can be tested by
@@ -174,12 +177,11 @@ describe('[PullListAPI.getByUser]', () => {
 
     const res = ds.getByUser('John')
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockPullList),
+      RTE.map(d => expect(d).toMatchObject(mockPullList)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { owner: 'John' })
   })
@@ -194,10 +196,11 @@ describe('[PullListAPI.addComicSeries]', () => {
 
     const res = ds.addComicSeries(mockPullListId, mockComicSeriesId)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
       collection,
@@ -227,12 +230,11 @@ describe('[PullListAPI.addComicSeries]', () => {
 
     const res = ds.addComicSeries(mockPullList._id, mockComicSeries._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockPullList),
+      RTE.map(d => expect(d).toMatchObject(mockPullList)),
+      runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
       collection,
@@ -251,10 +253,11 @@ describe('[PullListAPI.removeComicSeries]', () => {
 
     const res = ds.removeComicSeries(mockPullListId, mockComicSeriesId)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
       collection,
@@ -284,12 +287,11 @@ describe('[PullListAPI.removeComicSeries]', () => {
 
     const res = ds.removeComicSeries(mockPullList._id, mockComicSeries._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockPullList),
+      RTE.map(d => expect(d).toMatchObject(mockPullList)),
+      runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
       collection,

@@ -1,6 +1,6 @@
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
 import { NextApiRequest } from 'next'
-import { Db, MongoError, FilterQuery } from 'mongodb'
+import { Db, MongoError, FilterQuery, ObjectID } from 'mongodb'
 import { Option } from 'fp-ts/lib/Option'
 import { ComicBookAPI, ComicSeriesAPI } from '../datasources'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'

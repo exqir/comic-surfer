@@ -4,8 +4,11 @@ import {
   createMockConfig,
   createMockReaderWithReturnValue,
   foldOptionPromise,
+  runRTEwithMockDb,
 } from 'tests/_utils'
 import { PublisherDbObject } from 'types/server-schema'
+import { pipe } from 'fp-ts/lib/pipeable'
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 const config = createMockConfig()
 const defaultPublisher: PublisherDbObject = {
@@ -32,10 +35,11 @@ describe('[PublisherAPI.insert]', () => {
 
     const res = ds.insert(mockPublisher)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockPublisher)
     // TODO: The mock function is actually being called which can be tested by
@@ -57,12 +61,11 @@ describe('[PublisherAPI.insert]', () => {
 
     const res = ds.insert(mockPublisher)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockPublisher),
+      RTE.map(d => expect(d).toMatchObject(mockPublisher)),
+      runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockPublisher)
   })
@@ -76,10 +79,11 @@ describe('[PublisherAPI.getById]', () => {
 
     const res = ds.getById(mockPublisher._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockPublisher._id })
     // TODO: The mock function is actually being called which can be tested by
@@ -97,12 +101,11 @@ describe('[PublisherAPI.getById]', () => {
 
     const res = ds.getById(mockPublisher._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockPublisher),
+      RTE.map(d => expect(d).toMatchObject(mockPublisher)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockPublisher._id })
   })
@@ -116,10 +119,11 @@ describe('[PublisherAPI.getByIds]', () => {
 
     const res = ds.getByIds([mockPublisher._id])
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockPublisher._id] },
@@ -139,12 +143,11 @@ describe('[PublisherAPI.getByIds]', () => {
 
     const res = ds.getByIds([mockPublisher[0]._id])
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockPublisher),
+      RTE.map(d => expect(d).toMatchObject(mockPublisher)),
+      runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockPublisher[0]._id] },
@@ -161,10 +164,11 @@ describe('[PublisherAPI.addComicSeries]', () => {
 
     const res = ds.addComicSeries(mockPublisherId, mockComicSeriesId)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
       collection,
@@ -194,12 +198,11 @@ describe('[PublisherAPI.addComicSeries]', () => {
 
     const res = ds.addComicSeries(mockPublisher._id, mockComicSeries._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockPublisher),
+      RTE.map(d => expect(d).toMatchObject(mockPublisher)),
+      runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
       collection,

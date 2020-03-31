@@ -3,8 +3,10 @@ import { MongoDataSource } from './MongoDataSource'
 import {
   createMockConfig,
   createMockReaderWithReturnValue,
-  foldOptionPromise,
+  runRTEwithMockDb,
 } from 'tests/_utils'
+import { pipe } from 'fp-ts/lib/pipeable'
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 const config = createMockConfig()
 
@@ -20,10 +22,11 @@ describe('[MongoDataSource.insert]', () => {
 
     const res = ds.insert(mockComicBook)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockComicBook)
     // TODO: The mock function is actually being called which can be tested by
@@ -44,12 +47,11 @@ describe('[MongoDataSource.insert]', () => {
 
     const res = ds.insert(mockDocument)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockDocument),
+      RTE.map(d => expect(d).toMatchObject(mockDocument)),
+      runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockDocument)
   })
@@ -63,10 +65,11 @@ describe('[MongoDataSource.getById]', () => {
 
     const res = ds.getById(mockDocument._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockDocument._id })
     // TODO: The mock function is actually being called which can be tested by
@@ -82,12 +85,11 @@ describe('[MongoDataSource.getById]', () => {
 
     const res = ds.getById(mockDocument._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockDocument),
+      RTE.map(d => expect(d).toMatchObject(mockDocument)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockDocument._id })
   })
@@ -101,10 +103,11 @@ describe('[MongoDataSource.getByIds]', () => {
 
     const res = ds.getByIds([mockDocument._id])
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockDocument._id] },
@@ -122,12 +125,11 @@ describe('[MongoDataSource.getByIds]', () => {
 
     const res = ds.getByIds([mockDocument[0]._id])
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockDocument),
+      RTE.map(d => expect(d).toMatchObject(mockDocument)),
+      runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockDocument[0]._id] },

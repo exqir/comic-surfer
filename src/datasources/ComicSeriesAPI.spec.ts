@@ -6,9 +6,11 @@ import {
 import {
   createMockConfig,
   createMockReaderWithReturnValue,
-  foldOptionPromise,
+  runRTEwithMockDb,
 } from 'tests/_utils'
 import { ComicSeriesDbObject } from 'types/server-schema'
+import { pipe } from 'fp-ts/lib/pipeable'
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 const config = createMockConfig()
 const defaultComicSeries: ComicSeriesDbObject = {
@@ -34,10 +36,11 @@ describe('[ComicSeriesAPI.insert]', () => {
 
     const res = ds.insert(mockComicSeries)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockComicSeries)
     // TODO: The mock function is actually being called which can be tested by
@@ -59,12 +62,11 @@ describe('[ComicSeriesAPI.insert]', () => {
 
     const res = ds.insert(mockComicSeries)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockComicSeries),
+      RTE.map(d => expect(d).toMatchObject(mockComicSeries)),
+      runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockComicSeries)
   })
@@ -78,10 +80,11 @@ describe('[ComicSeriesAPI.getById]', () => {
 
     const res = ds.getById(mockComicSeries._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockComicSeries._id })
     // TODO: The mock function is actually being called which can be tested by
@@ -99,12 +102,11 @@ describe('[ComicSeriesAPI.getById]', () => {
 
     const res = ds.getById(mockComicSeries._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockComicSeries),
+      RTE.map(d => expect(d).toMatchObject(mockComicSeries)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockComicSeries._id })
   })
@@ -118,10 +120,11 @@ describe('[ComicSeriesAPI.getByIds]', () => {
 
     const res = ds.getByIds([mockComicSeries._id])
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockComicSeries._id] },
@@ -141,12 +144,11 @@ describe('[ComicSeriesAPI.getByIds]', () => {
 
     const res = ds.getByIds([mockComicSeries[0]._id])
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockComicSeries),
+      RTE.map(d => expect(d).toMatchObject(mockComicSeries)),
+      runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockComicSeries[0]._id] },
@@ -163,10 +165,11 @@ describe('[ComicSeriesAPI.addComicBook]', () => {
 
     const res = ds.addComicBook(mockComicSeriesId, mockComicBookId)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
       collection,
@@ -192,12 +195,11 @@ describe('[ComicSeriesAPI.addComicBook]', () => {
 
     const res = ds.addComicBook(mockComicSeries._id, mockComicBook._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockComicSeries),
+      RTE.map(d => expect(d).toMatchObject(mockComicSeries)),
+      runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
       collection,

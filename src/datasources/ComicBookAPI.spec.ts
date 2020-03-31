@@ -3,9 +3,11 @@ import { ComicBookAPI, comicBookCollection as collection } from './ComicBookAPI'
 import {
   createMockConfig,
   createMockReaderWithReturnValue,
-  foldOptionPromise,
+  runRTEwithMockDb,
 } from 'tests/_utils'
 import { ComicBookDbObject } from 'types/server-schema'
+import { pipe } from 'fp-ts/lib/pipeable'
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 const config = createMockConfig()
 const defaultComicBook: ComicBookDbObject = {
@@ -32,10 +34,11 @@ describe('[ComicBookAPI.insert]', () => {
 
     const res = ds.insert(mockComicBook)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockComicBook)
     // TODO: The mock function is actually being called which can be tested by
@@ -57,12 +60,11 @@ describe('[ComicBookAPI.insert]', () => {
 
     const res = ds.insert(mockComicBook)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockComicBook),
+      RTE.map(d => expect(d).toMatchObject(mockComicBook)),
+      runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockComicBook)
   })
@@ -76,10 +78,11 @@ describe('[ComicBookAPI.getById]', () => {
 
     const res = ds.getById(mockComicBook._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockComicBook._id })
     // TODO: The mock function is actually being called which can be tested by
@@ -97,12 +100,11 @@ describe('[ComicBookAPI.getById]', () => {
 
     const res = ds.getById(mockComicBook._id)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockComicBook),
+      RTE.map(d => expect(d).toMatchObject(mockComicBook)),
+      runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockComicBook._id })
   })
@@ -116,10 +118,11 @@ describe('[ComicBookAPI.getByIds]', () => {
 
     const res = ds.getByIds([mockComicBook._id])
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockComicBook._id] },
@@ -139,12 +142,11 @@ describe('[ComicBookAPI.getByIds]', () => {
 
     const res = ds.getByIds([mockComicBook[0]._id])
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d).toMatchObject(mockComicBook),
+      RTE.map(d => expect(d).toMatchObject(mockComicBook)),
+      runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockComicBook[0]._id] },
@@ -160,10 +162,11 @@ describe('[ComicBookAPI.updateReleaseDate]', () => {
 
     const res = ds.updateReleaseDate(id, 1473199200000)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => expect(err).toBeInstanceOf(MongoError),
-      d => {},
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
       collection,
@@ -192,12 +195,11 @@ describe('[ComicBookAPI.updateReleaseDate]', () => {
 
     const res = ds.updateReleaseDate(mockComicBook._id, newDate)
 
-    foldOptionPromise(
+    expect.assertions(2)
+    await pipe(
       res,
-      err => {
-        throw err
-      },
-      d => expect(d.releaseDate).toEqual(newDate),
+      RTE.map(d => expect(d.releaseDate).toEqual(newDate)),
+      runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
       collection,
