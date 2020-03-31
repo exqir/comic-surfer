@@ -39,10 +39,10 @@ export const ComicBookResolver: ComicBookResolver = {
       pipe(
         creators,
         maybeToOption,
-        chain(publisherIds =>
+        chain(creatorIds =>
           pipe(
             db,
-            map(runRTEtoNullable(dataSources.creator.getByIds(publisherIds))),
+            map(runRTEtoNullable(dataSources.creator.getByIds(creatorIds))),
           ),
         ),
         toNullable,

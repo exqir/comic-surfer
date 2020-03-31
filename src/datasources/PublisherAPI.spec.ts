@@ -3,7 +3,6 @@ import { PublisherAPI, publisherCollection as collection } from './PublisherAPI'
 import {
   createMockConfig,
   createMockReaderWithReturnValue,
-  foldOptionPromise,
   runRTEwithMockDb,
 } from 'tests/_utils'
 import { PublisherDbObject } from 'types/server-schema'

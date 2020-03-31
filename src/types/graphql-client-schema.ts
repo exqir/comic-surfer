@@ -14,7 +14,7 @@ export type ComicBook = {
   title: Scalars['String'];
   issue?: Maybe<Scalars['String']>;
   releaseDate?: Maybe<Scalars['Int']>;
-  /** TOOD: Check what find returns if no items was found */
+  /** TODO: Check what find returns if no items was found */
   creators?: Maybe<Array<Creator>>;
   series?: Maybe<ComicSeries>;
   publisher?: Maybe<Publisher>;
@@ -30,8 +30,8 @@ export type ComicSeries = {
   collectionsUrl?: Maybe<Scalars['String']>;
   issuesUrl?: Maybe<Scalars['String']>;
   publisher?: Maybe<Publisher>;
-  collections?: Maybe<Array<Maybe<ComicBook>>>;
-  issues?: Maybe<Array<Maybe<ComicBook>>>;
+  collections?: Maybe<Array<ComicBook>>;
+  issues?: Maybe<Array<ComicBook>>;
 };
 
 export type Creator = {

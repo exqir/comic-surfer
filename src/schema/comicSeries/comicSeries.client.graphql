@@ -9,6 +9,6 @@ type ComicSeries {
   collectionsUrl: String
   issuesUrl: String
   publisher: Publisher
-  collections: [ComicBook]
-  issues: [ComicBook]
+  collections: [ComicBook!]
+  issues: [ComicBook!]
 }

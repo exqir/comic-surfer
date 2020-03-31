@@ -42,8 +42,8 @@ export type ComicSeries = {
   collectionsUrl: Maybe<Scalars['String']>;
   issuesUrl: Maybe<Scalars['String']>;
   publisher: Maybe<Publisher>;
-  collections: Maybe<Array<Maybe<ComicBook>>>;
-  issues: Maybe<Array<Maybe<ComicBook>>>;
+  collections: Maybe<Array<ComicBook>>;
+  issues: Maybe<Array<ComicBook>>;
 };
 
 export type Creator = {
@@ -183,8 +183,8 @@ export type ComicSeriesDbObject = {
   collectionsUrl: Maybe<string>,
   issuesUrl: Maybe<string>,
   publisher: Maybe<PublisherDbObject['_id']>,
-  collections: Maybe<Array<Maybe<ComicBookDbObject['_id']>>>,
-  issues: Maybe<Array<Maybe<ComicBookDbObject['_id']>>>,
+  collections: Maybe<Array<ComicBookDbObject['_id']>>,
+  issues: Maybe<Array<ComicBookDbObject['_id']>>,
 };
 
 export type PublisherDbObject = {

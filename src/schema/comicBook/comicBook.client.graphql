@@ -7,7 +7,7 @@ type ComicBook {
   title: String!
   issue: String
   releaseDate: Int
-  # TOOD: Check what find returns if no items was found
+  # TODO: Check what find returns if no items was found
   creators: [Creator!]
   series: ComicSeries
   publisher: Publisher

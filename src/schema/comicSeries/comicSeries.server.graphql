@@ -9,6 +9,6 @@ type ComicSeries @entity {
   collectionsUrl: String @column
   issuesUrl: String @column
   publisher: Publisher @link
-  collections: [ComicBook] @link
-  issues: [ComicBook] @link
+  collections: [ComicBook!] @link
+  issues: [ComicBook!] @link
 }

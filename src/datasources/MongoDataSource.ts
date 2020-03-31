@@ -36,11 +36,6 @@ export class MongoDataSource<T extends { _id: ObjectID }> extends DataSource<
     )
   }
 
-  // public insert(document: Omit<T, '_id'>) {
-  //   const { insertOne } = this.dataLayer!
-  //   return this.execute(insertOne(this.collection, document))
-  // }
-
   public getById(id: ObjectID) {
     const { findOne } = this.dataLayer!
     const { logger } = this.context!
@@ -50,15 +45,6 @@ export class MongoDataSource<T extends { _id: ObjectID }> extends DataSource<
     )
   }
 
-  // public getById(id: ObjectID) {
-  //   const { findOne } = this.dataLayer!
-  //   return this.execute(
-  //     // TODO: Extending the Generic T  doesn't seem to force the type for
-  //     // FilterQuery to recognize the property _id to be on type T.
-  //     findOne<T>(this.collection, { _id: id }),
-  //   )
-  // }
-
   public getByIds(ids: ObjectID[]) {
     const { findMany } = this.dataLayer!
     const { logger } = this.context!
@@ -67,12 +53,4 @@ export class MongoDataSource<T extends { _id: ObjectID }> extends DataSource<
       mapLeft(logError(logger)),
     )
   }
-
-  // public getByIds(ids: ObjectID[]) {
-  //   const { findMany } = this.dataLayer!
-  //   return this.execute(
-  //     // @ts-ignore
-  //     findMany<T>(this.collection, { _id: { $in: ids } } as T[]),
-  //   )
-  // }
 }
