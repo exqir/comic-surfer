@@ -1,5 +1,5 @@
 import { pipe } from 'fp-ts/lib/pipeable'
-import { toNullable, chain, map } from 'fp-ts/lib/Option'
+import { toNullable, map } from 'fp-ts/lib/Option'
 import { Resolver } from 'types/app'
 import {
   QueryGetComicBookArgs,
@@ -8,7 +8,7 @@ import {
   PublisherDbObject,
   ComicSeriesDbObject,
 } from 'types/server-schema'
-import { runRTEtoNullable, maybeToOption } from 'lib'
+import { runRTEtoNullable, mapOtoRTEnullable, chainMaybeToNullable } from 'lib'
 
 interface ComicBookQuery {
   // TODO: This actually returns a ComicBook but this is not what the function returns
@@ -36,40 +36,19 @@ export const ComicBookQuery: ComicBookQuery = {
 export const ComicBookResolver: ComicBookResolver = {
   ComicBook: {
     creators: ({ creators }, _, { dataSources, db }) =>
-      pipe(
+      chainMaybeToNullable(
         creators,
-        maybeToOption,
-        chain(creatorIds =>
-          pipe(
-            db,
-            map(runRTEtoNullable(dataSources.creator.getByIds(creatorIds))),
-          ),
-        ),
-        toNullable,
+        mapOtoRTEnullable(db, dataSources.creator.getByIds),
       ),
     publisher: ({ publisher }, _, { dataSources, db }) =>
-      pipe(
+      chainMaybeToNullable(
         publisher,
-        maybeToOption,
-        chain(publisherId =>
-          pipe(
-            db,
-            map(runRTEtoNullable(dataSources.publisher.getById(publisherId))),
-          ),
-        ),
-        toNullable,
+        mapOtoRTEnullable(db, dataSources.publisher.getById),
       ),
     series: ({ series }, _, { dataSources, db }) =>
-      pipe(
+      chainMaybeToNullable(
         series,
-        maybeToOption,
-        chain(seriesId =>
-          pipe(
-            db,
-            map(runRTEtoNullable(dataSources.comicSeries.getById(seriesId))),
-          ),
-        ),
-        toNullable,
+        mapOtoRTEnullable(db, dataSources.comicSeries.getById),
       ),
   },
 }

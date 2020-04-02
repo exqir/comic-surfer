@@ -5,6 +5,10 @@ import {
   ComicBookResolver,
 } from './comicBook/comicBookResolver'
 import ComicSeries from './comicSeries/comicSeries.server.graphql'
+import {
+  ComicSeriesQuery,
+  ComicSeriesResolver,
+} from './comicSeries/comicSeriesResolver'
 import Creator from './creator/creator.server.graphql'
 import Publisher from './publisher/publisher.server.graphql'
 import PullList from './pullList/pullList.server.graphql'
@@ -23,6 +27,8 @@ export default [
 export const resolvers = {
   Query: {
     ...ComicBookQuery,
+    ...ComicSeriesQuery,
   },
   ...ComicBookResolver,
+  ...ComicSeriesResolver,
 }
