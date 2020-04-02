@@ -39,7 +39,7 @@ export type Creator = {
   _id: Scalars['ID'];
   firstname?: Maybe<Scalars['String']>;
   lastname: Scalars['String'];
-  series?: Maybe<Array<Maybe<ComicSeries>>>;
+  series?: Maybe<Array<ComicSeries>>;
 };
 
 export type Mutation = {
@@ -78,7 +78,7 @@ export type Publisher = {
   seriesPath?: Maybe<Scalars['String']>;
   searchPath?: Maybe<Scalars['String']>;
   searchPathSeries?: Maybe<Scalars['String']>;
-  series?: Maybe<Array<Maybe<ComicSeries>>>;
+  series?: Maybe<Array<ComicSeries>>;
 };
 
 export type PullList = {

@@ -9,6 +9,22 @@ export class PublisherAPI extends MongoDataSource<PublisherDbObject> {
     super(publisherCollection)
   }
 
+  public getByName(name: string) {
+    const { findOne } = this.dataLayer!
+    return pipe(
+      findOne<PublisherDbObject>(this.collection, { name }),
+      this.logError,
+    )
+  }
+
+  public getByNames(names: string[]) {
+    const { findMany } = this.dataLayer!
+    return pipe(
+      findMany<PublisherDbObject>(this.collection, { name: { $in: names } }),
+      this.logError,
+    )
+  }
+
   public addComicSeries(id: ObjectID, comicSeriesId: ObjectID) {
     const { updateOne } = this.dataLayer!
     return pipe(

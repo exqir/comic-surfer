@@ -13,5 +13,5 @@ type Publisher @entity {
   seriesPath: String @column
   searchPath: String @column
   searchPathSeries: String @column
-  series: [ComicSeries] @link
+  series: [ComicSeries!] @link
 }

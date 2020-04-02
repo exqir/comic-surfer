@@ -154,6 +154,90 @@ describe('[PublisherAPI.getByIds]', () => {
   })
 })
 
+describe('[PublisherAPI.getByName]', () => {
+  it('should query dataLayer for Publisher with id and return left in case of Error', async () => {
+    const mockPublisher = { ...defaultPublisher }
+    const { findOne } = config.context.dataLayer
+    findOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+
+    const res = ds.getByName(mockPublisher.name)
+
+    expect.assertions(2)
+    await pipe(
+      res,
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
+    )
+    expect(findOne).toBeCalledWith(collection, { name: mockPublisher.name })
+    // TODO: The mock function is actually being called which can be tested by
+    // a mock implementation and via debugger. However, this information
+    // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
+    // expect(config.context.logger.error.mock).toBeCalledWith('TestError')
+  })
+
+  it('should query dataLayer for Publisher with id and return right with result', async () => {
+    const mockPublisher = { ...defaultPublisher }
+    const { findOne } = config.context.dataLayer
+    findOne.mockReturnValueOnce(
+      createMockReaderWithReturnValue<PublisherDbObject>(mockPublisher),
+    )
+
+    const res = ds.getByName(mockPublisher.name)
+
+    expect.assertions(2)
+    await pipe(
+      res,
+      RTE.map(d => expect(d).toMatchObject(mockPublisher)),
+      runRTEwithMockDb,
+    )
+    expect(findOne).toBeCalledWith(collection, { name: mockPublisher.name })
+  })
+})
+
+describe('[PublisherAPI.getByNames]', () => {
+  it('should query dataLayer for Publisher with ids and return left in case of Error', async () => {
+    const mockPublisher = { ...defaultPublisher }
+    const { findMany } = config.context.dataLayer
+    findMany.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+
+    const res = ds.getByNames([mockPublisher.name])
+
+    expect.assertions(2)
+    await pipe(
+      res,
+      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
+    )
+    expect(findMany).toBeCalledWith(collection, {
+      name: { $in: [mockPublisher.name] },
+    })
+    // TODO: The mock function is actually being called which can be tested by
+    // a mock implementation and via debugger. However, this information
+    // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
+    // expect(config.context.logger.error.mock).toBeCalledWith('TestError')
+  })
+
+  it('should query dataLayer for Publisher with ids and return right with result', async () => {
+    const mockPublisher = [{ ...defaultPublisher }]
+    const { findMany } = config.context.dataLayer
+    findMany.mockReturnValueOnce(
+      createMockReaderWithReturnValue<PublisherDbObject>(mockPublisher),
+    )
+
+    const res = ds.getByNames([mockPublisher[0].name])
+
+    expect.assertions(2)
+    await pipe(
+      res,
+      RTE.map(d => expect(d).toMatchObject(mockPublisher)),
+      runRTEwithMockDb,
+    )
+    expect(findMany).toBeCalledWith(collection, {
+      name: { $in: [mockPublisher[0].name] },
+    })
+  })
+})
+
 describe('[PublisherAPI.addComicSeries]', () => {
   it('should add ComicSeries as an issue to Publisher using dataLayer and return left in case of Error', async () => {
     const mockPublisherId = new ObjectID()

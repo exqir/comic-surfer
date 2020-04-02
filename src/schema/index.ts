@@ -10,6 +10,7 @@ import {
   ComicSeriesResolver,
 } from './comicSeries/comicSeriesResolver'
 import Creator from './creator/creator.server.graphql'
+import { CreatorResolver } from './creator/creatorResolver'
 import Publisher from './publisher/publisher.server.graphql'
 import PullList from './pullList/pullList.server.graphql'
 import Search from './search/search.server.graphql'
@@ -31,4 +32,5 @@ export const resolvers = {
   },
   ...ComicBookResolver,
   ...ComicSeriesResolver,
+  ...CreatorResolver,
 }

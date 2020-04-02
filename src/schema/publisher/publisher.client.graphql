@@ -13,5 +13,5 @@ type Publisher {
   seriesPath: String
   searchPath: String
   searchPathSeries: String
-  series: [ComicSeries]
+  series: [ComicSeries!]
 }
