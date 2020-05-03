@@ -114,7 +114,7 @@ const defaultComicSeries: ComicSeriesDbObject = {
   publisher: null,
 }
 
-describe('[Creator.series]', () => {
+describe('[Publisher.series]', () => {
   const { context } = createMockConfig()
   context.dataSources.comicSeries = ({
     getByIds: jest.fn(),

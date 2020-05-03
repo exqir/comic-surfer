@@ -11,5 +11,5 @@ extend type Mutation {
 type PullList {
   _id: ID!
   owner: String!
-  list: [ComicSeries]
+  list: [ComicSeries!]
 }

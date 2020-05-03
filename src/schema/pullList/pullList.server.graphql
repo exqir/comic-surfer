@@ -11,5 +11,5 @@ extend type Mutation {
 type PullList @entity {
   _id: ID! @id
   owner: String! @column
-  list: [ComicSeries] @link
+  list: [ComicSeries!] @link
 }

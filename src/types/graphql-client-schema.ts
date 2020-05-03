@@ -85,7 +85,7 @@ export type PullList = {
    __typename?: 'PullList';
   _id: Scalars['ID'];
   owner: Scalars['String'];
-  list?: Maybe<Array<Maybe<ComicSeries>>>;
+  list?: Maybe<Array<ComicSeries>>;
 };
 
 /** TODO: check which of the four paths are really needed */

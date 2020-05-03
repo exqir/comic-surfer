@@ -97,7 +97,7 @@ export type PullList = {
    __typename?: 'PullList';
   _id: Scalars['ID'];
   owner: Scalars['String'];
-  list: Maybe<Array<Maybe<ComicSeries>>>;
+  list: Maybe<Array<ComicSeries>>;
 };
 
 export type Query = {
@@ -202,7 +202,7 @@ export type PublisherDbObject = {
 export type PullListDbObject = {
   _id: ObjectID,
   owner: string,
-  list: Maybe<Array<Maybe<ComicSeriesDbObject['_id']>>>,
+  list: Maybe<Array<ComicSeriesDbObject['_id']>>,
 };
 
 export type SearchDbObject = {
