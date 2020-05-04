@@ -2,7 +2,7 @@ import { createTestClient } from 'apollo-server-testing'
 import { gql } from 'apollo-server-micro'
 import {
   constructTestServer,
-  createMockOptionWithReturnValue,
+  createMockReaderWithReturnValue,
 } from 'tests/_utils'
 import { ObjectID } from 'mongodb'
 import { ComicBook } from 'types/server-schema'
@@ -37,7 +37,7 @@ describe('Queries', () => {
     comicBook.getById = jest
       .fn()
       .mockReturnValueOnce(
-        createMockOptionWithReturnValue<ComicBook>(mockComicBook),
+        createMockReaderWithReturnValue<ComicBook>(mockComicBook),
       )
 
     const { query } = createTestClient(server)

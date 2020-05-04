@@ -7,6 +7,7 @@ import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import { CreatorAPI } from 'datasources/CreatorAPI'
 import { PublisherAPI } from 'datasources/PublisherAPI'
 import { PullListAPI } from 'datasources/PullListAPI'
+import { ScrapeService } from 'services/ScrapeService'
 
 export interface Logger {
   log: (...args: any[]) => void
@@ -59,6 +60,10 @@ export interface DataSources {
   pullList: PullListAPI
 }
 
+export interface Services {
+  scrape: ScrapeService
+}
+
 /**
  * Context provided to all requests handled by the GraphQL server.
  */
@@ -66,6 +71,7 @@ export interface GraphQLContext {
   req: NextApiRequest
   dataLayer: DataLayer
   dataSources: DataSources
+  services: Services
   logger: Logger
   db: Option<Db>
 }

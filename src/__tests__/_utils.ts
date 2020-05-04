@@ -6,7 +6,7 @@ import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { NextApiRequest } from 'next'
 import { KeyValueCache } from 'apollo-server-core'
 import { ApolloServer } from 'apollo-server-micro'
-import { DataSources } from 'types/app'
+import { DataSources, Services } from 'types/app'
 import typeDefs, { resolvers } from '../schema'
 import {
   ComicBookAPI,
@@ -45,6 +45,32 @@ export function createMockReaderWithReturnValue<T>(
 }
 
 /**
+ * Creates a `TaskEither<Error, T>` that returns `value` as right
+ * side or a `Error` as left side in case of `isFailure`.
+ * @param value {T} Value to be returned when the Task is executed.
+ * @param isFailure {boolean} Defines if a success or failure should be mocked.
+ * @returns reader {TaskEither<Error, T>}
+ */
+export function createMockTaskWithReturnValue<T>(
+  value: T,
+  isFailure?: boolean,
+): () => Promise<Either<Error, T>>
+export function createMockTaskWithReturnValue<T>(
+  value: T[],
+  isFailure?: boolean,
+): () => Promise<Either<Error, T[]>>
+export function createMockTaskWithReturnValue<T>(
+  value: T | T[],
+  isFailure?: boolean,
+) {
+  return () =>
+    new Promise<Either<Error, T | T[]>>((resolve, reject) => {
+      const either = isFailure ? left(new Error('TestError')) : right(value)
+      resolve(either)
+    })
+}
+
+/**
  * Run ReaderTaskEither with an empty Db mock.
  * @param rte {RTE.ReaderTaskEither} - ReaderTaskEither to be run.
  */
@@ -75,6 +101,7 @@ export const createMockConfig = () => ({
     req: {} as NextApiRequest,
     dataLayer: mockDataLayer,
     dataSources: {} as DataSources,
+    services: {} as Services,
     logger: mockLogger,
     db: some({} as Db),
   },

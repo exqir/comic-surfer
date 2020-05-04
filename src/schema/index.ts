@@ -12,7 +12,12 @@ import {
 import Creator from './creator/creator.server.graphql'
 import { CreatorResolver } from './creator/creatorResolver'
 import Publisher from './publisher/publisher.server.graphql'
+import {
+  PublisherQuery,
+  PublisherResolver,
+} from './publisher/publisherResolver'
 import PullList from './pullList/pullList.server.graphql'
+import { PullListQuery, PullListResolver } from './pullList/pullListResolver'
 import Search from './search/search.server.graphql'
 
 export default [
@@ -29,8 +34,12 @@ export const resolvers = {
   Query: {
     ...ComicBookQuery,
     ...ComicSeriesQuery,
+    ...PublisherQuery,
+    ...PullListQuery,
   },
   ...ComicBookResolver,
   ...ComicSeriesResolver,
   ...CreatorResolver,
+  ...PublisherResolver,
+  ...PullListResolver,
 }
