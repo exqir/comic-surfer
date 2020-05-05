@@ -19,10 +19,23 @@ type Scraper = <T>(
   options: ScrapeOptions,
 ) => Promise<ScrapeResult<T>>
 
+type ScrapeServiceOptions = {
+  scraper: Scraper
+  baseUrl: string
+  searchPath: string
+}
 export class ScrapeService {
   scraper: Scraper
-  constructor(scraper: Scraper) {
+  baseUrl: string
+  searchPath: string
+  constructor({
+    scraper,
+    baseUrl = '',
+    searchPath = '',
+  }: ScrapeServiceOptions) {
     this.scraper = scraper
+    this.baseUrl = baseUrl
+    this.searchPath = searchPath
   }
 
   private scrape<T>(url: string, config: ScrapeOptions) {
@@ -80,6 +93,16 @@ export class ScrapeService {
   ): TaskEither<Error, ComicSeriesSearchScrapeData['searchResults']> {
     const url = `${basePath}${path}`
     const config = comicSeriesSearch[name]
+
+    return pipe(
+      this.scrape<ComicSeriesSearchScrapeData>(url, config),
+      map(({ searchResults }) => searchResults),
+    )
+  }
+
+  getComicSeriesSearchCX(query: string) {
+    const url = [this.baseUrl, this.searchPath, query].join('')
+    const config = comicSeriesSearch.cx
 
     return pipe(
       this.scrape<ComicSeriesSearchScrapeData>(url, config),

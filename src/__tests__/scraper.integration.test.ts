@@ -9,7 +9,11 @@ import { ScrapeService } from '../services/ScrapeService'
 
 const PORT = 9000
 const URL = `http://localhost:${PORT}`
-const scraper = new ScrapeService(scrapeIt)
+const scraper = new ScrapeService({
+  scraper: scrapeIt,
+  baseUrl: URL,
+  searchPath: '/search.html?=',
+})
 let server: http.Server
 
 beforeAll(done => {
@@ -117,6 +121,27 @@ describe('[Scraper.getComicSeriesSearch]', () => {
           },
           {
             title: 'Title 2',
+            url: '/title-2.html',
+          },
+        ])
+      }),
+    )()
+  })
+})
+
+describe('[Scraper.getComicSeriesSearchCX]', () => {
+  it('should scrap data from comic-series-search page', async () => {
+    expect.assertions(1)
+    return pipe(
+      scraper.getComicSeriesSearchCX('title'),
+      map(res => {
+        expect(res).toMatchObject([
+          {
+            title: 'Search Title 1',
+            url: '/title-1.html',
+          },
+          {
+            title: 'Search Title 2',
             url: '/title-2.html',
           },
         ])

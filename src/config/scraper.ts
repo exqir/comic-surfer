@@ -164,4 +164,16 @@ export const comicSeriesSearch: ComicSeriesSearchScraperConfig = {
       },
     },
   },
+  cx: {
+    searchResults: {
+      listItem: '.series-list .content-details',
+      data: {
+        title: '.content-title',
+        url: {
+          attr: 'href',
+          convert: (url: string) => url.split('?').shift(),
+        },
+      },
+    },
+  },
 }

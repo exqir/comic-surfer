@@ -10,7 +10,13 @@ import {
 } from '../config/scraper'
 
 const mockScraper = jest.fn()
-const scraper = new ScrapeService(mockScraper)
+const baseUrl = '/base'
+const searchPath = '/search?='
+const scraper = new ScrapeService({
+  scraper: mockScraper,
+  baseUrl,
+  searchPath,
+})
 
 const defaultPublisher: PublisherDbObject = {
   _id: new ObjectID(),
@@ -177,6 +183,32 @@ describe('[ScrapeService.getComicSeriesSearch]', () => {
     expect(mockScraper).toHaveBeenCalledWith(
       '/path/comic-series-search',
       comicSeriesSearch.image,
+    )
+    map(d => expect(d).toMatchObject(mockResult.searchResults))(result)
+  })
+})
+
+describe('[ScrapeService.getComicSeriesSearchCX]', () => {
+  it('should return ComicSeriesSearch scrape results', async () => {
+    const mockResult = {
+      searchResults: [
+        {
+          title: 'Title',
+          url: '/title',
+        },
+      ],
+    }
+    mockScraper.mockResolvedValueOnce({
+      response: { statusCode: 200 },
+      data: mockResult,
+    })
+    const task = scraper.getComicSeriesSearchCX('title')
+
+    const result = await task()
+
+    expect(mockScraper).toHaveBeenCalledWith(
+      [baseUrl, searchPath, 'title'].join(''),
+      comicSeriesSearch.cx,
     )
     map(d => expect(d).toMatchObject(mockResult.searchResults))(result)
   })
