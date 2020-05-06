@@ -12,7 +12,7 @@ const URL = `http://localhost:${PORT}`
 const scraper = new ScrapeService({
   scraper: scrapeIt,
   baseUrl: URL,
-  searchPath: '/search.html?=',
+  searchPath: '/cx-comic-series-search.html?search=',
 })
 let server: http.Server
 
@@ -48,6 +48,22 @@ describe('[Scraper.getComicSeries]', () => {
         { ...defaultPublisher, basePath: URL },
         '/comic-series.html',
       ),
+      map(res => {
+        expect(res).toMatchObject({
+          title: 'Title',
+          collectionUrl: '/collections.html',
+          singleIssuesUrl: '/issues.html',
+        })
+      }),
+    )()
+  })
+})
+
+describe('[Scraper.getComicSeriesCX]', () => {
+  it('should scrap data from comic-series page', async () => {
+    expect.assertions(1)
+    return pipe(
+      scraper.getComicSeriesCX('/cx-comic-series.html'),
       map(res => {
         expect(res).toMatchObject({
           title: 'Title',
@@ -137,12 +153,12 @@ describe('[Scraper.getComicSeriesSearchCX]', () => {
       map(res => {
         expect(res).toMatchObject([
           {
-            title: 'Search Title 1',
-            url: '/title-1.html',
+            title: 'Series 1',
+            url: '/series-1.html',
           },
           {
-            title: 'Search Title 2',
-            url: '/title-2.html',
+            title: 'Series 2',
+            url: '/series-2.html',
           },
         ])
       }),

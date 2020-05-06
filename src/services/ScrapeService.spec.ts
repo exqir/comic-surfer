@@ -104,6 +104,44 @@ describe('[ScrapeService.getComicSeries]', () => {
   })
 })
 
+describe('[ScrapeService.getComicSeriesCX]', () => {
+  it('should return ComicSeries scrape results', async () => {
+    const mockResult = {
+      title: 'Title',
+      urls: [
+        {
+          name: 'Latest Releases',
+          url: '/latest',
+        },
+        {
+          name: 'Issues',
+          url: '/issues',
+        },
+        {
+          name: 'Collected Editions',
+          url: '/collected',
+        },
+      ],
+    }
+    mockScraper.mockResolvedValueOnce({
+      response: { statusCode: 200 },
+      data: mockResult,
+    })
+    const task = scraper.getComicSeriesCX(`${baseUrl}/series`)
+
+    const result = await task()
+
+    expect(mockScraper).toHaveBeenCalledWith('/path/series', comicSeries.image)
+    map(d =>
+      expect(d).toMatchObject({
+        title: mockResult.title,
+        collectionUrl: mockResult.urls[2].url,
+        singleIssuesUrl: mockResult.urls[1].url,
+      }),
+    )(result)
+  })
+})
+
 describe('[ScrapeService.getComicBookList]', () => {
   it('should return ComicBookList scrape results', async () => {
     const mockResult = {

@@ -13,9 +13,18 @@ export interface ComicSeriesScrapeData {
   title: string
   collectionUrl: string
   singleIssuesUrl: string
+  urls: {
+    name: string
+    url: string
+  }[]
 }
 export interface ComicSeriesScraperConfig {
-  [name: string]: ComicSeriesConfig
+  [name: string]:
+    | ComicSeriesConfig
+    | {
+        title: Selector
+        urls: Selector
+      }
 }
 export const comicSeries: ComicSeriesScraperConfig = {
   image: {
@@ -29,6 +38,18 @@ export const comicSeries: ComicSeriesScraperConfig = {
       selector: '.section__moreLink',
       attr: 'href',
       eq: 1,
+    },
+  },
+  cx: {
+    title: '.item-title',
+    urls: {
+      listItem: '.header-row-title-link',
+      data: {
+        name: '.list-title-header',
+        url: {
+          attr: 'href',
+        },
+      },
     },
   },
 }
@@ -166,12 +187,11 @@ export const comicSeriesSearch: ComicSeriesSearchScraperConfig = {
   },
   cx: {
     searchResults: {
-      listItem: '.series-list .content-details',
+      listItem: '.item-series-link',
       data: {
-        title: '.content-title',
+        title: '.small-title',
         url: {
           attr: 'href',
-          convert: (url: string) => url.split('?').shift(),
         },
       },
     },

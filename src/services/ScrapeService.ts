@@ -63,6 +63,27 @@ export class ScrapeService {
 
     return this.scrape(url, config)
   }
+  getComicSeriesCX(path: string) {
+    const url = `${this.baseUrl}${path}`
+    const config = comicSeries.cx
+
+    return pipe(
+      this.scrape<ComicSeriesScrapeData>(url, config),
+      map(({ title, urls }) => ({
+        title,
+        collectionUrl: urls.reduce(
+          (_, { name, url }) =>
+            name.toLowerCase().includes('collected') ? url : _,
+          '',
+        ),
+        singleIssuesUrl: urls.reduce(
+          (_, { name, url }) =>
+            name.toLowerCase().includes('issues') ? url : _,
+          '',
+        ),
+      })),
+    )
+  }
 
   getComicBookList(
     { name, basePath }: PublisherDbObject,
