@@ -102,6 +102,23 @@ export const comicBookList: ComicBookListScraperConfig = {
       },
     },
   },
+  cx: {
+    comicBookList: {
+      listItem: '.comic-item',
+      data: {
+        title: '.content-title',
+        url: {
+          selector: '.content-details',
+          attr: 'href',
+        },
+        issue: {
+          selector: '.content-subtitle',
+          convert: (issue: string) => (issue.match(/[0-9]+/) || [''])[0],
+        },
+        releaseDate: {},
+      },
+    },
+  },
 }
 
 /**

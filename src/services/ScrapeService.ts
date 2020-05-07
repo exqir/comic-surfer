@@ -98,6 +98,18 @@ export class ScrapeService {
     )
   }
 
+  getComicBookListCX(
+    path: string,
+  ): TaskEither<Error, ComicBookListScrapeData['comicBookList']> {
+    const url = `${this.baseUrl}${path}`
+    const config = comicBookList.cx
+
+    return pipe(
+      this.scrape<ComicBookListScrapeData>(url, config),
+      map(({ comicBookList }) => comicBookList),
+    )
+  }
+
   getComicBook(
     { name, basePath }: PublisherDbObject,
     path: string,

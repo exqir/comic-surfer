@@ -103,6 +103,29 @@ describe('[Scraper.getComicBookList]', () => {
   })
 })
 
+describe('[Scraper.getComicBookListCX]', () => {
+  it('should scrap data from comic-book-list page', async () => {
+    expect.assertions(1)
+    return pipe(
+      scraper.getComicBookListCX('/cx-comic-book-list.html'),
+      map(res => {
+        expect(res).toMatchObject([
+          {
+            title: 'Comic Book 2',
+            url: '/issue-2.html',
+            issue: '2',
+          },
+          {
+            title: 'Comic Book 1',
+            url: '/issue-1.html',
+            issue: '1',
+          },
+        ])
+      }),
+    )()
+  })
+})
+
 describe('[Scraper.getComicBook]', () => {
   it('should scrap data from comic-book page', async () => {
     expect.assertions(1)
