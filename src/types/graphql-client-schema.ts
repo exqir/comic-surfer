@@ -98,7 +98,6 @@ export type Query = {
   getPublishers?: Maybe<Array<Publisher>>;
   getPullList?: Maybe<PullList>;
   getSearch?: Maybe<Array<Maybe<Search>>>;
-  getSearchByPublishers?: Maybe<Array<Maybe<Search>>>;
 };
 
 
@@ -137,17 +136,9 @@ export type QueryGetSearchArgs = {
   q: Scalars['String'];
 };
 
-
-/** TODO: check which of the four paths are really needed */
-export type QueryGetSearchByPublishersArgs = {
-  q: Scalars['String'];
-  publishers: Array<Scalars['String']>;
-};
-
 export type Search = {
    __typename?: 'Search';
   title: Scalars['String'];
   url: Scalars['String'];
-  publisher: Publisher;
 };
 

@@ -44,26 +44,7 @@ describe('[Scraper.getComicSeries]', () => {
   it('should scrap data from comic-series page', async () => {
     expect.assertions(1)
     return pipe(
-      scraper.getComicSeries(
-        { ...defaultPublisher, basePath: URL },
-        '/comic-series.html',
-      ),
-      map(res => {
-        expect(res).toMatchObject({
-          title: 'Title',
-          collectionUrl: '/collections.html',
-          singleIssuesUrl: '/issues.html',
-        })
-      }),
-    )()
-  })
-})
-
-describe('[Scraper.getComicSeriesCX]', () => {
-  it('should scrap data from comic-series page', async () => {
-    expect.assertions(1)
-    return pipe(
-      scraper.getComicSeriesCX('/cx-comic-series.html'),
+      scraper.getComicSeries('/cx-comic-series.html'),
       map(res => {
         expect(res).toMatchObject({
           title: 'Title',
@@ -79,35 +60,7 @@ describe('[Scraper.getComicBookList]', () => {
   it('should scrap data from comic-book-list page', async () => {
     expect.assertions(1)
     return pipe(
-      scraper.getComicBookList(
-        { ...defaultPublisher, basePath: URL },
-        '/comic-book-list.html',
-      ),
-      map(res => {
-        expect(res).toMatchObject([
-          {
-            title: 'Comic Book #2',
-            url: '/issue-2.html',
-            issue: '2',
-            releaseDate: 1478041200000,
-          },
-          {
-            title: 'Comic Book #1',
-            url: '/issue-1.html',
-            issue: '1',
-            releaseDate: 1473199200000,
-          },
-        ])
-      }),
-    )()
-  })
-})
-
-describe('[Scraper.getComicBookListCX]', () => {
-  it('should scrap data from comic-book-list page', async () => {
-    expect.assertions(1)
-    return pipe(
-      scraper.getComicBookListCX('/cx-comic-book-list.html'),
+      scraper.getComicBookList('/cx-comic-book-list.html'),
       map(res => {
         expect(res).toMatchObject([
           {
@@ -130,13 +83,11 @@ describe('[Scraper.getComicBook]', () => {
   it('should scrap data from comic-book page', async () => {
     expect.assertions(1)
     return pipe(
-      scraper.getComicBook(
-        { ...defaultPublisher, basePath: URL },
-        '/comic-book.html',
-      ),
+      scraper.getComicBook('/cx-comic-book.html'),
       map(res => {
         expect(res).toMatchObject({
-          creators: [{ author: 'Joshua Williamson', artist: 'Mike Henderson' }],
+          releaseDate: 1473199200000,
+          creators: ['DC', 'Joshua Williamson', 'Mike Henderson'],
           imageUrl: '/cover.png',
         })
       }),
@@ -148,31 +99,7 @@ describe('[Scraper.getComicSeriesSearch]', () => {
   it('should scrap data from comic-series-search page', async () => {
     expect.assertions(1)
     return pipe(
-      scraper.getComicSeriesSearch(
-        { ...defaultPublisher, basePath: URL },
-        '/comic-series-search.html',
-      ),
-      map(res => {
-        expect(res).toMatchObject([
-          {
-            title: 'Title 1',
-            url: '/title-1.html',
-          },
-          {
-            title: 'Title 2',
-            url: '/title-2.html',
-          },
-        ])
-      }),
-    )()
-  })
-})
-
-describe('[Scraper.getComicSeriesSearchCX]', () => {
-  it('should scrap data from comic-series-search page', async () => {
-    expect.assertions(1)
-    return pipe(
-      scraper.getComicSeriesSearchCX('title'),
+      scraper.getComicSeriesSearch('title'),
       map(res => {
         expect(res).toMatchObject([
           {

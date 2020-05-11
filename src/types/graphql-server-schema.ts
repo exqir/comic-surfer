@@ -109,7 +109,6 @@ export type Query = {
   getPublishers: Maybe<Array<Publisher>>;
   getPullList: Maybe<PullList>;
   getSearch: Maybe<Array<Maybe<Search>>>;
-  getSearchByPublishers: Maybe<Array<Maybe<Search>>>;
 };
 
 
@@ -142,17 +141,10 @@ export type QueryGetSearchArgs = {
   q: Scalars['String'];
 };
 
-
-export type QueryGetSearchByPublishersArgs = {
-  q: Scalars['String'];
-  publishers: Array<Scalars['String']>;
-};
-
 export type Search = {
    __typename?: 'Search';
   title: Scalars['String'];
   url: Scalars['String'];
-  publisher: Publisher;
 };
 
 
@@ -208,5 +200,4 @@ export type PullListDbObject = {
 export type SearchDbObject = {
   title: string,
   url: string,
-  publisher: PublisherDbObject['_id'],
 };

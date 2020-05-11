@@ -1,4 +1,4 @@
-import { ApolloServer, gql } from 'apollo-server-micro'
+import { ApolloServer } from 'apollo-server-micro'
 import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
 import typeDefs, { resolvers } from '../../schema'
 import {

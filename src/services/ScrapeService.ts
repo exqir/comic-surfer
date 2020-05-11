@@ -2,7 +2,6 @@ import { ScrapeOptions, ScrapeResult } from 'scrape-it'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { left, right } from 'fp-ts/lib/Either'
 import { TaskEither, map } from 'fp-ts/lib/TaskEither'
-import { PublisherDbObject } from 'types/server-schema'
 import {
   comicSeries,
   ComicSeriesScrapeData,
@@ -55,15 +54,11 @@ export class ScrapeService {
   }
 
   getComicSeries(
-    { name, basePath }: PublisherDbObject,
     path: string,
-  ): TaskEither<Error, ComicSeriesScrapeData> {
-    const url = `${basePath}${path}`
-    const config = comicSeries[name]
-
-    return this.scrape(url, config)
-  }
-  getComicSeriesCX(path: string) {
+  ): TaskEither<
+    Error,
+    { title: string; collectionUrl: string; singleIssuesUrl: string }
+  > {
     const url = `${this.baseUrl}${path}`
     const config = comicSeries.cx
 
@@ -86,19 +81,6 @@ export class ScrapeService {
   }
 
   getComicBookList(
-    { name, basePath }: PublisherDbObject,
-    path: string,
-  ): TaskEither<Error, ComicBookListScrapeData['comicBookList']> {
-    const url = `${basePath}${path}`
-    const config = comicBookList[name]
-
-    return pipe(
-      this.scrape<ComicBookListScrapeData>(url, config),
-      map(({ comicBookList }) => comicBookList),
-    )
-  }
-
-  getComicBookListCX(
     path: string,
   ): TaskEither<Error, ComicBookListScrapeData['comicBookList']> {
     const url = `${this.baseUrl}${path}`
@@ -111,29 +93,34 @@ export class ScrapeService {
   }
 
   getComicBook(
-    { name, basePath }: PublisherDbObject,
     path: string,
-  ): TaskEither<Error, ComicBookScrapeData> {
-    const url = `${basePath}${path}`
-    const config = comicBook[name]
-
-    return pipe(this.scrape(url, config))
-  }
-
-  getComicSeriesSearch(
-    { name, basePath }: PublisherDbObject,
-    path: string,
-  ): TaskEither<Error, ComicSeriesSearchScrapeData['searchResults']> {
-    const url = `${basePath}${path}`
-    const config = comicSeriesSearch[name]
+  ): TaskEither<
+    Error,
+    {
+      imageUrl: string
+      releaseDate: number
+      creators: string[]
+    }
+  > {
+    const url = `${this.baseUrl}${path}`
+    const config = comicBook.cx
 
     return pipe(
-      this.scrape<ComicSeriesSearchScrapeData>(url, config),
-      map(({ searchResults }) => searchResults),
+      this.scrape<ComicBookScrapeData>(url, config),
+      map(({ meta, creators, imageUrl }) => ({
+        imageUrl,
+        releaseDate: meta.reduce(
+          (_, { type, date }) => (type.includes('Release Date') ? date : _),
+          0,
+        ),
+        creators: creators.map(({ name }) => name),
+      })),
     )
   }
 
-  getComicSeriesSearchCX(query: string) {
+  getComicSeriesSearch(
+    query: string,
+  ): TaskEither<Error, ComicSeriesSearchScrapeData['searchResults']> {
     const url = [this.baseUrl, this.searchPath, query].join('')
     const config = comicSeriesSearch.cx
 

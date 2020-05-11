@@ -2,6 +2,8 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import * as O from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as RT from 'fp-ts/lib/ReaderTask'
+import * as TE from 'fp-ts/lib/TaskEither'
+import * as T from 'fp-ts/lib/Task'
 import { Maybe } from 'types/server-schema'
 import { Logger } from 'types/app'
 import { MongoError } from 'mongodb'
@@ -10,6 +12,9 @@ export const logError = (logger: Logger) => (err: MongoError) => {
   logger.error(err.message)
   return err
 }
+
+export const foldTEtoNullable = <A, B>() =>
+  TE.fold<A, B, B | null>(() => T.of(null), T.of)
 
 export const foldRTEtoNullable = <A, B, C>() =>
   RTE.fold<A, B, C, C | null>(() => RT.of(null), RT.of)

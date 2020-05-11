@@ -6,40 +6,19 @@ type Selector = string | ScrapeOptionElement | ScrapeOptionList
  */
 interface ComicSeriesConfig extends ScrapeOptions {
   title: Selector
-  collectionUrl: Selector
-  singleIssuesUrl: Selector
+  urls: Selector
 }
 export interface ComicSeriesScrapeData {
   title: string
-  collectionUrl: string
-  singleIssuesUrl: string
   urls: {
     name: string
     url: string
   }[]
 }
 export interface ComicSeriesScraperConfig {
-  [name: string]:
-    | ComicSeriesConfig
-    | {
-        title: Selector
-        urls: Selector
-      }
+  [name: string]: ComicSeriesConfig
 }
 export const comicSeries: ComicSeriesScraperConfig = {
-  image: {
-    title: '.header__title',
-    collectionUrl: {
-      selector: '.section__moreLink',
-      attr: 'href',
-      eq: 0,
-    },
-    singleIssuesUrl: {
-      selector: '.section__moreLink',
-      attr: 'href',
-      eq: 1,
-    },
-  },
   cx: {
     title: '.item-title',
     urls: {
@@ -65,7 +44,6 @@ interface ComicBookListConfig extends ScrapeOptions {
       title: Selector
       url: Selector
       issue: Selector
-      releaseDate: Selector
     }
   }
 }
@@ -74,34 +52,12 @@ export interface ComicBookListScrapeData {
     title: string
     url: string
     issue: string
-    releaseDate: number
   }[]
 }
 export interface ComicBookListScraperConfig {
   [name: string]: ComicBookListConfig
 }
 export const comicBookList: ComicBookListScraperConfig = {
-  image: {
-    comicBookList: {
-      listItem: '.book',
-      data: {
-        title: '.book__headline a',
-        url: {
-          selector: '.book__headline a',
-          attr: 'href',
-        },
-        issue: {
-          selector: '.book__headline a',
-          convert: (title: string) => (title.match(/[0-9]+$/) || [''])[0],
-        },
-        releaseDate: {
-          selector: '.book__text',
-          convert: (dateString: string) =>
-            Date.parse(dateString.replace('Published:', '').trim()),
-        },
-      },
-    },
-  },
   cx: {
     comicBookList: {
       listItem: '.comic-item',
@@ -115,7 +71,6 @@ export const comicBookList: ComicBookListScraperConfig = {
           selector: '.content-subtitle',
           convert: (issue: string) => (issue.match(/[0-9]+/) || [''])[0],
         },
-        releaseDate: {},
       },
     },
   },
@@ -126,19 +81,30 @@ export const comicBookList: ComicBookListScraperConfig = {
  */
 
 interface ComicBookConfig extends ScrapeOptions {
+  meta: {
+    listItem: string
+    data: {
+      type: Selector
+      date: Selector
+    }
+  }
   creators: {
     listItem: string
     data: {
-      author: Selector
-      artist: Selector
+      type: Selector
+      name: Selector
     }
   }
   imageUrl: Selector
 }
 export interface ComicBookScrapeData {
+  meta: {
+    type: string
+    date: number
+  }[]
   creators: {
-    author: string
-    artist: string
+    type: string
+    name: string
   }[]
   imageUrl: string
 }
@@ -146,22 +112,26 @@ export interface ComicBookScraperConfig {
   [name: string]: ComicBookConfig
 }
 export const comicBook: ComicBookScraperConfig = {
-  image: {
-    creators: {
-      listItem: '.header__title + p',
+  cx: {
+    meta: {
+      listItem: '.secondary-credits',
       data: {
-        author: {
-          selector: 'a',
-          eq: 0,
-        },
-        artist: {
-          selector: 'a',
-          eq: 1,
+        type: '.tag-label',
+        date: {
+          selector: '.credit-value',
+          convert: (date: string) => Date.parse(date),
         },
       },
     },
+    creators: {
+      listItem: '.tag',
+      data: {
+        type: '.tag-label',
+        name: '.tag-link',
+      },
+    },
     imageUrl: {
-      selector: '.book-cover img.book',
+      selector: '.cover',
       attr: 'src',
     },
   },
@@ -190,18 +160,6 @@ export interface ComicSeriesSearchScraperConfig {
   [name: string]: ComicSeriesSearchConfig
 }
 export const comicSeriesSearch: ComicSeriesSearchScraperConfig = {
-  image: {
-    searchResults: {
-      listItem: '.news-list li h2',
-      data: {
-        title: 'a',
-        url: {
-          selector: 'a',
-          attr: 'href',
-        },
-      },
-    },
-  },
   cx: {
     searchResults: {
       listItem: '.item-series-link',
