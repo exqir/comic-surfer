@@ -12,7 +12,6 @@
     "apollo-server-micro": "^2.9.7",
     "fp-ts": "^2.5.3",
     "graphql": "^14.5.8",
-    "mongad": "*",
     "mongodb": "^3.5.5",
     "next": "^9.3.2",
     "react": "^16.13.1",
