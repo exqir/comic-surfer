@@ -1,0 +1,12 @@
+{
+  "name": "@comic-surfer/root",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "fs-extra": "^8.1.0",
+    "glob": "^7.1.6",
+    "prettier": "^2.0.5"
+  }
+}

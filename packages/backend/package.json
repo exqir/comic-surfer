@@ -1,5 +1,6 @@
 {
   "name": "@comic-surfer/backend",
+  "version": "0.1.0",
   "scripts": {
     "dev": "next",
     "build": "next build",
@@ -23,8 +24,6 @@
     "@types/mongodb": "^3.3.7",
     "@types/serve-handler": "^6.1.0",
     "apollo-server-testing": "^2.9.7",
-    "fs-extra": "^8.1.0",
-    "glob": "^7.1.6",
     "jest": "^24.9.0",
     "jest-transform-graphql": "^2.1.0",
     "serve-handler": "^6.1.2",

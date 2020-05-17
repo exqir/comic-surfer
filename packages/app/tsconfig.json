@@ -13,15 +13,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "baseUrl": "./src",
-    "paths": {
-      "types/client-schema": ["types/graphql-client-schema.ts"],
-      "types/server-schema": ["types/graphql-server-schema.ts"],
-      "types/app": ["types/types.ts"],
-      "tests/*": ["__tests__/*"],
-      "lib/*": ["lib/*"]
-    }
+    "baseUrl": "./src"
   },
-  "exclude": ["src/types/graphql-schema.ts", "node_modules"],
+  "exclude": ["node_modules"],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }
