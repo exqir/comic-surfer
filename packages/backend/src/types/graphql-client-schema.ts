@@ -14,7 +14,6 @@ export type ComicBook = {
   title: Scalars['String'];
   issue?: Maybe<Scalars['String']>;
   releaseDate?: Maybe<Scalars['Int']>;
-  /** TODO: Check what find returns if no items was found */
   creators?: Maybe<Array<Creator>>;
   series?: Maybe<ComicSeries>;
   publisher?: Maybe<Publisher>;
@@ -88,7 +87,6 @@ export type PullList = {
   list?: Maybe<Array<ComicSeries>>;
 };
 
-/** TODO: check which of the four paths are really needed */
 export type Query = {
    __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
@@ -101,37 +99,31 @@ export type Query = {
 };
 
 
-/** TODO: check which of the four paths are really needed */
 export type QueryGetComicBookArgs = {
   id: Scalars['ID'];
 };
 
 
-/** TODO: check which of the four paths are really needed */
 export type QueryGetComicSeriesArgs = {
   id: Scalars['ID'];
 };
 
 
-/** TODO: check which of the four paths are really needed */
 export type QueryGetPublisherArgs = {
   name: Scalars['String'];
 };
 
 
-/** TODO: check which of the four paths are really needed */
 export type QueryGetPublishersArgs = {
   names: Array<Scalars['String']>;
 };
 
 
-/** TODO: check which of the four paths are really needed */
 export type QueryGetPullListArgs = {
   owner: Scalars['String'];
 };
 
 
-/** TODO: check which of the four paths are really needed */
 export type QueryGetSearchArgs = {
   q: Scalars['String'];
 };

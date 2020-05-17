@@ -4,7 +4,17 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "start": "yarn start",
+    "dev": "yarn dev",
+    "test": "yarn test",
+    "generate-schema": "node scripts/generate-client-schema.js && graphql-codegen --config codegen.yml"
+  },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.13.1",
+    "@graphql-codegen/typescript": "^1.13.1",
+    "@graphql-codegen/typescript-operations": "^1.13.1",
+    "@graphql-codegen/typescript-mongodb": "^1.13.1",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
     "prettier": "^2.0.5"

@@ -22,4 +22,6 @@ const apolloServer = new ApolloServer({
   context: () => ({}),
 })
 
-apolloServer.listen(5000, 'localhost')
+apolloServer
+  .listen(5000, 'localhost')
+  .then(({ url }) => console.log(`GraphQL Server started at: ${url}`))

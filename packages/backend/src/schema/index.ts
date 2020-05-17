@@ -1,3 +1,4 @@
+import 'graphql-import-node'
 import Root from './schema.root.graphql'
 import ComicBook from './comicBook/comicBook.server.graphql'
 import {
