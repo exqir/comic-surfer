@@ -1,5 +1,5 @@
 import { createTestClient } from 'apollo-server-testing'
-import { gql } from 'apollo-server-micro'
+import { gql } from 'apollo-server'
 import {
   constructTestServer,
   createMockReaderWithReturnValue,

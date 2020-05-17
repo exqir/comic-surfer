@@ -1,13 +1,13 @@
-import { ApolloServer } from 'apollo-server-micro'
+import { ApolloServer } from 'apollo-server'
 import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
-import typeDefs, { resolvers } from '../../schema'
+import typeDefs, { resolvers } from './schema'
 import {
   ComicBookAPI,
   ComicSeriesAPI,
   CreatorAPI,
   PublisherAPI,
   PullListAPI,
-} from '../../datasources'
+} from './datasources'
 
 const apolloServer = new ApolloServer({
   typeDefs: [DIRECTIVES, ...typeDefs],
@@ -22,10 +22,4 @@ const apolloServer = new ApolloServer({
   context: () => ({}),
 })
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
-
-export default apolloServer.createHandler({ path: '/api/graphql' })
+apolloServer.listen(5000, 'localhost')

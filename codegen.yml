@@ -2,13 +2,13 @@ overwrite: true
 require:
   - ts-node/register
 generates:
-  src/types/graphql-client-schema.ts:
-    schema: 'src/schema/**/*.@(root|client).graphql'
+  backend/src/types/graphql-client-schema.ts:
+    schema: 'backend/src/schema/**/*.@(root|client).graphql'
     plugins:
       - 'typescript'
       - 'typescript-operations'
-  src/types/graphql-server-schema.ts:
-    schema: 'src/schema/**/*.@(root|server).graphql'
+  backend/src/types/graphql-server-schema.ts:
+    schema: 'backend/src/schema/**/*.@(root|server).graphql'
     plugins:
       - 'typescript'
       - 'typescript-operations'

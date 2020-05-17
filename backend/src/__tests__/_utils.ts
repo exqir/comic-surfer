@@ -3,9 +3,8 @@ import { MongoError, Db } from 'mongodb'
 import { some, map, Option } from 'fp-ts/lib/Option'
 import { right, left, Either, fold } from 'fp-ts/lib/Either'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
-import { NextApiRequest } from 'next'
 import { KeyValueCache } from 'apollo-server-core'
-import { ApolloServer } from 'apollo-server-micro'
+import { ApolloServer } from 'apollo-server'
 import { DataSources, Services } from 'types/app'
 import typeDefs, { resolvers } from '../schema'
 import {
@@ -98,7 +97,7 @@ const mockDataLayer = {
  */
 export const createMockConfig = () => ({
   context: {
-    req: {} as NextApiRequest,
+    // req: {} as NextApiRequest,
     dataLayer: mockDataLayer,
     dataSources: {} as DataSources,
     services: {} as Services,

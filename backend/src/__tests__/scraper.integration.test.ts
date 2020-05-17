@@ -16,9 +16,9 @@ const scraper = new ScrapeService({
 })
 let server: http.Server
 
-beforeAll(done => {
+beforeAll((done) => {
   server = http.createServer((request, response) => {
-    return handler(request, response, { public: 'src/__fixtures__' })
+    return handler(request, response, { public: '__fixtures__' })
   })
 
   server.listen(PORT, done)
@@ -45,7 +45,7 @@ describe('[Scraper.getComicSeries]', () => {
     expect.assertions(1)
     return pipe(
       scraper.getComicSeries('/cx-comic-series.html'),
-      map(res => {
+      map((res) => {
         expect(res).toMatchObject({
           title: 'Title',
           collectionUrl: '/collections.html',
@@ -61,7 +61,7 @@ describe('[Scraper.getComicBookList]', () => {
     expect.assertions(1)
     return pipe(
       scraper.getComicBookList('/cx-comic-book-list.html'),
-      map(res => {
+      map((res) => {
         expect(res).toMatchObject([
           {
             title: 'Comic Book 2',
@@ -84,7 +84,7 @@ describe('[Scraper.getComicBook]', () => {
     expect.assertions(1)
     return pipe(
       scraper.getComicBook('/cx-comic-book.html'),
-      map(res => {
+      map((res) => {
         expect(res).toMatchObject({
           releaseDate: 1473199200000,
           creators: ['DC', 'Joshua Williamson', 'Mike Henderson'],
@@ -100,7 +100,7 @@ describe('[Scraper.getComicSeriesSearch]', () => {
     expect.assertions(1)
     return pipe(
       scraper.getComicSeriesSearch('title'),
-      map(res => {
+      map((res) => {
         expect(res).toMatchObject([
           {
             title: 'Series 1',

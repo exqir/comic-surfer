@@ -1,5 +1,4 @@
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
-import { NextApiRequest } from 'next'
 import { Db, MongoError, FilterQuery, ObjectID } from 'mongodb'
 import { Option } from 'fp-ts/lib/Option'
 import { ComicBookAPI, ComicSeriesAPI } from '../datasources'
@@ -68,7 +67,7 @@ export interface Services {
  * Context provided to all requests handled by the GraphQL server.
  */
 export interface GraphQLContext {
-  req: NextApiRequest
+  // req:
   dataLayer: DataLayer
   dataSources: DataSources
   services: Services

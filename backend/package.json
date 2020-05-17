@@ -1,21 +1,18 @@
 {
-  "name": "comic-surfer",
+  "name": "@comic-surfer/backend",
   "scripts": {
     "dev": "next",
     "build": "next build",
     "start": "next start",
     "test": "jest",
-    "generate-schema": "node scripts/generate-client-schema.js && graphql-codegen --config codegen.yml"
+    "generate-schema": "node ../scripts/generate-client-schema.js && graphql-codegen --config codegen.yml"
   },
   "dependencies": {
     "@graphql-codegen/typescript-mongodb": "^1.13.1",
-    "apollo-server-micro": "^2.9.7",
+    "apollo-server": "^2.13.1",
     "fp-ts": "^2.5.3",
     "graphql": "^14.5.8",
     "mongodb": "^3.5.5",
-    "next": "^9.3.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
     "scrape-it": "^5.2.0"
   },
   "devDependencies": {
@@ -24,14 +21,12 @@
     "@graphql-codegen/typescript-operations": "^1.13.1",
     "@types/jest": "^24.0.20",
     "@types/mongodb": "^3.3.7",
-    "@types/react": "^16.9.11",
     "@types/serve-handler": "^6.1.0",
     "apollo-server-testing": "^2.9.7",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.6",
     "jest": "^24.9.0",
     "jest-transform-graphql": "^2.1.0",
-    "next-plugin-graphql": "0.0.2",
     "serve-handler": "^6.1.2",
     "ts-jest": "^24.1.0",
     "ts-node": "^8.4.1",
