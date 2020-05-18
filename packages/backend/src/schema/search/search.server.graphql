@@ -2,7 +2,7 @@ extend type Query {
   getSearch(q: String!): [Search]
 }
 
-type Search @entity {
-  title: String! @column
-  url: String! @column
+type Search {
+  title: String!
+  url: String!
 }

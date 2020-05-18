@@ -1,0 +1,18 @@
+version: '3'
+services:
+  api:
+    build: .
+    volumes:
+      - ./src:/app/src
+    ports:
+      - '5000:5000'
+    links:
+      - mongo
+  mongo:
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_DATABASE=riddler
+    volumes:
+      - ../../db-seed:/docker-entrypoint-initdb.d
+    ports:
+      - '27017:27017'
