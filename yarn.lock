@@ -4887,7 +4887,7 @@ forwarded@~0.1.2:
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
   integrity sha1-mMI9qxF1ZXuMBXPozszZGw/xjIQ=
 
-fp-ts@^2.5.3:
+fp-ts@^2.1.1, fp-ts@^2.5.3:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-2.6.1.tgz#f2505a4b44a77a344a1e451c667383e42f3728de"
   integrity sha512-ZYOgqEOvUuO59rvItjf1OniEG4k/ClY3rd+AiuRYbl3skY4X/s7Oig25/wvORjycjeOjjr5OO+VcpprLQQOpIQ==
@@ -7087,6 +7087,14 @@ mkdirp@1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
+
+mongad@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/mongad/-/mongad-0.1.0.tgz#f6b210a29d2cdcba417753742f1c11a517e16053"
+  integrity sha512-r6WiAY5YNe57G3fVGrS39FaLYeX7KwcqHZPpBMAJiLdfeY+cFaAL+5AwYVenFaNA4XYXEzdI79hu1EK/XUg3SA==
+  dependencies:
+    "@types/mongodb" "^3.3.7"
+    fp-ts "^2.1.1"
 
 mongodb@^3.5.5:
   version "3.5.7"

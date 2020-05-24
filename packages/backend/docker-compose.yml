@@ -8,6 +8,9 @@ services:
       - '5000:5000'
     links:
       - mongo
+      - fixtures
+    env_file:
+      - development.env
   mongo:
     image: mongo:latest
     environment:
@@ -16,3 +19,11 @@ services:
       - ../../db-seed:/docker-entrypoint-initdb.d
     ports:
       - '27017:27017'
+  fixtures:
+    image: nginx:latest
+    volumes:
+      - ./__fixtures__:/usr/share/nginx/html/
+    ports:
+      - '8080:80'
+    environment:
+      - NGINX_PORT=80

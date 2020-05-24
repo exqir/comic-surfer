@@ -12,6 +12,7 @@
     "fp-ts": "^2.5.3",
     "graphql": "^14.5.8",
     "graphql-import-node": "^0.0.4",
+    "mongad": "^0.1.0",
     "mongodb": "^3.5.5",
     "scrape-it": "^5.2.0"
   },

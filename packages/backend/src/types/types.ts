@@ -1,5 +1,5 @@
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
-import { Db, MongoError, FilterQuery, ObjectID } from 'mongodb'
+import { Db, MongoError, FilterQuery, ObjectID, WithId } from 'mongodb'
 import { Option } from 'fp-ts/lib/Option'
 import { ComicBookAPI, ComicSeriesAPI } from '../datasources'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
@@ -15,37 +15,37 @@ export interface Logger {
 }
 
 export interface DataLayer {
-  findOne: <T>(
+  findOne: <T extends object>(
     collection: string,
     query: FilterQuery<T>,
-  ) => ReaderTaskEither<Db, MongoError, T>
-  findMany: <T>(
+  ) => ReaderTaskEither<Db, MongoError, T | null>
+  findMany: <T extends object>(
     collection: string,
     query: FilterQuery<T>,
   ) => ReaderTaskEither<Db, MongoError, T[]>
-  insertOne: <T>(
+  insertOne: <T extends object>(
     collection: string,
     document: T,
-  ) => ReaderTaskEither<Db, MongoError, T>
-  insertMany: <T>(
+  ) => ReaderTaskEither<Db, MongoError, WithId<T>>
+  insertMany: <T extends object>(
     collection: string,
-    document: T,
-  ) => ReaderTaskEither<Db, MongoError, T[]>
-  updateOne: <T>(
+    documents: T[],
+  ) => ReaderTaskEither<Db, MongoError, WithId<T>[]>
+  updateOne: <T extends object>(
     collection: string,
     query: FilterQuery<T>,
     update: {},
-  ) => ReaderTaskEither<Db, MongoError, T>
-  updateMany: <T>(
+  ) => ReaderTaskEither<Db, MongoError, T | null>
+  updateMany: <T extends object>(
     collection: string,
     query: FilterQuery<T>,
     update: {},
   ) => ReaderTaskEither<Db, MongoError, T[]>
-  deleteOne: <T>(
+  deleteOne: <T extends object>(
     collection: string,
     query: FilterQuery<T>,
-  ) => ReaderTaskEither<Db, MongoError, T>
-  deleteMany: <T>(
+  ) => ReaderTaskEither<Db, MongoError, T | null>
+  deleteMany: <T extends object>(
     collection: string,
     query: FilterQuery<T>,
   ) => ReaderTaskEither<Db, MongoError, T[]>
@@ -61,6 +61,7 @@ export interface DataSources {
 
 export interface Services {
   scrape: ScrapeService
+  logger: Logger
 }
 
 /**
@@ -71,7 +72,6 @@ export interface GraphQLContext {
   dataLayer: DataLayer
   dataSources: DataSources
   services: Services
-  logger: Logger
   db: Option<Db>
 }
 

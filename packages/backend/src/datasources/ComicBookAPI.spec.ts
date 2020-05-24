@@ -37,7 +37,7 @@ describe('[ComicBookAPI.insert]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockComicBook)
@@ -63,7 +63,7 @@ describe('[ComicBookAPI.insert]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockComicBook)),
+      RTE.map((d) => expect(d).toMatchObject(mockComicBook)),
       runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockComicBook)
@@ -81,7 +81,7 @@ describe('[ComicBookAPI.getById]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockComicBook._id })
@@ -103,7 +103,7 @@ describe('[ComicBookAPI.getById]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockComicBook)),
+      RTE.map((d) => expect(d).toMatchObject(mockComicBook)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockComicBook._id })
@@ -121,7 +121,7 @@ describe('[ComicBookAPI.getByIds]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
@@ -145,7 +145,7 @@ describe('[ComicBookAPI.getByIds]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockComicBook)),
+      RTE.map((d) => expect(d).toMatchObject(mockComicBook)),
       runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
@@ -165,7 +165,7 @@ describe('[ComicBookAPI.updateReleaseDate]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
@@ -198,7 +198,7 @@ describe('[ComicBookAPI.updateReleaseDate]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d.releaseDate).toEqual(newDate)),
+      RTE.map((d) => expect(d!.releaseDate).toEqual(newDate)),
       runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(

@@ -22,7 +22,7 @@ export class MongoDataSource<T extends { _id: ObjectID }> extends DataSource<
   }
 
   protected get logError() {
-    const { logger } = this.context!
+    const { logger } = this.context?.services!
     return mapLeft(logError(logger))
   }
 
