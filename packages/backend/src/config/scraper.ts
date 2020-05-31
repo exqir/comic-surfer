@@ -43,7 +43,7 @@ interface ComicBookListConfig extends ScrapeOptions {
     data: {
       title: Selector
       url: Selector
-      issue: Selector
+      issueNo: Selector
     }
   }
 }
@@ -51,7 +51,7 @@ export interface ComicBookListScrapeData {
   comicBookList: {
     title: string
     url: string
-    issue: string
+    issueNo: string
   }[]
 }
 export interface ComicBookListScraperConfig {
@@ -67,7 +67,7 @@ export const comicBookList: ComicBookListScraperConfig = {
           selector: '.content-details',
           attr: 'href',
         },
-        issue: {
+        issueNo: {
           selector: '.content-subtitle',
           convert: (issue: string) => (issue.match(/[0-9]+/) || [''])[0],
         },
@@ -95,7 +95,7 @@ interface ComicBookConfig extends ScrapeOptions {
       name: Selector
     }
   }
-  imageUrl: Selector
+  coverImgUrl: Selector
 }
 export interface ComicBookScrapeData {
   meta: {
@@ -106,7 +106,7 @@ export interface ComicBookScrapeData {
     type: string
     name: string
   }[]
-  imageUrl: string
+  coverImgUrl: string
 }
 export interface ComicBookScraperConfig {
   [name: string]: ComicBookConfig
@@ -119,7 +119,10 @@ export const comicBook: ComicBookScraperConfig = {
         type: '.tag-label',
         date: {
           selector: '.credit-value',
-          convert: (date: string) => Date.parse(date),
+          // TODO: new Date() seems to be a day off.
+          // new Date('November 2, 2016').toISOString()
+          // "2016-11-01T23:00:00.000Z"
+          convert: (date: string) => new Date(date),
         },
       },
     },
@@ -130,7 +133,7 @@ export const comicBook: ComicBookScraperConfig = {
         name: '.tag-link',
       },
     },
-    imageUrl: {
+    coverImgUrl: {
       selector: '.cover',
       attr: 'src',
     },

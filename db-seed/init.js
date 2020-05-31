@@ -30,10 +30,10 @@ const comicSeries = db.comicSeries.findOne({ title: 'Descender' })
 
 db.comicBook.insertOne({
   title: 'Descender #1',
-  issue: '1',
-  releaseDate: 1473199200000,
+  issueNo: '1',
+  releaseDate: new Date('2020-01-15'),
   creators: [],
-  coverUrl: '/descender/1/cover.jpg',
+  coverImgUrl: '/descender/1/cover.jpg',
   url: '/descender/1',
   publisher: publisher._id,
 })
@@ -47,7 +47,7 @@ db.comicSeries.updateOne(
 // prettier-ignore
 db.comicBook.updateOne(
   { _id: comicBook._id },
-  { $set: { series: comicSeries._id, }, $push: { creators: creator._id } }
+  { $set: { comicSeries: comicSeries._id, }, $push: { creators: creator._id } }
 )
 // prettier-ignore
 db.publisher.updateOne(

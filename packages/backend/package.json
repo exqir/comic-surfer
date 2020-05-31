@@ -12,11 +12,13 @@
     "fp-ts": "^2.5.3",
     "graphql": "^14.5.8",
     "graphql-import-node": "^0.0.4",
+    "graphql-iso-date": "^3.6.1",
     "mongad": "^0.1.0",
     "mongodb": "^3.5.5",
     "scrape-it": "^5.2.0"
   },
   "devDependencies": {
+    "@types/graphql-iso-date": "^3.3.3",
     "@types/jest": "^24.0.20",
     "@types/mongodb": "^3.3.7",
     "@types/serve-handler": "^6.1.0",

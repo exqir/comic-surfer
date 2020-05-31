@@ -1,16 +1,15 @@
 extend type Query {
-  getComicBook(id: ID!): ComicBook
+  comicBook(id: ID!): ComicBook
 }
 
 type ComicBook @entity {
   _id: ID! @id
   title: String! @column
-  issue: String @column
-  releaseDate: Int @column
-  # TODO: Check what find returns if no items was found
-  creators: [Creator!] @link
-  series: ComicSeries @link
+  issueNo: String @column
+  releaseDate: Date @column
+  creators: [Creator]! @link
+  comicSeries: ComicSeries @link
   publisher: Publisher @link
-  coverUrl: String @column
+  coverImgUrl: String @column
   url: String! @column
 }

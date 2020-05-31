@@ -2,6 +2,7 @@ import { ScrapeService } from './ScrapeService'
 import { ObjectID } from 'mongodb'
 import { isLeft, mapLeft, isRight, map } from 'fp-ts/lib/Either'
 import { PublisherDbObject } from 'types/server-schema'
+import { createMockConfig } from 'tests/_utils'
 import {
   comicSeries,
   comicBookList,
@@ -14,6 +15,7 @@ const baseUrl = '/base'
 const searchPath = '/search?='
 const scraper = new ScrapeService({
   scraper: mockScraper,
+  logger: createMockConfig().context.services.logger,
   baseUrl,
   searchPath,
 })
@@ -41,7 +43,7 @@ describe('ScrapeService', () => {
     expect(mockScraper).toHaveBeenCalledWith('/base/series', comicSeries.cx)
     expect(isLeft(result)).toBe(true)
     expect(() =>
-      mapLeft(e => {
+      mapLeft((e) => {
         throw e
       })(result),
     ).toThrow(/Failed/)
@@ -59,7 +61,7 @@ describe('ScrapeService', () => {
     expect(mockScraper).toHaveBeenCalledWith('/base/series', comicSeries.cx)
     expect(isLeft(result)).toBe(true)
     expect(() =>
-      mapLeft(e => {
+      mapLeft((e) => {
         throw e
       })(result),
     ).toThrow(/Failed/)
@@ -94,7 +96,7 @@ describe('ScrapeService', () => {
     expect.assertions(3)
     expect(mockScraper).toHaveBeenCalledWith('/base/series', comicSeries.cx)
     expect(isRight(result)).toBe(true)
-    map(d =>
+    map((d) =>
       expect(d).toMatchObject({
         title: mockResult.title,
         collectionUrl: mockResult.urls[2].url,
@@ -136,7 +138,7 @@ describe('[ScrapeService.getComicSeries]', () => {
       `${baseUrl}/series`,
       comicSeries.cx,
     )
-    map(d =>
+    map((d) =>
       expect(d).toMatchObject({
         title: mockResult.title,
         collectionUrl: mockResult.urls[2].url,
@@ -153,7 +155,7 @@ describe('[ScrapeService.getComicBookList]', () => {
         {
           title: 'Title',
           url: '/title-1',
-          issue: '1',
+          issueNo: '1',
         },
       ],
     }
@@ -170,7 +172,7 @@ describe('[ScrapeService.getComicBookList]', () => {
       `${baseUrl}/book-list`,
       comicBookList.cx,
     )
-    map(d => expect(d).toMatchObject(mockResult.comicBookList))(result)
+    map((d) => expect(d).toMatchObject(mockResult.comicBookList))(result)
   })
 })
 
@@ -179,7 +181,7 @@ describe('[ScrapeService.getComicBook]', () => {
     const mockResult = {
       meta: [
         { type: 'Page Count', date: 32 },
-        { type: 'Release Date', date: 1576244967959 },
+        { type: 'Release Date', date: new Date('2020-05-30') },
       ],
       creators: [
         {
@@ -191,7 +193,7 @@ describe('[ScrapeService.getComicBook]', () => {
           artist: 'John Rambo',
         },
       ],
-      imageUrl: '/image.jpg',
+      coverImgUrl: '/image.jpg',
     }
     mockScraper.mockResolvedValueOnce({
       response: { statusCode: 200 },
@@ -206,11 +208,11 @@ describe('[ScrapeService.getComicBook]', () => {
       `${baseUrl}/comic-book`,
       comicBook.cx,
     )
-    map(d =>
+    map((d) =>
       expect(d).toMatchObject({
         releaseDate: mockResult.meta[1].date,
         creators: [mockResult.creators[0].name, mockResult.creators[1].name],
-        imageUrl: mockResult.imageUrl,
+        coverImgUrl: mockResult.coverImgUrl,
       }),
     )(result)
   })
@@ -239,6 +241,6 @@ describe('[ScrapeService.getComicSeriesSearch]', () => {
       [baseUrl, searchPath, 'title'].join(''),
       comicSeriesSearch.cx,
     )
-    map(d => expect(d).toMatchObject(mockResult.searchResults))(result)
+    map((d) => expect(d).toMatchObject(mockResult.searchResults))(result)
   })
 })

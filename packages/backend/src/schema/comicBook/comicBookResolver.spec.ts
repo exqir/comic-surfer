@@ -19,12 +19,12 @@ const defaultComicBook: ComicBookDbObject = {
   _id: new ObjectID(),
   title: 'Comic',
   url: '/path',
-  issue: null,
-  creators: null,
-  coverUrl: null,
+  issueNo: null,
+  creators: [],
+  coverImgUrl: null,
   publisher: null,
   releaseDate: null,
-  series: null,
+  comicSeries: null,
 }
 
 describe('[Query.getComicBook]', () => {
@@ -40,7 +40,7 @@ describe('[Query.getComicBook]', () => {
       createMockReaderWithReturnValue({}, true),
     )
 
-    const res = await ComicBookQuery.getComicBook(
+    const res = await ComicBookQuery.comicBook(
       {},
       { id: mockComicBook._id },
       context,
@@ -58,7 +58,7 @@ describe('[Query.getComicBook]', () => {
       createMockReaderWithReturnValue<ComicBookDbObject>(mockComicBook),
     )
 
-    const res = await ComicBookQuery.getComicBook(
+    const res = await ComicBookQuery.comicBook(
       {},
       { id: mockComicBook._id },
       context,
@@ -199,8 +199,8 @@ describe('[ComicBook.series]', () => {
       createMockReaderWithReturnValue({}, true),
     )
 
-    const res = await ComicBookResolver.ComicBook.series(
-      { ...defaultComicBook, series: mockComicSeries._id },
+    const res = await ComicBookResolver.ComicBook.comicSeries(
+      { ...defaultComicBook, comicSeries: mockComicSeries._id },
       {},
       context,
       {} as GraphQLResolveInfo,
@@ -217,8 +217,8 @@ describe('[ComicBook.series]', () => {
       createMockReaderWithReturnValue<ComicSeriesDbObject>(mockComicSeries),
     )
 
-    const res = await ComicBookResolver.ComicBook.series(
-      { ...defaultComicBook, series: mockComicSeries._id },
+    const res = await ComicBookResolver.ComicBook.comicSeries(
+      { ...defaultComicBook, comicSeries: mockComicSeries._id },
       {},
       context,
       {} as GraphQLResolveInfo,

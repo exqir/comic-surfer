@@ -14,12 +14,12 @@ const defaultComicBook: ComicBookDbObject = {
   _id: new ObjectID(),
   title: 'Comic',
   url: '/path',
-  issue: null,
-  creators: null,
-  coverUrl: null,
+  issueNo: null,
+  creators: [],
+  coverImgUrl: null,
   publisher: null,
   releaseDate: null,
-  series: null,
+  comicSeries: null,
 }
 
 const ds = new ComicBookAPI()

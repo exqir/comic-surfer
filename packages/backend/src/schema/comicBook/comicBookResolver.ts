@@ -2,30 +2,35 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import { toNullable, map } from 'fp-ts/lib/Option'
 import { Resolver } from 'types/app'
 import {
-  QueryGetComicBookArgs,
+  QueryComicBookArgs,
   ComicBookDbObject,
   CreatorDbObject,
   PublisherDbObject,
   ComicSeriesDbObject,
 } from 'types/server-schema'
-import { runRTEtoNullable, mapOtoRTEnullable, chainMaybeToNullable } from 'lib'
+import {
+  runRTEtoNullable,
+  mapOtoRTEnullable,
+  chainMaybeToNullable,
+  filterMaybe,
+} from 'lib'
 
 interface ComicBookQuery {
   // TODO: This actually returns a ComicBook but this is not what the function returns
   // but what is returned once all field resolvers are done
-  getComicBook: Resolver<ComicBookDbObject, QueryGetComicBookArgs>
+  comicBook: Resolver<ComicBookDbObject, QueryComicBookArgs>
 }
 
 interface ComicBookResolver {
   ComicBook: {
     creators: Resolver<CreatorDbObject[], {}, ComicBookDbObject>
     publisher: Resolver<PublisherDbObject, {}, ComicBookDbObject>
-    series: Resolver<ComicSeriesDbObject, {}, ComicBookDbObject>
+    comicSeries: Resolver<ComicSeriesDbObject, {}, ComicBookDbObject>
   }
 }
 
 export const ComicBookQuery: ComicBookQuery = {
-  getComicBook: (_, { id }, { dataSources, db }) =>
+  comicBook: (_, { id }, { dataSources, db }) =>
     pipe(
       db,
       map(runRTEtoNullable(dataSources.comicBook.getById(id))),
@@ -36,18 +41,21 @@ export const ComicBookQuery: ComicBookQuery = {
 export const ComicBookResolver: ComicBookResolver = {
   ComicBook: {
     creators: ({ creators }, _, { dataSources, db }) =>
-      chainMaybeToNullable(
-        creators,
-        mapOtoRTEnullable(db, dataSources.creator.getByIds),
+      pipe(
+        db,
+        map(
+          runRTEtoNullable(dataSources.creator.getByIds(filterMaybe(creators))),
+        ),
+        toNullable,
       ),
     publisher: ({ publisher }, _, { dataSources, db }) =>
       chainMaybeToNullable(
         publisher,
         mapOtoRTEnullable(db, dataSources.publisher.getById),
       ),
-    series: ({ series }, _, { dataSources, db }) =>
+    comicSeries: ({ comicSeries }, _, { dataSources, db }) =>
       chainMaybeToNullable(
-        series,
+        comicSeries,
         mapOtoRTEnullable(db, dataSources.comicSeries.getById),
       ),
   },

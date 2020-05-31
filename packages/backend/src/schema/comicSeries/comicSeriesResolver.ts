@@ -2,7 +2,7 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import { toNullable, map } from 'fp-ts/lib/Option'
 import { Resolver } from 'types/app'
 import {
-  QueryGetComicBookArgs,
+  QueryGetComicSeriesArgs,
   ComicBookDbObject,
   PublisherDbObject,
   ComicSeriesDbObject,
@@ -12,7 +12,7 @@ import { runRTEtoNullable, chainMaybeToNullable, mapOtoRTEnullable } from 'lib'
 interface ComicSeriesQuery {
   // TODO: This actually returns a ComicSeries but this is not what the function returns
   // but what is returned once all field resolvers are done
-  getComicSeries: Resolver<ComicSeriesDbObject, QueryGetComicBookArgs>
+  getComicSeries: Resolver<ComicSeriesDbObject, QueryGetComicSeriesArgs>
 }
 
 interface ComicSeriesResolver {

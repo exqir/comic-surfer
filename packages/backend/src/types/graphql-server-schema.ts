@@ -25,12 +25,12 @@ export type ComicBook = {
    __typename?: 'ComicBook';
   _id: Scalars['ID'];
   title: Scalars['String'];
-  issue: Maybe<Scalars['String']>;
+  issueNo: Maybe<Scalars['String']>;
   releaseDate: Maybe<Scalars['Int']>;
-  creators: Maybe<Array<Creator>>;
-  series: Maybe<ComicSeries>;
+  creators: Array<Maybe<Creator>>;
+  comicSeries: Maybe<ComicSeries>;
   publisher: Maybe<Publisher>;
-  coverUrl: Maybe<Scalars['String']>;
+  coverImgUrl: Maybe<Scalars['String']>;
   url: Scalars['String'];
 };
 
@@ -103,7 +103,7 @@ export type PullList = {
 export type Query = {
    __typename?: 'Query';
   _empty: Maybe<Scalars['String']>;
-  getComicBook: Maybe<ComicBook>;
+  comicBook: Maybe<ComicBook>;
   getComicSeries: Maybe<ComicSeries>;
   getPublisher: Maybe<Publisher>;
   getPublishers: Maybe<Array<Publisher>>;
@@ -112,7 +112,7 @@ export type Query = {
 };
 
 
-export type QueryGetComicBookArgs = {
+export type QueryComicBookArgs = {
   id: Scalars['ID'];
 };
 
@@ -152,12 +152,12 @@ import { ObjectID } from 'mongodb';
 export type ComicBookDbObject = {
   _id: ObjectID,
   title: string,
-  issue: Maybe<string>,
+  issueNo: Maybe<string>,
   releaseDate: Maybe<number>,
-  creators: Maybe<Array<CreatorDbObject['_id']>>,
-  series: Maybe<ComicSeriesDbObject['_id']>,
+  creators: Array<Maybe<CreatorDbObject['_id']>>,
+  comicSeries: Maybe<ComicSeriesDbObject['_id']>,
   publisher: Maybe<PublisherDbObject['_id']>,
-  coverUrl: Maybe<string>,
+  coverImgUrl: Maybe<string>,
   url: string,
 };
 
@@ -195,9 +195,4 @@ export type PullListDbObject = {
   _id: ObjectID,
   owner: string,
   list: Maybe<Array<ComicSeriesDbObject['_id']>>,
-};
-
-export type SearchDbObject = {
-  title: string,
-  url: string,
 };

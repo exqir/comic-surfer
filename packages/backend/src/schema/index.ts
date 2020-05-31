@@ -1,4 +1,5 @@
 import 'graphql-import-node'
+import { GraphQLDate } from 'graphql-iso-date'
 import Root from './schema.root.graphql'
 import ComicBook from './comicBook/comicBook.server.graphql'
 import {
@@ -33,6 +34,7 @@ export default [
 ]
 
 export const resolvers = {
+  Date: GraphQLDate,
   Query: {
     ...ComicBookQuery,
     ...ComicSeriesQuery,

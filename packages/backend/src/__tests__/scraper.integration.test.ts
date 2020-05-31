@@ -6,11 +6,13 @@ import { ObjectID } from 'mongodb'
 import scrapeIt from 'scrape-it'
 import { PublisherDbObject } from 'types/server-schema'
 import { ScrapeService } from '../services/ScrapeService'
+import { createMockConfig } from 'tests/_utils'
 
 const PORT = 9000
 const URL = `http://localhost:${PORT}`
 const scraper = new ScrapeService({
   scraper: scrapeIt,
+  logger: createMockConfig().context.services.logger,
   baseUrl: URL,
   searchPath: '/cx-comic-series-search.html?search=',
 })
@@ -66,12 +68,12 @@ describe('[Scraper.getComicBookList]', () => {
           {
             title: 'Comic Book 2',
             url: '/issue-2.html',
-            issue: '2',
+            issueNo: '2',
           },
           {
             title: 'Comic Book 1',
             url: '/issue-1.html',
-            issue: '1',
+            issueNo: '1',
           },
         ])
       }),
@@ -86,9 +88,9 @@ describe('[Scraper.getComicBook]', () => {
       scraper.getComicBook('/cx-comic-book.html'),
       map((res) => {
         expect(res).toMatchObject({
-          releaseDate: 1473199200000,
+          releaseDate: new Date('September 7, 2016'),
           creators: ['DC', 'Joshua Williamson', 'Mike Henderson'],
-          imageUrl: '/cover.png',
+          coverImgUrl: '/cover.png',
         })
       }),
     )()

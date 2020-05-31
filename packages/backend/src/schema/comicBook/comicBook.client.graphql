@@ -1,16 +1,16 @@
 extend type Query {
-  getComicBook(id: ID!): ComicBook
+  comicBook(id: ID!): ComicBook
 }
 
 type ComicBook {
   _id: ID!
   title: String!
-  issue: String
+  issueNo: String
   releaseDate: Int
   # TODO: Check what find returns if no items was found
-  creators: [Creator!]
-  series: ComicSeries
+  creators: [Creator]!
+  comicSeries: ComicSeries
   publisher: Publisher
-  coverUrl: String
+  coverImgUrl: String
   url: String!
 }

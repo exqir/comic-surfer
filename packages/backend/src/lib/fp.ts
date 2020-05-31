@@ -39,3 +39,6 @@ export const mapOtoRTEnullable = <T, L, R, V>(
   o: O.Option<T>,
   fn: (v: V) => RTE.ReaderTaskEither<T, L, R>,
 ) => (v: V) => mapOption(o, runRTEtoNullable(fn(v)))
+
+export const filterMaybe = <T>(m: Maybe<T>[]): T[] =>
+  m.filter((mm): mm is T => mm !== null)

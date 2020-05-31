@@ -12,12 +12,12 @@ export type ComicBook = {
    __typename?: 'ComicBook';
   _id: Scalars['ID'];
   title: Scalars['String'];
-  issue?: Maybe<Scalars['String']>;
+  issueNo?: Maybe<Scalars['String']>;
   releaseDate?: Maybe<Scalars['Int']>;
-  creators?: Maybe<Array<Creator>>;
-  series?: Maybe<ComicSeries>;
+  creators: Array<Maybe<Creator>>;
+  comicSeries?: Maybe<ComicSeries>;
   publisher?: Maybe<Publisher>;
-  coverUrl?: Maybe<Scalars['String']>;
+  coverImgUrl?: Maybe<Scalars['String']>;
   url: Scalars['String'];
 };
 
@@ -90,7 +90,7 @@ export type PullList = {
 export type Query = {
    __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
-  getComicBook?: Maybe<ComicBook>;
+  comicBook?: Maybe<ComicBook>;
   getComicSeries?: Maybe<ComicSeries>;
   getPublisher?: Maybe<Publisher>;
   getPublishers?: Maybe<Array<Publisher>>;
@@ -99,7 +99,7 @@ export type Query = {
 };
 
 
-export type QueryGetComicBookArgs = {
+export type QueryComicBookArgs = {
   id: Scalars['ID'];
 };
 

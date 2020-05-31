@@ -86,7 +86,7 @@ export class ScrapeService {
     )
   }
 
-  public getComicBookLis = (
+  public getComicBookList = (
     path: string,
   ): TaskEither<Error, ComicBookListScrapeData['comicBookList']> => {
     const url = `${this.baseUrl}${path}`
@@ -103,7 +103,7 @@ export class ScrapeService {
   ): TaskEither<
     Error,
     {
-      imageUrl: string
+      coverImgUrl: string
       releaseDate: number
       creators: string[]
     }
@@ -113,8 +113,8 @@ export class ScrapeService {
 
     return pipe(
       this.scrape<ComicBookScrapeData>(url, config),
-      map(({ meta, creators, imageUrl }) => ({
-        imageUrl,
+      map(({ meta, creators, coverImgUrl }) => ({
+        coverImgUrl,
         releaseDate: meta.reduce(
           (_, { type, date }) => (type.includes('Release Date') ? date : _),
           0,
