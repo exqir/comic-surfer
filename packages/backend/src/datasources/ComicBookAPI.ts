@@ -1,5 +1,5 @@
 import { ComicBookDbObject } from 'types/server-schema'
-import { MongoDataSource } from './MongoDataSource'
+import { MongoDataSource, toObjectId } from './MongoDataSource'
 import { ObjectID } from 'mongodb'
 import { pipe } from 'fp-ts/lib/pipeable'
 
@@ -9,12 +9,12 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
     super(comicBookCollection)
   }
 
-  public updateReleaseDate(id: ObjectID, newDate: number) {
+  public updateReleaseDate = (id: ObjectID, newDate: number) => {
     const { updateOne } = this.dataLayer!
     return pipe(
       updateOne<ComicBookDbObject>(
         this.collection,
-        { _id: id },
+        { _id: toObjectId(id) },
         { $set: { releaseDate: newDate } },
       ),
       this.logError,

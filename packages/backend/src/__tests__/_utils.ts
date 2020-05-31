@@ -14,6 +14,7 @@ import {
   PublisherAPI,
   PullListAPI,
 } from '../datasources'
+import { ScrapeService } from 'services/ScrapeService'
 
 /**
  * Creates a `ReaderTaskEither<Db, MongoError, T>` that returns `value` as right
@@ -92,6 +93,14 @@ const mockDataLayer = {
   deleteMany: jest.fn(),
 }
 
+const mockScraper = ({
+  scrape: jest.fn(),
+  getComicSeries: jest.fn(),
+  getComicBookList: jest.fn(),
+  getComicBook: jest.fn(),
+  getComicSeriesSearch: jest.fn(),
+} as any) as ScrapeService
+
 /**
  * Creates a mock GraphQL config object.
  */
@@ -100,8 +109,10 @@ export const createMockConfig = () => ({
     // req: {} as NextApiRequest,
     dataLayer: mockDataLayer,
     dataSources: {} as DataSources,
-    services: {} as Services,
-    logger: mockLogger,
+    services: {
+      scrape: mockScraper,
+      logger: mockLogger,
+    } as Services,
     db: some({} as Db),
   },
   cache: {} as KeyValueCache,

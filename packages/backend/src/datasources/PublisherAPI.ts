@@ -1,5 +1,5 @@
 import { PublisherDbObject } from 'types/server-schema'
-import { MongoDataSource } from './MongoDataSource'
+import { MongoDataSource, toObjectId } from './MongoDataSource'
 import { ObjectID } from 'mongodb'
 import { pipe } from 'fp-ts/lib/pipeable'
 
@@ -9,7 +9,7 @@ export class PublisherAPI extends MongoDataSource<PublisherDbObject> {
     super(publisherCollection)
   }
 
-  public getByName(name: string) {
+  public getByName = (name: string) => {
     const { findOne } = this.dataLayer!
     return pipe(
       findOne<PublisherDbObject>(this.collection, { name }),
@@ -17,7 +17,7 @@ export class PublisherAPI extends MongoDataSource<PublisherDbObject> {
     )
   }
 
-  public getByNames(names: string[]) {
+  public getByNames = (names: string[]) => {
     const { findMany } = this.dataLayer!
     return pipe(
       findMany<PublisherDbObject>(this.collection, { name: { $in: names } }),
@@ -25,13 +25,13 @@ export class PublisherAPI extends MongoDataSource<PublisherDbObject> {
     )
   }
 
-  public addComicSeries(id: ObjectID, comicSeriesId: ObjectID) {
+  public addComicSeries = (id: ObjectID, comicSeriesId: ObjectID) => {
     const { updateOne } = this.dataLayer!
     return pipe(
       updateOne<PublisherDbObject>(
         this.collection,
-        { _id: id },
-        { $push: { series: comicSeriesId } },
+        { _id: toObjectId(id) },
+        { $push: { series: toObjectId(comicSeriesId) } },
       ),
       this.logError,
     )
