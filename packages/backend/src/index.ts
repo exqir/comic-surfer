@@ -26,6 +26,7 @@ const baseUrl = process.env.SCRAP_BASE_URL || 'https://m.comixology.eu'
 const searchPath = process.env.SCRAP_SEARCH_PATH || '/search/series?search='
 
 let db: Option<Db>
+const logger = createLogger('Comic-Surfer', 'de-DE')
 
 const connectToDb = pipe(
   mongad.connect(dbConnectionString, { useUnifiedTopology: true }),
@@ -58,10 +59,11 @@ const apolloServer = new ApolloServer({
     services: {
       scrape: new ScrapeService({
         scraper: scrapeIt,
+        logger,
         baseUrl,
         searchPath,
       }),
-      logger: createLogger('Comic-Surfer', 'de-DE'),
+      logger,
     },
   }),
 })

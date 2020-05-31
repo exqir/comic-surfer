@@ -1,3 +1,22 @@
+db.creator.insertOne({
+  firstname: 'Jeff',
+  lastname: 'Lemire',
+  series: [],
+})
+const creator = db.creator.findOne({ firstname: 'Jeff' })
+
+db.publisher.insertOne({
+  name: 'Image',
+  iconUrl: '/image/icon.jpg',
+  url: '/image',
+  basePath: '/',
+  seriesPath: '/',
+  searchPath: '/',
+  searchPathSeries: '/',
+  series: [],
+})
+const publisher = db.publisher.findOne({ name: 'Image' })
+
 db.comicSeries.insertOne({
   title: 'Descender',
   url: '/descender',
@@ -5,6 +24,7 @@ db.comicSeries.insertOne({
   issuesUrl: '/descender/issues',
   collections: [],
   issues: [],
+  publisher: publisher._id,
 })
 const comicSeries = db.comicSeries.findOne({ title: 'Descender' })
 
@@ -13,11 +33,12 @@ db.comicBook.insertOne({
   issue: '1',
   releaseDate: 1473199200000,
   creators: [],
-  series: [],
   coverUrl: '/descender/1/cover.jpg',
   url: '/descender/1',
+  publisher: publisher._id,
 })
 const comicBook = db.comicBook.findOne({ title: 'Descender #1' })
+
 // prettier-ignore
 db.comicSeries.updateOne(
   { _id: comicSeries._id },
@@ -26,6 +47,11 @@ db.comicSeries.updateOne(
 // prettier-ignore
 db.comicBook.updateOne(
   { _id: comicBook._id },
-  { $set: { series: comicSeries._id } }
+  { $set: { series: comicSeries._id, }, $push: { creators: creator._id } }
+)
+// prettier-ignore
+db.publisher.updateOne(
+  { _id: publisher._id },
+  { $push: { series: comicSeries._id } }
 )
 db.pullList.insertOne({ owner: 'John Rambo', list: [comicSeries._id] })

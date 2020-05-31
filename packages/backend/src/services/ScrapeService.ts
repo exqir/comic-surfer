@@ -1,7 +1,7 @@
 import { ScrapeOptions, ScrapeResult } from 'scrape-it'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { left, right } from 'fp-ts/lib/Either'
-import { TaskEither, map } from 'fp-ts/lib/TaskEither'
+import { TaskEither, map, mapLeft } from 'fp-ts/lib/TaskEither'
 import {
   comicSeries,
   ComicSeriesScrapeData,
@@ -12,6 +12,7 @@ import {
   comicSeriesSearch,
   ComicSeriesSearchScrapeData,
 } from '../config/scraper'
+import { Logger } from 'types/app'
 
 type Scraper = <T>(
   url: string | object,
@@ -20,19 +21,23 @@ type Scraper = <T>(
 
 type ScrapeServiceOptions = {
   scraper: Scraper
+  logger: Logger
   baseUrl: string
   searchPath: string
 }
 export class ScrapeService {
   scraper: Scraper
+  logger: Logger
   baseUrl: string
   searchPath: string
   constructor({
     scraper,
+    logger,
     baseUrl = '',
     searchPath = '',
   }: ScrapeServiceOptions) {
     this.scraper = scraper
+    this.logger = logger
     this.baseUrl = baseUrl
     this.searchPath = searchPath
   }
@@ -48,17 +53,18 @@ export class ScrapeService {
         }
         return right<Error, T>(data)
       } catch (e) {
+        this.logger.error(e)
         return left<Error, T>(e)
       }
     }
   }
 
-  getComicSeries(
+  public getComicSeries = (
     path: string,
   ): TaskEither<
     Error,
     { title: string; collectionUrl: string; singleIssuesUrl: string }
-  > {
+  > => {
     const url = `${this.baseUrl}${path}`
     const config = comicSeries.cx
 
@@ -80,9 +86,9 @@ export class ScrapeService {
     )
   }
 
-  getComicBookList(
+  public getComicBookLis = (
     path: string,
-  ): TaskEither<Error, ComicBookListScrapeData['comicBookList']> {
+  ): TaskEither<Error, ComicBookListScrapeData['comicBookList']> => {
     const url = `${this.baseUrl}${path}`
     const config = comicBookList.cx
 
@@ -92,7 +98,7 @@ export class ScrapeService {
     )
   }
 
-  getComicBook(
+  public getComicBook = (
     path: string,
   ): TaskEither<
     Error,
@@ -101,7 +107,7 @@ export class ScrapeService {
       releaseDate: number
       creators: string[]
     }
-  > {
+  > => {
     const url = `${this.baseUrl}${path}`
     const config = comicBook.cx
 
@@ -118,9 +124,9 @@ export class ScrapeService {
     )
   }
 
-  getComicSeriesSearch(
+  public getComicSeriesSearch = (
     query: string,
-  ): TaskEither<Error, ComicSeriesSearchScrapeData['searchResults']> {
+  ): TaskEither<Error, ComicSeriesSearchScrapeData['searchResults']> => {
     const url = [this.baseUrl, this.searchPath, query].join('')
     const config = comicSeriesSearch.cx
 
