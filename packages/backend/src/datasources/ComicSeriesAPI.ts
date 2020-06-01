@@ -17,7 +17,7 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
       updateOne<ComicSeriesDbObject>(
         this.collection,
         { _id: toObjectId(id) },
-        { $push: { issues: toObjectId(comicBookId) } },
+        { $push: { singleIssues: toObjectId(comicBookId) } },
       ),
       this.logError,
     )

@@ -9,7 +9,7 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
     super(comicBookCollection)
   }
 
-  public updateReleaseDate = (id: ObjectID, newDate: number) => {
+  public updateReleaseDate = (id: ObjectID, newDate: Date) => {
     const { updateOne } = this.dataLayer!
     return pipe(
       updateOne<ComicBookDbObject>(

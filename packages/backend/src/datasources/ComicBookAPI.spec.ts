@@ -160,7 +160,7 @@ describe('[ComicBookAPI.updateReleaseDate]', () => {
     const { updateOne } = config.context.dataLayer
     updateOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
-    const res = ds.updateReleaseDate(id, 1473199200000)
+    const res = ds.updateReleaseDate(id, new Date('2020-05-30'))
 
     expect.assertions(2)
     await pipe(
@@ -171,7 +171,7 @@ describe('[ComicBookAPI.updateReleaseDate]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { _id: id },
-      { $set: { releaseDate: 1473199200000 } },
+      { $set: { releaseDate: new Date('2020-05-30') } },
     )
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
@@ -182,9 +182,9 @@ describe('[ComicBookAPI.updateReleaseDate]', () => {
   it('should update ComicBook using dataLayer and return right with result', async () => {
     const mockComicBook = {
       ...defaultComicBook,
-      releaseDate: 1473199200000,
+      releaseDate: new Date('2020-01-30'),
     }
-    const newDate = mockComicBook.releaseDate + 100
+    const newDate = new Date('2020-05-30')
     const { updateOne } = config.context.dataLayer
     updateOne.mockReturnValueOnce(
       createMockReaderWithReturnValue<ComicBookDbObject>({

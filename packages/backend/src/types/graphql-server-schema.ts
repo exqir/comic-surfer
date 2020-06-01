@@ -6,6 +6,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Date: Date;
 };
 
 
@@ -26,7 +27,7 @@ export type ComicBook = {
   _id: Scalars['ID'];
   title: Scalars['String'];
   issueNo: Maybe<Scalars['String']>;
-  releaseDate: Maybe<Scalars['Int']>;
+  releaseDate: Maybe<Scalars['Date']>;
   creators: Array<Maybe<Creator>>;
   comicSeries: Maybe<ComicSeries>;
   publisher: Maybe<Publisher>;
@@ -40,10 +41,10 @@ export type ComicSeries = {
   title: Scalars['String'];
   url: Scalars['String'];
   collectionsUrl: Maybe<Scalars['String']>;
-  issuesUrl: Maybe<Scalars['String']>;
+  singleIssuesUrl: Maybe<Scalars['String']>;
   publisher: Maybe<Publisher>;
-  collections: Maybe<Array<ComicBook>>;
-  issues: Maybe<Array<ComicBook>>;
+  collections: Array<ComicBook>;
+  singleIssues: Array<ComicBook>;
 };
 
 export type Creator = {
@@ -53,6 +54,7 @@ export type Creator = {
   lastname: Scalars['String'];
   series: Maybe<Array<ComicSeries>>;
 };
+
 
 export type Mutation = {
    __typename?: 'Mutation';
@@ -104,7 +106,7 @@ export type Query = {
    __typename?: 'Query';
   _empty: Maybe<Scalars['String']>;
   comicBook: Maybe<ComicBook>;
-  getComicSeries: Maybe<ComicSeries>;
+  comicSeries: Maybe<ComicSeries>;
   getPublisher: Maybe<Publisher>;
   getPublishers: Maybe<Array<Publisher>>;
   getPullList: Maybe<PullList>;
@@ -117,7 +119,7 @@ export type QueryComicBookArgs = {
 };
 
 
-export type QueryGetComicSeriesArgs = {
+export type QueryComicSeriesArgs = {
   id: Scalars['ID'];
 };
 
@@ -153,7 +155,7 @@ export type ComicBookDbObject = {
   _id: ObjectID,
   title: string,
   issueNo: Maybe<string>,
-  releaseDate: Maybe<number>,
+  releaseDate: Maybe<Date>,
   creators: Array<Maybe<CreatorDbObject['_id']>>,
   comicSeries: Maybe<ComicSeriesDbObject['_id']>,
   publisher: Maybe<PublisherDbObject['_id']>,
@@ -173,10 +175,10 @@ export type ComicSeriesDbObject = {
   title: string,
   url: string,
   collectionsUrl: Maybe<string>,
-  issuesUrl: Maybe<string>,
+  singleIssuesUrl: Maybe<string>,
   publisher: Maybe<PublisherDbObject['_id']>,
-  collections: Maybe<Array<ComicBookDbObject['_id']>>,
-  issues: Maybe<Array<ComicBookDbObject['_id']>>,
+  collections: Array<ComicBookDbObject['_id']>,
+  singleIssues: Array<ComicBookDbObject['_id']>,
 };
 
 export type PublisherDbObject = {

@@ -18,9 +18,9 @@ const defaultComicSeries: ComicSeriesDbObject = {
   title: 'Comic',
   url: '/path',
   collectionsUrl: null,
-  collections: null,
-  issuesUrl: null,
-  issues: null,
+  collections: [],
+  singleIssuesUrl: null,
+  singleIssues: [],
   publisher: null,
 }
 
@@ -39,7 +39,7 @@ describe('[ComicSeriesAPI.insert]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockComicSeries)
@@ -65,7 +65,7 @@ describe('[ComicSeriesAPI.insert]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockComicSeries)),
+      RTE.map((d) => expect(d).toMatchObject(mockComicSeries)),
       runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockComicSeries)
@@ -83,7 +83,7 @@ describe('[ComicSeriesAPI.getById]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockComicSeries._id })
@@ -105,7 +105,7 @@ describe('[ComicSeriesAPI.getById]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockComicSeries)),
+      RTE.map((d) => expect(d).toMatchObject(mockComicSeries)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockComicSeries._id })
@@ -123,7 +123,7 @@ describe('[ComicSeriesAPI.getByIds]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
@@ -147,7 +147,7 @@ describe('[ComicSeriesAPI.getByIds]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockComicSeries)),
+      RTE.map((d) => expect(d).toMatchObject(mockComicSeries)),
       runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
@@ -168,13 +168,13 @@ describe('[ComicSeriesAPI.addComicBook]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
       collection,
       { _id: mockComicSeriesId },
-      { $push: { issues: mockComicBookId } },
+      { $push: { singleIssues: mockComicBookId } },
     )
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
@@ -198,13 +198,13 @@ describe('[ComicSeriesAPI.addComicBook]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockComicSeries)),
+      RTE.map((d) => expect(d).toMatchObject(mockComicSeries)),
       runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
       collection,
       { _id: mockComicSeries._id },
-      { $push: { issues: mockComicBook._id } },
+      { $push: { singleIssues: mockComicBook._id } },
     )
   })
 })

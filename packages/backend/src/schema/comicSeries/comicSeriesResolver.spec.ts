@@ -15,9 +15,9 @@ const defaultComicSeries: ComicSeriesDbObject = {
   title: 'Comic',
   url: '/path',
   collectionsUrl: null,
-  collections: null,
-  issuesUrl: null,
-  issues: null,
+  collections: [],
+  singleIssuesUrl: null,
+  singleIssues: [],
   publisher: null,
 }
 
@@ -34,7 +34,7 @@ describe('[Query.getComicSeries]', () => {
       createMockReaderWithReturnValue({}, true),
     )
 
-    const res = await ComicSeriesQuery.getComicSeries(
+    const res = await ComicSeriesQuery.comicSeries(
       {},
       { id: mockComicSeries._id },
       context,
@@ -52,7 +52,7 @@ describe('[Query.getComicSeries]', () => {
       createMockReaderWithReturnValue<ComicSeriesDbObject>(mockComicSeries),
     )
 
-    const res = await ComicSeriesQuery.getComicSeries(
+    const res = await ComicSeriesQuery.comicSeries(
       {},
       { id: mockComicSeries._id },
       context,
@@ -68,15 +68,15 @@ const defaultComicBook: ComicBookDbObject = {
   _id: new ObjectID(),
   title: 'Comic',
   url: '/path',
-  issue: null,
-  creators: null,
-  coverUrl: null,
+  issueNo: null,
+  creators: [],
+  coverImgUrl: null,
   publisher: null,
   releaseDate: null,
-  series: null,
+  comicSeries: null,
 }
 
-describe('[ComicSeries.issues]', () => {
+describe('[ComicSeries.singleIssues]', () => {
   const { context } = createMockConfig()
   context.dataSources.comicBook = ({
     getByIds: jest.fn(),
@@ -89,8 +89,8 @@ describe('[ComicSeries.issues]', () => {
       createMockReaderWithReturnValue({}, true),
     )
 
-    const res = await ComicSeriesResolver.ComicSeries.issues(
-      { ...defaultComicSeries, issues: [mockComicBook._id] },
+    const res = await ComicSeriesResolver.ComicSeries.singleIssues(
+      { ...defaultComicSeries, singleIssues: [mockComicBook._id] },
       {},
       context,
       {} as GraphQLResolveInfo,
@@ -107,8 +107,8 @@ describe('[ComicSeries.issues]', () => {
       createMockReaderWithReturnValue<ComicBookDbObject>([mockComicBook]),
     )
 
-    const res = await ComicSeriesResolver.ComicSeries.issues(
-      { ...defaultComicSeries, issues: [mockComicBook._id] },
+    const res = await ComicSeriesResolver.ComicSeries.singleIssues(
+      { ...defaultComicSeries, singleIssues: [mockComicBook._id] },
       {},
       context,
       {} as GraphQLResolveInfo,

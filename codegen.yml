@@ -16,4 +16,5 @@ generates:
     config:
       scalars:
         ID: ObjectID
+        Date: Date
       avoidOptionals: true

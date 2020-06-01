@@ -21,9 +21,9 @@ db.comicSeries.insertOne({
   title: 'Descender',
   url: '/descender',
   collectionsUrl: '/descender/collections',
-  issuesUrl: '/descender/issues',
+  singleIssuesUrl: '/descender/issues',
   collections: [],
-  issues: [],
+  singleIssues: [],
   publisher: publisher._id,
 })
 const comicSeries = db.comicSeries.findOne({ title: 'Descender' })
@@ -42,7 +42,7 @@ const comicBook = db.comicBook.findOne({ title: 'Descender #1' })
 // prettier-ignore
 db.comicSeries.updateOne(
   { _id: comicSeries._id },
-  { $push: { issues: comicBook._id } }
+  { $push: { singleIssues: comicBook._id } }
 )
 // prettier-ignore
 db.comicBook.updateOne(

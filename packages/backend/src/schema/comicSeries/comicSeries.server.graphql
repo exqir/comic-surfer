@@ -1,5 +1,5 @@
 extend type Query {
-  getComicSeries(id: ID!): ComicSeries
+  comicSeries(id: ID!): ComicSeries
 }
 
 type ComicSeries @entity {
@@ -7,8 +7,8 @@ type ComicSeries @entity {
   title: String! @column
   url: String! @column
   collectionsUrl: String @column
-  issuesUrl: String @column
+  singleIssuesUrl: String @column
   publisher: Publisher @link
-  collections: [ComicBook!] @link
-  issues: [ComicBook!] @link
+  collections: [ComicBook!]! @link
+  singleIssues: [ComicBook!]! @link
 }
