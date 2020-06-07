@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@graphql-codegen/typescript-mongodb": "^1.13.1",
-    "apollo-server": "^2.13.1",
+    "apollo-server": "^2.14.2",
     "fp-ts": "^2.5.3",
     "graphql": "^14.5.8",
     "graphql-import-node": "^0.0.4",
