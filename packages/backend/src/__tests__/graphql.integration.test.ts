@@ -27,10 +27,10 @@ describe('Queries', () => {
       title: 'Comic',
       url: '/path',
       releaseDate: null,
-      issue: '#12',
-      coverUrl: '/',
-      creators: null,
-      series: null,
+      issueNo: '#12',
+      coverImgUrl: '/',
+      creators: [],
+      comicSeries: null,
       publisher: null,
     }
     const { server, comicBook } = constructTestServer()

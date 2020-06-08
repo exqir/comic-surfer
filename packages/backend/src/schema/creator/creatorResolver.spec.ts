@@ -9,7 +9,7 @@ const defaultCreator: CreatorDbObject = {
   _id: new ObjectID(),
   firstname: 'John',
   lastname: 'Rambo',
-  series: null,
+  comicSeries: [],
 }
 
 const defaultComicSeries: ComicSeriesDbObject = {
@@ -17,13 +17,13 @@ const defaultComicSeries: ComicSeriesDbObject = {
   title: 'Comic',
   url: '/path',
   collectionsUrl: null,
-  collections: null,
-  issuesUrl: null,
-  issues: null,
+  collections: [],
+  singleIssuesUrl: null,
+  singleIssues: [],
   publisher: null,
 }
 
-describe('[Creator.series]', () => {
+describe('[Creator.comicSeries]', () => {
   const { context } = createMockConfig()
   context.dataSources.comicSeries = ({
     getByIds: jest.fn(),
@@ -36,8 +36,8 @@ describe('[Creator.series]', () => {
       createMockReaderWithReturnValue({}, true),
     )
 
-    const res = await CreatorResolver.Creator.series(
-      { ...defaultCreator, series: [mockComicSeries._id] },
+    const res = await CreatorResolver.Creator.comicSeries(
+      { ...defaultCreator, comicSeries: [mockComicSeries._id] },
       {},
       context,
       {} as GraphQLResolveInfo,
@@ -54,8 +54,8 @@ describe('[Creator.series]', () => {
       createMockReaderWithReturnValue<ComicSeriesDbObject>([mockComicSeries]),
     )
 
-    const res = await CreatorResolver.Creator.series(
-      { ...defaultCreator, series: [mockComicSeries._id] },
+    const res = await CreatorResolver.Creator.comicSeries(
+      { ...defaultCreator, comicSeries: [mockComicSeries._id] },
       {},
       context,
       {} as GraphQLResolveInfo,

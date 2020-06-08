@@ -1,7 +1,7 @@
 # TODO: check which of the four paths are really needed
 extend type Query {
-  getPublishers(names: [String!]!): [Publisher!]
-  getPublisher(name: String!): Publisher
+  publishers(names: [String!]): [Publisher!]!
+  publisher(name: String!): Publisher
 }
 
 type Publisher @entity {
@@ -9,9 +9,6 @@ type Publisher @entity {
   name: String! @column
   iconUrl: String @column
   url: String @column
-  basePath: String @column
-  seriesPath: String @column
-  searchPath: String @column
-  searchPathSeries: String @column
-  series: [ComicSeries!] @link
+  cxUrl: String @column
+  comicSeries: [ComicSeries!]! @link
 }

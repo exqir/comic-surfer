@@ -10,14 +10,11 @@ const defaultPublisher: PublisherDbObject = {
   name: 'Image',
   iconUrl: null,
   url: null,
-  basePath: null,
-  searchPath: null,
-  searchPathSeries: null,
-  series: null,
-  seriesPath: null,
+  cxUrl: null,
+  comicSeries: [],
 }
 
-describe('[Query.getPublishers]', () => {
+describe('[Query.publishers]', () => {
   const { context } = createMockConfig()
   context.dataSources.publisher = ({
     getByNames: jest.fn(),
@@ -30,7 +27,7 @@ describe('[Query.getPublishers]', () => {
       createMockReaderWithReturnValue({}, true),
     )
 
-    const res = await PublisherQuery.getPublishers(
+    const res = await PublisherQuery.publishers(
       {},
       { names: [mockPublisher.name] },
       context,
@@ -48,7 +45,7 @@ describe('[Query.getPublishers]', () => {
       createMockReaderWithReturnValue<PublisherDbObject>([mockPublisher]),
     )
 
-    const res = await PublisherQuery.getPublishers(
+    const res = await PublisherQuery.publishers(
       {},
       { names: [mockPublisher.name] },
       context,
@@ -60,7 +57,7 @@ describe('[Query.getPublishers]', () => {
   })
 })
 
-describe('[Query.getPublisher]', () => {
+describe('[Query.publisher]', () => {
   const { context } = createMockConfig()
   context.dataSources.publisher = ({
     getByName: jest.fn(),
@@ -73,7 +70,7 @@ describe('[Query.getPublisher]', () => {
       createMockReaderWithReturnValue({}, true),
     )
 
-    const res = await PublisherQuery.getPublisher(
+    const res = await PublisherQuery.publisher(
       {},
       { name: mockPublisher.name },
       context,
@@ -91,7 +88,7 @@ describe('[Query.getPublisher]', () => {
       createMockReaderWithReturnValue<PublisherDbObject>(mockPublisher),
     )
 
-    const res = await PublisherQuery.getPublisher(
+    const res = await PublisherQuery.publisher(
       {},
       { name: mockPublisher.name },
       context,
@@ -108,13 +105,13 @@ const defaultComicSeries: ComicSeriesDbObject = {
   title: 'Comic',
   url: '/path',
   collectionsUrl: null,
-  collections: null,
-  issuesUrl: null,
-  issues: null,
+  collections: [],
+  singleIssuesUrl: null,
+  singleIssues: [],
   publisher: null,
 }
 
-describe('[Publisher.series]', () => {
+describe('[Publisher.comicSeries]', () => {
   const { context } = createMockConfig()
   context.dataSources.comicSeries = ({
     getByIds: jest.fn(),
@@ -127,8 +124,8 @@ describe('[Publisher.series]', () => {
       createMockReaderWithReturnValue({}, true),
     )
 
-    const res = await PublisherResolver.Publisher.series(
-      { ...defaultPublisher, series: [mockComicSeries._id] },
+    const res = await PublisherResolver.Publisher.comicSeries(
+      { ...defaultPublisher, comicSeries: [mockComicSeries._id] },
       {},
       context,
       {} as GraphQLResolveInfo,
@@ -145,8 +142,8 @@ describe('[Publisher.series]', () => {
       createMockReaderWithReturnValue<ComicSeriesDbObject>([mockComicSeries]),
     )
 
-    const res = await PublisherResolver.Publisher.series(
-      { ...defaultPublisher, series: [mockComicSeries._id] },
+    const res = await PublisherResolver.Publisher.comicSeries(
+      { ...defaultPublisher, comicSeries: [mockComicSeries._id] },
       {},
       context,
       {} as GraphQLResolveInfo,

@@ -7,7 +7,7 @@ type ComicBook @entity {
   title: String! @column
   issueNo: String @column
   releaseDate: Date @column
-  creators: [Creator]! @link
+  creators: [Creator!]! @link
   comicSeries: ComicSeries @link
   publisher: Publisher @link
   coverImgUrl: String @column

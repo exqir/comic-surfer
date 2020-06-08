@@ -1,7 +1,5 @@
 import { ScrapeService } from './ScrapeService'
-import { ObjectID } from 'mongodb'
 import { isLeft, mapLeft, isRight, map } from 'fp-ts/lib/Either'
-import { PublisherDbObject } from 'types/server-schema'
 import { createMockConfig } from 'tests/_utils'
 import {
   comicSeries,
@@ -20,17 +18,6 @@ const scraper = new ScrapeService({
   searchPath,
 })
 
-const defaultPublisher: PublisherDbObject = {
-  _id: new ObjectID(),
-  name: 'image',
-  basePath: '/path',
-  iconUrl: null,
-  url: null,
-  searchPath: null,
-  searchPathSeries: null,
-  series: null,
-  seriesPath: null,
-}
 // TODO: Add expect for number of assertions like in integration test
 describe('ScrapeService', () => {
   it('should return left in case of Error', async () => {

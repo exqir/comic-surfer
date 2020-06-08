@@ -15,7 +15,7 @@ export type ComicBook = {
   title: Scalars['String'];
   issueNo?: Maybe<Scalars['String']>;
   releaseDate?: Maybe<Scalars['Date']>;
-  creators: Array<Maybe<Creator>>;
+  creators: Array<Creator>;
   comicSeries?: Maybe<ComicSeries>;
   publisher?: Maybe<Publisher>;
   coverImgUrl?: Maybe<Scalars['String']>;
@@ -39,7 +39,7 @@ export type Creator = {
   _id: Scalars['ID'];
   firstname?: Maybe<Scalars['String']>;
   lastname: Scalars['String'];
-  series?: Maybe<Array<ComicSeries>>;
+  comicSeries: Array<ComicSeries>;
 };
 
 
@@ -75,11 +75,8 @@ export type Publisher = {
   name: Scalars['String'];
   iconUrl?: Maybe<Scalars['String']>;
   url?: Maybe<Scalars['String']>;
-  basePath?: Maybe<Scalars['String']>;
-  seriesPath?: Maybe<Scalars['String']>;
-  searchPath?: Maybe<Scalars['String']>;
-  searchPathSeries?: Maybe<Scalars['String']>;
-  series?: Maybe<Array<ComicSeries>>;
+  cxUrl?: Maybe<Scalars['String']>;
+  comicSeries: Array<ComicSeries>;
 };
 
 export type PullList = {
@@ -94,10 +91,10 @@ export type Query = {
   _empty?: Maybe<Scalars['String']>;
   comicBook?: Maybe<ComicBook>;
   comicSeries?: Maybe<ComicSeries>;
-  getPublisher?: Maybe<Publisher>;
-  getPublishers?: Maybe<Array<Publisher>>;
   getPullList?: Maybe<PullList>;
   getSearch?: Maybe<Array<Maybe<Search>>>;
+  publisher?: Maybe<Publisher>;
+  publishers: Array<Publisher>;
 };
 
 
@@ -111,16 +108,6 @@ export type QueryComicSeriesArgs = {
 };
 
 
-export type QueryGetPublisherArgs = {
-  name: Scalars['String'];
-};
-
-
-export type QueryGetPublishersArgs = {
-  names: Array<Scalars['String']>;
-};
-
-
 export type QueryGetPullListArgs = {
   owner: Scalars['String'];
 };
@@ -128,6 +115,16 @@ export type QueryGetPullListArgs = {
 
 export type QueryGetSearchArgs = {
   q: Scalars['String'];
+};
+
+
+export type QueryPublisherArgs = {
+  name: Scalars['String'];
+};
+
+
+export type QueryPublishersArgs = {
+  names?: Maybe<Array<Scalars['String']>>;
 };
 
 export type Search = {

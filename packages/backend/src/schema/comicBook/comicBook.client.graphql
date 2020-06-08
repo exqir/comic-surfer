@@ -7,7 +7,7 @@ type ComicBook {
   title: String!
   issueNo: String
   releaseDate: Date
-  creators: [Creator]!
+  creators: [Creator!]!
   comicSeries: ComicSeries
   publisher: Publisher
   coverImgUrl: String

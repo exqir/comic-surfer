@@ -8,11 +8,8 @@ const creator = db.creator.findOne({ firstname: 'Jeff' })
 db.publisher.insertOne({
   name: 'Image',
   iconUrl: '/image/icon.jpg',
-  url: '/image',
-  basePath: '/',
-  seriesPath: '/',
-  searchPath: '/',
-  searchPathSeries: '/',
+  url: 'https://www.image.com',
+  cxUrl: '/image',
   series: [],
 })
 const publisher = db.publisher.findOne({ name: 'Image' })

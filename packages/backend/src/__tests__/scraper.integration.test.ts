@@ -30,18 +30,6 @@ afterAll(() => {
   server.close()
 })
 
-const defaultPublisher: PublisherDbObject = {
-  _id: new ObjectID(),
-  name: 'image',
-  iconUrl: null,
-  url: null,
-  basePath: null,
-  searchPath: null,
-  searchPathSeries: null,
-  series: null,
-  seriesPath: null,
-}
-
 describe('[Scraper.getComicSeries]', () => {
   it('should scrap data from comic-series page', async () => {
     expect.assertions(1)

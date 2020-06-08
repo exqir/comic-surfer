@@ -21,7 +21,7 @@ const defaultComicSeries: ComicSeriesDbObject = {
   publisher: null,
 }
 
-describe('[Query.getComicSeries]', () => {
+describe('[Query.comicSeries]', () => {
   const { context } = createMockConfig()
   context.dataSources.comicSeries = ({
     getById: jest.fn(),
@@ -124,11 +124,8 @@ const defaultPublisher: PublisherDbObject = {
   name: 'Image',
   iconUrl: null,
   url: null,
-  basePath: null,
-  searchPath: null,
-  searchPathSeries: null,
-  series: null,
-  seriesPath: null,
+  cxUrl: null,
+  comicSeries: [],
 }
 
 describe('[ComicSeries.publisher]', () => {

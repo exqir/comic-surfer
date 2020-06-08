@@ -8,12 +8,7 @@ import {
   PublisherDbObject,
   ComicSeriesDbObject,
 } from 'types/server-schema'
-import {
-  runRTEtoNullable,
-  mapOtoRTEnullable,
-  chainMaybeToNullable,
-  filterMaybe,
-} from 'lib'
+import { runRTEtoNullable, mapOtoRTEnullable, chainMaybeToNullable } from 'lib'
 
 interface ComicBookQuery {
   // TODO: This actually returns a ComicBook but this is not what the function returns
@@ -43,9 +38,7 @@ export const ComicBookResolver: ComicBookResolver = {
     creators: ({ creators }, _, { dataSources, db }) =>
       pipe(
         db,
-        map(
-          runRTEtoNullable(dataSources.creator.getByIds(filterMaybe(creators))),
-        ),
+        map(runRTEtoNullable(dataSources.creator.getByIds(creators))),
         toNullable,
       ),
     publisher: ({ publisher }, _, { dataSources, db }) =>

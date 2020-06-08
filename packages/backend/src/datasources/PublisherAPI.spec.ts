@@ -15,11 +15,8 @@ const defaultPublisher: PublisherDbObject = {
   name: 'Image',
   iconUrl: null,
   url: null,
-  basePath: null,
-  searchPath: null,
-  searchPathSeries: null,
-  series: null,
-  seriesPath: null,
+  cxUrl: null,
+  comicSeries: [],
 }
 
 const ds = new PublisherAPI()
@@ -37,7 +34,7 @@ describe('[PublisherAPI.insert]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockPublisher)
@@ -63,7 +60,7 @@ describe('[PublisherAPI.insert]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockPublisher)),
+      RTE.map((d) => expect(d).toMatchObject(mockPublisher)),
       runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockPublisher)
@@ -81,7 +78,7 @@ describe('[PublisherAPI.getById]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockPublisher._id })
@@ -103,7 +100,7 @@ describe('[PublisherAPI.getById]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockPublisher)),
+      RTE.map((d) => expect(d).toMatchObject(mockPublisher)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockPublisher._id })
@@ -121,7 +118,7 @@ describe('[PublisherAPI.getByIds]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
@@ -145,12 +142,51 @@ describe('[PublisherAPI.getByIds]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockPublisher)),
+      RTE.map((d) => expect(d).toMatchObject(mockPublisher)),
       runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
       _id: { $in: [mockPublisher[0]._id] },
     })
+  })
+})
+
+describe('[PublisherAPI.getAll]', () => {
+  it('should query dataLayer for all Publishers and return left in case of Error', async () => {
+    const { findMany } = config.context.dataLayer
+    findMany.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+
+    const res = ds.getAll()
+
+    expect.assertions(2)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
+    )
+    expect(findMany).toBeCalledWith(collection, {})
+    // TODO: The mock function is actually being called which can be tested by
+    // a mock implementation and via debugger. However, this information
+    // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
+    // expect(config.context.logger.error.mock).toBeCalledWith('TestError')
+  })
+
+  it('should query dataLayer for all Publishers and return right with result', async () => {
+    const mockPublisher = [{ ...defaultPublisher }]
+    const { findMany } = config.context.dataLayer
+    findMany.mockReturnValueOnce(
+      createMockReaderWithReturnValue<PublisherDbObject>(mockPublisher),
+    )
+
+    const res = ds.getAll()
+
+    expect.assertions(2)
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(mockPublisher)),
+      runRTEwithMockDb,
+    )
+    expect(findMany).toBeCalledWith(collection, {})
   })
 })
 
@@ -165,7 +201,7 @@ describe('[PublisherAPI.getByName]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { name: mockPublisher.name })
@@ -187,7 +223,7 @@ describe('[PublisherAPI.getByName]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockPublisher)),
+      RTE.map((d) => expect(d).toMatchObject(mockPublisher)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { name: mockPublisher.name })
@@ -205,7 +241,7 @@ describe('[PublisherAPI.getByNames]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
@@ -229,7 +265,7 @@ describe('[PublisherAPI.getByNames]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockPublisher)),
+      RTE.map((d) => expect(d).toMatchObject(mockPublisher)),
       runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
@@ -250,7 +286,7 @@ describe('[PublisherAPI.addComicSeries]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
@@ -284,7 +320,7 @@ describe('[PublisherAPI.addComicSeries]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockPublisher)),
+      RTE.map((d) => expect(d).toMatchObject(mockPublisher)),
       runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(

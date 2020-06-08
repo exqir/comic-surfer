@@ -27,7 +27,7 @@ const defaultComicBook: ComicBookDbObject = {
   comicSeries: null,
 }
 
-describe('[Query.getComicBook]', () => {
+describe('[Query.comicBook]', () => {
   const { context } = createMockConfig()
   context.dataSources.comicBook = ({
     getById: jest.fn(),
@@ -74,7 +74,7 @@ const defaultCreator: CreatorDbObject = {
   _id: new ObjectID(),
   firstname: 'John',
   lastname: 'Rambo',
-  series: null,
+  comicSeries: [],
 }
 
 describe('[ComicBook.creators]', () => {
@@ -125,11 +125,8 @@ const defaultPublisher: PublisherDbObject = {
   name: 'Image',
   iconUrl: null,
   url: null,
-  basePath: null,
-  searchPath: null,
-  searchPathSeries: null,
-  series: null,
-  seriesPath: null,
+  cxUrl: null,
+  comicSeries: [],
 }
 
 describe('[ComicBook.publisher]', () => {
@@ -180,13 +177,13 @@ const defaultComicSeries: ComicSeriesDbObject = {
   title: 'Comic',
   url: '/path',
   collectionsUrl: null,
-  collections: null,
-  issuesUrl: null,
-  issues: null,
+  collections: [],
+  singleIssuesUrl: null,
+  singleIssues: [],
   publisher: null,
 }
 
-describe('[ComicBook.series]', () => {
+describe('[ComicBook.comicSeries]', () => {
   const { context } = createMockConfig()
   context.dataSources.comicSeries = ({
     getById: jest.fn(),
