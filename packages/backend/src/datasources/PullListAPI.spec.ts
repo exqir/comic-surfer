@@ -13,7 +13,7 @@ const config = createMockConfig()
 const defaultPullList: PullListDbObject = {
   _id: new ObjectID(),
   owner: 'John',
-  list: null,
+  list: [],
 }
 
 const ds = new PullListAPI()
@@ -31,7 +31,7 @@ describe('[PullListAPI.insert]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockPullList)
@@ -57,7 +57,7 @@ describe('[PullListAPI.insert]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockPullList)),
+      RTE.map((d) => expect(d).toMatchObject(mockPullList)),
       runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockPullList)
@@ -75,7 +75,7 @@ describe('[PullListAPI.getById]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockPullList._id })
@@ -97,7 +97,7 @@ describe('[PullListAPI.getById]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockPullList)),
+      RTE.map((d) => expect(d).toMatchObject(mockPullList)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockPullList._id })
@@ -115,7 +115,7 @@ describe('[PullListAPI.getByIds]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
@@ -139,7 +139,7 @@ describe('[PullListAPI.getByIds]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockPullList)),
+      RTE.map((d) => expect(d).toMatchObject(mockPullList)),
       runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
@@ -158,7 +158,7 @@ describe('[PullListAPI.getByUser]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { owner: '' })
@@ -180,7 +180,7 @@ describe('[PullListAPI.getByUser]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockPullList)),
+      RTE.map((d) => expect(d).toMatchObject(mockPullList)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { owner: 'John' })
@@ -199,7 +199,7 @@ describe('[PullListAPI.addComicSeries]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
@@ -233,7 +233,7 @@ describe('[PullListAPI.addComicSeries]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockPullList)),
+      RTE.map((d) => expect(d).toMatchObject(mockPullList)),
       runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
@@ -256,7 +256,7 @@ describe('[PullListAPI.removeComicSeries]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(
@@ -290,7 +290,7 @@ describe('[PullListAPI.removeComicSeries]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockPullList)),
+      RTE.map((d) => expect(d).toMatchObject(mockPullList)),
       runRTEwithMockDb,
     )
     expect(updateOne).toBeCalledWith(

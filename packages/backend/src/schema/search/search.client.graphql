@@ -1,5 +1,5 @@
 extend type Query {
-  getSearch(q: String!): [Search]
+  search(q: String!): [Search!]!
 }
 
 type Search {

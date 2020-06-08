@@ -1,10 +1,10 @@
 import { createMockConfig, createMockTaskWithReturnValue } from 'tests/_utils'
-import { SearchDbObject } from 'types/server-schema'
+import { Search } from 'types/server-schema'
 import { GraphQLResolveInfo } from 'graphql'
 import { SearchQuery } from './searchResolver'
 import { ScrapeService } from 'services/ScrapeService'
 
-const defaultSearch: SearchDbObject = {
+const defaultSearch: Search = {
   title: 'Comic',
   url: '/path',
 }
@@ -18,10 +18,10 @@ describe('[Query.getSearch]', () => {
   it('should call ScrapeService and return null in case of Error', async () => {
     const { getComicSeriesSearch } = context.services.scrape
     ;(getComicSeriesSearch as jest.Mock).mockReturnValueOnce(
-      createMockTaskWithReturnValue<SearchDbObject[]>([], true),
+      createMockTaskWithReturnValue<Search[]>([], true),
     )
 
-    const res = await SearchQuery.getSearch(
+    const res = await SearchQuery.search(
       {},
       { q: 'query' },
       context,
@@ -36,10 +36,10 @@ describe('[Query.getSearch]', () => {
     const mockSearch = { ...defaultSearch }
     const { getComicSeriesSearch } = context.services.scrape
     ;(getComicSeriesSearch as jest.Mock).mockReturnValueOnce(
-      createMockTaskWithReturnValue<SearchDbObject[]>([mockSearch]),
+      createMockTaskWithReturnValue<Search[]>([mockSearch]),
     )
 
-    const res = await SearchQuery.getSearch(
+    const res = await SearchQuery.search(
       {},
       { q: 'query' },
       context,

@@ -7,11 +7,11 @@ import { PullListResolver, PullListQuery } from './pullListResolver'
 
 const defaultPullList: PullListDbObject = {
   _id: new ObjectID(),
-  owner: 'John',
-  list: null,
+  owner: 'some-user-id',
+  list: [],
 }
 
-describe('[Query.getPullList]', () => {
+describe('[Query.pullList]', () => {
   const { context } = createMockConfig()
   context.dataSources.pullList = ({
     getByUser: jest.fn(),
@@ -24,10 +24,10 @@ describe('[Query.getPullList]', () => {
       createMockReaderWithReturnValue({}, true),
     )
 
-    const res = await PullListQuery.getPullList(
+    const res = await PullListQuery.pullList(
       {},
-      { owner: mockPullList.owner },
-      context,
+      {},
+      { ...context, user: mockPullList.owner },
       {} as GraphQLResolveInfo,
     )
 
@@ -42,10 +42,10 @@ describe('[Query.getPullList]', () => {
       createMockReaderWithReturnValue<PullListDbObject>(mockPullList),
     )
 
-    const res = await PullListQuery.getPullList(
+    const res = await PullListQuery.pullList(
       {},
-      { owner: mockPullList.owner },
-      context,
+      {},
+      { ...context, user: mockPullList.owner },
       {} as GraphQLResolveInfo,
     )
 
@@ -59,9 +59,9 @@ const defaultComicSeries: ComicSeriesDbObject = {
   title: 'Comic',
   url: '/path',
   collectionsUrl: null,
-  collections: null,
-  issuesUrl: null,
-  issues: null,
+  collections: [],
+  singleIssuesUrl: null,
+  singleIssues: [],
   publisher: null,
 }
 

@@ -1,15 +1,15 @@
 extend type Query {
-  getPullList(owner: String!): PullList
+  pullList: PullList
 }
 
 extend type Mutation {
-  createPullList(owner: String!): PullList!
-  pullSeries(owner: String!, publisher: String!, seriesUrl: String!): PullList!
-  removeSeries(owner: String!, series: ID!): PullList!
+  subscribeComicSeries(comicSeriesUrl: String!): PullList!
+  subscribeExistingComicSeries(comicSeriesId: ID!): PullList!
+  unsubscribeComicSeries(comicSeriesId: ID!): PullList!
 }
 
 type PullList @entity {
   _id: ID! @id
   owner: String! @column
-  list: [ComicSeries!] @link
+  list: [ComicSeries!]! @link
 }

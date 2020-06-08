@@ -73,6 +73,7 @@ export interface GraphQLContext {
   dataSources: DataSources
   services: Services
   db: Option<Db>
+  user: string
 }
 
 /**

@@ -14,7 +14,7 @@ const defaultCreator: CreatorDbObject = {
   _id: new ObjectID(),
   firstname: 'John',
   lastname: 'Rambo',
-  series: null,
+  comicSeries: [],
 }
 
 const ds = new CreatorAPI()
@@ -32,7 +32,7 @@ describe('[CreatorAPI.insert]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockCreator)
@@ -58,7 +58,7 @@ describe('[CreatorAPI.insert]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockCreator)),
+      RTE.map((d) => expect(d).toMatchObject(mockCreator)),
       runRTEwithMockDb,
     )
     expect(insertOne).toBeCalledWith(collection, mockCreator)
@@ -76,7 +76,7 @@ describe('[CreatorAPI.getById]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockCreator._id })
@@ -98,7 +98,7 @@ describe('[CreatorAPI.getById]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockCreator)),
+      RTE.map((d) => expect(d).toMatchObject(mockCreator)),
       runRTEwithMockDb,
     )
     expect(findOne).toBeCalledWith(collection, { _id: mockCreator._id })
@@ -116,7 +116,7 @@ describe('[CreatorAPI.getByIds]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.mapLeft(err => expect(err).toBeInstanceOf(MongoError)),
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {
@@ -140,7 +140,7 @@ describe('[CreatorAPI.getByIds]', () => {
     expect.assertions(2)
     await pipe(
       res,
-      RTE.map(d => expect(d).toMatchObject(mockCreator)),
+      RTE.map((d) => expect(d).toMatchObject(mockCreator)),
       runRTEwithMockDb,
     )
     expect(findMany).toBeCalledWith(collection, {

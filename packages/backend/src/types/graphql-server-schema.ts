@@ -59,27 +59,24 @@ export type Creator = {
 export type Mutation = {
    __typename?: 'Mutation';
   _empty: Maybe<Scalars['String']>;
-  createPullList: PullList;
-  pullSeries: PullList;
-  removeSeries: PullList;
+  subscribeComicSeries: PullList;
+  subscribeExistingComicSeries: PullList;
+  unsubscribeComicSeries: PullList;
 };
 
 
-export type MutationCreatePullListArgs = {
-  owner: Scalars['String'];
+export type MutationSubscribeComicSeriesArgs = {
+  comicSeriesUrl: Scalars['String'];
 };
 
 
-export type MutationPullSeriesArgs = {
-  owner: Scalars['String'];
-  publisher: Scalars['String'];
-  seriesUrl: Scalars['String'];
+export type MutationSubscribeExistingComicSeriesArgs = {
+  comicSeriesId: Scalars['ID'];
 };
 
 
-export type MutationRemoveSeriesArgs = {
-  owner: Scalars['String'];
-  series: Scalars['ID'];
+export type MutationUnsubscribeComicSeriesArgs = {
+  comicSeriesId: Scalars['ID'];
 };
 
 export type Publisher = {
@@ -96,7 +93,7 @@ export type PullList = {
    __typename?: 'PullList';
   _id: Scalars['ID'];
   owner: Scalars['String'];
-  list: Maybe<Array<ComicSeries>>;
+  list: Array<ComicSeries>;
 };
 
 export type Query = {
@@ -104,10 +101,10 @@ export type Query = {
   _empty: Maybe<Scalars['String']>;
   comicBook: Maybe<ComicBook>;
   comicSeries: Maybe<ComicSeries>;
-  getPullList: Maybe<PullList>;
-  getSearch: Maybe<Array<Maybe<Search>>>;
   publisher: Maybe<Publisher>;
   publishers: Array<Publisher>;
+  pullList: Maybe<PullList>;
+  search: Array<Search>;
 };
 
 
@@ -121,16 +118,6 @@ export type QueryComicSeriesArgs = {
 };
 
 
-export type QueryGetPullListArgs = {
-  owner: Scalars['String'];
-};
-
-
-export type QueryGetSearchArgs = {
-  q: Scalars['String'];
-};
-
-
 export type QueryPublisherArgs = {
   name: Scalars['String'];
 };
@@ -138,6 +125,11 @@ export type QueryPublisherArgs = {
 
 export type QueryPublishersArgs = {
   names: Maybe<Array<Scalars['String']>>;
+};
+
+
+export type QuerySearchArgs = {
+  q: Scalars['String'];
 };
 
 export type Search = {
@@ -190,5 +182,5 @@ export type PublisherDbObject = {
 export type PullListDbObject = {
   _id: ObjectID,
   owner: string,
-  list: Maybe<Array<ComicSeriesDbObject['_id']>>,
+  list: Array<ComicSeriesDbObject['_id']>,
 };

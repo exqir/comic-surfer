@@ -114,6 +114,7 @@ export const createMockConfig = () => ({
       logger: mockLogger,
     } as Services,
     db: some({} as Db),
+    user: 'some-user-id',
   },
   cache: {} as KeyValueCache,
 })
