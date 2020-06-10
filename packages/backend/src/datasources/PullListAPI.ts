@@ -17,12 +17,12 @@ export class PullListAPI extends MongoDataSource<PullListDbObject> {
     )
   }
 
-  public addComicSeries = (id: ObjectID, comicSeriesId: ObjectID) => {
+  public addComicSeries = (user: string, comicSeriesId: ObjectID) => {
     const { updateOne } = this.dataLayer!
     return pipe(
       updateOne<PullListDbObject>(
         this.collection,
-        { _id: toObjectId(id) },
+        { owner: user },
         // TODO: check if series is already in pull list
         // e.g. list: { $ne: comicSeriesId }
         { $push: { list: toObjectId(comicSeriesId) } },
@@ -31,12 +31,12 @@ export class PullListAPI extends MongoDataSource<PullListDbObject> {
     )
   }
 
-  public removeComicSeries = (id: ObjectID, comicSeriesId: ObjectID) => {
+  public removeComicSeries = (user: string, comicSeriesId: ObjectID) => {
     const { updateOne } = this.dataLayer!
     return pipe(
       updateOne<PullListDbObject>(
         this.collection,
-        { _id: toObjectId(id) },
+        { owner: user },
         { $pull: { list: toObjectId(comicSeriesId) } },
       ),
       this.logError,

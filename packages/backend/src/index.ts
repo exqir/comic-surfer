@@ -65,6 +65,9 @@ const apolloServer = new ApolloServer({
       }),
       logger,
     },
+    // TODO: Use issuer from https://docs.magic.link/admin-sdk/node-js/sdk/users-module/getmetadatabytoken
+    // Example with Next: https://github.com/vercel/next.js/tree/canary/examples/with-magic
+    user: 'some-user-id',
   }),
 })
 

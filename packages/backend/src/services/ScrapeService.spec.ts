@@ -86,7 +86,7 @@ describe('ScrapeService', () => {
     map((d) =>
       expect(d).toMatchObject({
         title: mockResult.title,
-        collectionUrl: mockResult.urls[2].url,
+        collectionsUrl: mockResult.urls[2].url,
         singleIssuesUrl: mockResult.urls[1].url,
       }),
     )(result)
@@ -128,7 +128,7 @@ describe('[ScrapeService.getComicSeries]', () => {
     map((d) =>
       expect(d).toMatchObject({
         title: mockResult.title,
-        collectionUrl: mockResult.urls[2].url,
+        collectionsUrl: mockResult.urls[2].url,
         singleIssuesUrl: mockResult.urls[1].url,
       }),
     )(result)

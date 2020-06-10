@@ -189,12 +189,12 @@ describe('[PullListAPI.getByUser]', () => {
 
 describe('[PullListAPI.addComicSeries]', () => {
   it('should add ComicSeries to PullList using dataLayer and return left in case of Error', async () => {
-    const mockPullListId = new ObjectID()
+    const mockPullList = { ...defaultPullList }
     const mockComicSeriesId = new ObjectID()
     const { updateOne } = config.context.dataLayer
     updateOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
-    const res = ds.addComicSeries(mockPullListId, mockComicSeriesId)
+    const res = ds.addComicSeries(mockPullList.owner, mockComicSeriesId)
 
     expect.assertions(2)
     await pipe(
@@ -204,7 +204,7 @@ describe('[PullListAPI.addComicSeries]', () => {
     )
     expect(updateOne).toBeCalledWith(
       collection,
-      { _id: mockPullListId },
+      { owner: mockPullList.owner },
       { $push: { list: mockComicSeriesId } },
     )
     // TODO: The mock function is actually being called which can be tested by
@@ -228,7 +228,7 @@ describe('[PullListAPI.addComicSeries]', () => {
       createMockReaderWithReturnValue<PullListDbObject>(mockPullList),
     )
 
-    const res = ds.addComicSeries(mockPullList._id, mockComicSeries._id)
+    const res = ds.addComicSeries(mockPullList.owner, mockComicSeries._id)
 
     expect.assertions(2)
     await pipe(
@@ -238,7 +238,7 @@ describe('[PullListAPI.addComicSeries]', () => {
     )
     expect(updateOne).toBeCalledWith(
       collection,
-      { _id: mockPullList._id },
+      { owner: mockPullList.owner },
       { $push: { list: mockComicSeries._id } },
     )
   })
@@ -246,12 +246,12 @@ describe('[PullListAPI.addComicSeries]', () => {
 
 describe('[PullListAPI.removeComicSeries]', () => {
   it('should remove ComicSeries from PullList using dataLayer and return left in case of Error', async () => {
-    const mockPullListId = new ObjectID()
+    const mockPullList = { ...defaultPullList }
     const mockComicSeriesId = new ObjectID()
     const { updateOne } = config.context.dataLayer
     updateOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
 
-    const res = ds.removeComicSeries(mockPullListId, mockComicSeriesId)
+    const res = ds.removeComicSeries(mockPullList.owner, mockComicSeriesId)
 
     expect.assertions(2)
     await pipe(
@@ -261,7 +261,7 @@ describe('[PullListAPI.removeComicSeries]', () => {
     )
     expect(updateOne).toBeCalledWith(
       collection,
-      { _id: mockPullListId },
+      { owner: mockPullList.owner },
       { $pull: { list: mockComicSeriesId } },
     )
     // TODO: The mock function is actually being called which can be tested by
@@ -285,7 +285,7 @@ describe('[PullListAPI.removeComicSeries]', () => {
       createMockReaderWithReturnValue<PullListDbObject>(mockPullList),
     )
 
-    const res = ds.removeComicSeries(mockPullList._id, mockComicSeries._id)
+    const res = ds.removeComicSeries(mockPullList.owner, mockComicSeries._id)
 
     expect.assertions(2)
     await pipe(
@@ -295,7 +295,7 @@ describe('[PullListAPI.removeComicSeries]', () => {
     )
     expect(updateOne).toBeCalledWith(
       collection,
-      { _id: mockPullList._id },
+      { owner: mockPullList.owner },
       { $pull: { list: mockComicSeries._id } },
     )
   })

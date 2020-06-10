@@ -1,7 +1,7 @@
 db.creator.insertOne({
   firstname: 'Jeff',
   lastname: 'Lemire',
-  series: [],
+  comicSeries: [],
 })
 const creator = db.creator.findOne({ firstname: 'Jeff' })
 
@@ -10,7 +10,7 @@ db.publisher.insertOne({
   iconUrl: '/image/icon.jpg',
   url: 'https://www.image.com',
   cxUrl: '/image',
-  series: [],
+  comicSeries: [],
 })
 const publisher = db.publisher.findOne({ name: 'Image' })
 
@@ -49,6 +49,6 @@ db.comicBook.updateOne(
 // prettier-ignore
 db.publisher.updateOne(
   { _id: publisher._id },
-  { $push: { series: comicSeries._id } }
+  { $push: { comicSeries: comicSeries._id } }
 )
 db.pullList.insertOne({ owner: 'John Rambo', list: [comicSeries._id] })

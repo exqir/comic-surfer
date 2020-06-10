@@ -19,7 +19,11 @@ import {
   PublisherResolver,
 } from './publisher/publisherResolver'
 import PullList from './pullList/pullList.server.graphql'
-import { PullListQuery, PullListResolver } from './pullList/pullListResolver'
+import {
+  PullListQuery,
+  PullListMutation,
+  PullListResolver,
+} from './pullList/pullListResolver'
 import Search from './search/search.server.graphql'
 import { SearchQuery } from './search/searchResolver'
 
@@ -41,6 +45,9 @@ export const resolvers = {
     ...PublisherQuery,
     ...PullListQuery,
     ...SearchQuery,
+  },
+  Mutation: {
+    ...PullListMutation,
   },
   ...ComicBookResolver,
   ...ComicSeriesResolver,

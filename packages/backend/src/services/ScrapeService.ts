@@ -63,7 +63,7 @@ export class ScrapeService {
     path: string,
   ): TaskEither<
     Error,
-    { title: string; collectionUrl: string; singleIssuesUrl: string }
+    { title: string; collectionsUrl: string; singleIssuesUrl: string }
   > => {
     const url = `${this.baseUrl}${path}`
     const config = comicSeries.cx
@@ -72,7 +72,7 @@ export class ScrapeService {
       this.scrape<ComicSeriesScrapeData>(url, config),
       map(({ title, urls }) => ({
         title,
-        collectionUrl: urls.reduce(
+        collectionsUrl: urls.reduce(
           (_, { name, url }) =>
             name.toLowerCase().includes('collected') ? url : _,
           '',

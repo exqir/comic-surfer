@@ -2,9 +2,7 @@ import { map } from 'fp-ts/lib/TaskEither'
 import { pipe } from 'fp-ts/lib/pipeable'
 import handler from 'serve-handler'
 import http from 'http'
-import { ObjectID } from 'mongodb'
 import scrapeIt from 'scrape-it'
-import { PublisherDbObject } from 'types/server-schema'
 import { ScrapeService } from '../services/ScrapeService'
 import { createMockConfig } from 'tests/_utils'
 
@@ -38,7 +36,7 @@ describe('[Scraper.getComicSeries]', () => {
       map((res) => {
         expect(res).toMatchObject({
           title: 'Title',
-          collectionUrl: '/collections.html',
+          collectionsUrl: '/collections.html',
           singleIssuesUrl: '/issues.html',
         })
       }),
