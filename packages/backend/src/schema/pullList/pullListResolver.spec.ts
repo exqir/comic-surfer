@@ -115,13 +115,23 @@ describe('[Mutation.subscribeComicSeries]', () => {
       {} as GraphQLResolveInfo,
     )
 
+    expect(context.services.scrape.getComicSeries).toHaveBeenCalledWith(
+      '/series',
+    )
+    expect(context.dataSources.comicSeries.insert).toHaveBeenCalledWith({
+      ...defaultComicSeriesScrapResult,
+      url: '/series',
+      publisher: null,
+      collections: [],
+      singleIssues: [],
+    })
     expect(addComicSeries).toHaveBeenLastCalledWith(
       mockPullList.owner,
       defaultComicSeries._id,
     )
     expect(res).toEqual(null)
   })
-  // TODO: test call of service and insert if they use the provided url and create the right object
+
   it('should call PullListAPI and return its result', async () => {
     const mockPullList = { ...defaultPullList, list: [defaultComicSeries._id] }
     const { addComicSeries } = context.dataSources.pullList
@@ -136,7 +146,115 @@ describe('[Mutation.subscribeComicSeries]', () => {
       {} as GraphQLResolveInfo,
     )
 
+    expect(context.services.scrape.getComicSeries).toHaveBeenCalledWith(
+      '/series',
+    )
+    expect(context.dataSources.comicSeries.insert).toHaveBeenCalledWith({
+      ...defaultComicSeriesScrapResult,
+      url: '/series',
+      publisher: null,
+      collections: [],
+      singleIssues: [],
+    })
     expect(addComicSeries).toHaveBeenLastCalledWith(
+      mockPullList.owner,
+      defaultComicSeries._id,
+    )
+    expect(res).toMatchObject(mockPullList)
+  })
+})
+
+describe('[Mutation.subscribeExistingComicSeries]', () => {
+  const { context } = createMockConfig()
+  context.dataSources.pullList = ({
+    addComicSeries: jest.fn(),
+  } as unknown) as PullListAPI
+
+  it('should call PullListAPI and return null in case of Error', async () => {
+    const mockPullList = { ...defaultPullList }
+    const { addComicSeries } = context.dataSources.pullList
+    ;(addComicSeries as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
+
+    const res = await PullListMutation.subscribeExistingComicSeries(
+      {},
+      { comicSeriesId: defaultComicSeries._id },
+      { ...context, user: mockPullList.owner },
+      {} as GraphQLResolveInfo,
+    )
+
+    expect(addComicSeries).toHaveBeenLastCalledWith(
+      mockPullList.owner,
+      defaultComicSeries._id,
+    )
+    expect(res).toEqual(null)
+  })
+
+  it('should call PullListAPI and return its result', async () => {
+    const mockPullList = { ...defaultPullList, list: [defaultComicSeries._id] }
+    const { addComicSeries } = context.dataSources.pullList
+    ;(addComicSeries as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue<PullListDbObject>(mockPullList),
+    )
+
+    const res = await PullListMutation.subscribeExistingComicSeries(
+      {},
+      { comicSeriesId: defaultComicSeries._id },
+      { ...context, user: mockPullList.owner },
+      {} as GraphQLResolveInfo,
+    )
+
+    expect(addComicSeries).toHaveBeenLastCalledWith(
+      mockPullList.owner,
+      defaultComicSeries._id,
+    )
+    expect(res).toMatchObject(mockPullList)
+  })
+})
+
+describe('[Mutation.unsubscribeComicSeries]', () => {
+  const { context } = createMockConfig()
+  context.dataSources.pullList = ({
+    removeComicSeries: jest.fn(),
+  } as unknown) as PullListAPI
+
+  it('should call PullListAPI and return null in case of Error', async () => {
+    const mockPullList = { ...defaultPullList }
+    const { removeComicSeries } = context.dataSources.pullList
+    ;(removeComicSeries as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
+
+    const res = await PullListMutation.unsubscribeComicSeries(
+      {},
+      { comicSeriesId: defaultComicSeries._id },
+      { ...context, user: mockPullList.owner },
+      {} as GraphQLResolveInfo,
+    )
+
+    expect(removeComicSeries).toHaveBeenLastCalledWith(
+      mockPullList.owner,
+      defaultComicSeries._id,
+    )
+    expect(res).toEqual(null)
+  })
+
+  it('should call PullListAPI and return its result', async () => {
+    const mockPullList = { ...defaultPullList, list: [] }
+    const { removeComicSeries } = context.dataSources.pullList
+    ;(removeComicSeries as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue<PullListDbObject>(mockPullList),
+    )
+
+    const res = await PullListMutation.unsubscribeComicSeries(
+      {},
+      { comicSeriesId: defaultComicSeries._id },
+      { ...context, user: mockPullList.owner },
+      {} as GraphQLResolveInfo,
+    )
+
+    expect(removeComicSeries).toHaveBeenLastCalledWith(
       mockPullList.owner,
       defaultComicSeries._id,
     )

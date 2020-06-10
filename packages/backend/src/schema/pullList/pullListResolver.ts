@@ -68,7 +68,7 @@ export const PullListMutation: PullListMutation = {
               dataSources.comicSeries.insert({
                 ...comicSeries,
                 url: comicSeriesUrl,
-                publisher: new ObjectId(),
+                publisher: null,
                 collections: [],
                 singleIssues: [],
               }),
