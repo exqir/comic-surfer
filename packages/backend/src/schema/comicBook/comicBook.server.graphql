@@ -2,6 +2,14 @@ extend type Query {
   comicBook(id: ID!): ComicBook
 }
 
+extend type Mutation {
+  scrapComicBook(comicBookUrl: String!): ComicBook
+  scrapComicBookList(
+    comicSeriesId: ID!
+    comicBookListUrl: String!
+  ): [ComicBook!]!
+}
+
 type ComicBook @entity {
   _id: ID! @id
   title: String! @column

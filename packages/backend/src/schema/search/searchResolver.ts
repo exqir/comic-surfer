@@ -11,5 +11,6 @@ interface SearchQuery {
 
 export const SearchQuery: SearchQuery = {
   search: (_, { q }, { services }) =>
+    // TODO: Also search in the db for existing series.
     pipe(services.scrape.getComicSeriesSearch(q), foldTEtoNullable())(),
 }

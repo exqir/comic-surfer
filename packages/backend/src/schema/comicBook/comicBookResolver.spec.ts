@@ -1,6 +1,14 @@
 import { ObjectID } from 'mongodb'
-import { createMockConfig, createMockReaderWithReturnValue } from 'tests/_utils'
-import { ComicBookQuery, ComicBookResolver } from './comicBookResolver'
+import {
+  createMockConfig,
+  createMockReaderWithReturnValue,
+  createMockTaskWithReturnValue,
+} from 'tests/_utils'
+import {
+  ComicBookQuery,
+  ComicBookResolver,
+  ComicBookMutation,
+} from './comicBookResolver'
 import {
   ComicBookDbObject,
   CreatorDbObject,
@@ -14,6 +22,7 @@ import {
   PublisherAPI,
   ComicSeriesAPI,
 } from 'datasources'
+import { ScrapeService } from 'services/ScrapeService'
 
 const defaultComicBook: ComicBookDbObject = {
   _id: new ObjectID(),
@@ -67,6 +76,92 @@ describe('[Query.comicBook]', () => {
 
     expect(getById).toHaveBeenLastCalledWith(mockComicBook._id)
     expect(res).toMatchObject(mockComicBook)
+  })
+})
+
+const defaultComicBookListScrapResult = [
+  {
+    title: 'Title',
+    url: '/issue',
+    issueNo: '1',
+  },
+]
+
+const defaultComicSeries: ComicSeriesDbObject = {
+  _id: new ObjectID(),
+  title: 'Comic',
+  url: '/path',
+  collectionsUrl: null,
+  collections: [],
+  singleIssuesUrl: null,
+  singleIssues: [],
+  publisher: null,
+}
+
+describe('[Mutation.scrapComicBookList]', () => {
+  const { context } = createMockConfig()
+  context.dataSources.comicBook = ({
+    insertMany: jest.fn(),
+  } as unknown) as ComicBookAPI
+  context.services.scrape = ({
+    getComicBookList: jest
+      .fn()
+      .mockReturnValue(
+        createMockTaskWithReturnValue(defaultComicBookListScrapResult),
+      ),
+  } as unknown) as ScrapeService
+
+  it('should call ComicBookAPI and return null in case of Error', async () => {
+    const { insertMany } = context.dataSources.comicBook
+    ;(insertMany as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
+
+    const res = await ComicBookMutation.scrapComicBookList(
+      {},
+      { comicSeriesId: defaultComicSeries._id, comicBookListUrl: '/issues' },
+      context,
+      {} as GraphQLResolveInfo,
+    )
+
+    expect(insertMany).toHaveBeenLastCalledWith([
+      {
+        ...defaultComicBookListScrapResult[0],
+        comicSeries: defaultComicSeries._id,
+        creators: [],
+        publisher: null,
+        coverImgUrl: null,
+        releaseDate: null,
+      },
+    ])
+    expect(res).toEqual(null)
+  })
+
+  it('should call ComicBookAPI and return its result', async () => {
+    const mockComicBook = { ...defaultComicBook }
+    const { insertMany } = context.dataSources.comicBook
+    ;(insertMany as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue<ComicBookDbObject[]>([mockComicBook]),
+    )
+
+    const res = await ComicBookMutation.scrapComicBookList(
+      {},
+      { comicSeriesId: defaultComicSeries._id, comicBookListUrl: '/issues' },
+      context,
+      {} as GraphQLResolveInfo,
+    )
+
+    expect(insertMany).toHaveBeenLastCalledWith([
+      {
+        ...defaultComicBookListScrapResult[0],
+        comicSeries: defaultComicSeries._id,
+        creators: [],
+        publisher: null,
+        coverImgUrl: null,
+        releaseDate: null,
+      },
+    ])
+    expect(res).toMatchObject([mockComicBook])
   })
 })
 
@@ -171,17 +266,6 @@ describe('[ComicBook.publisher]', () => {
     expect(res).toMatchObject(mockPublisher)
   })
 })
-
-const defaultComicSeries: ComicSeriesDbObject = {
-  _id: new ObjectID(),
-  title: 'Comic',
-  url: '/path',
-  collectionsUrl: null,
-  collections: [],
-  singleIssuesUrl: null,
-  singleIssues: [],
-  publisher: null,
-}
 
 describe('[ComicBook.comicSeries]', () => {
   const { context } = createMockConfig()

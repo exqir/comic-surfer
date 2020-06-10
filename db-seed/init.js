@@ -51,4 +51,4 @@ db.publisher.updateOne(
   { _id: publisher._id },
   { $push: { comicSeries: comicSeries._id } }
 )
-db.pullList.insertOne({ owner: 'John Rambo', list: [comicSeries._id] })
+db.pullList.insertOne({ owner: 'some-user-id', list: [comicSeries._id] })

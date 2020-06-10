@@ -4,6 +4,7 @@ import Root from './schema.root.graphql'
 import ComicBook from './comicBook/comicBook.server.graphql'
 import {
   ComicBookQuery,
+  ComicBookMutation,
   ComicBookResolver,
 } from './comicBook/comicBookResolver'
 import ComicSeries from './comicSeries/comicSeries.server.graphql'
@@ -47,6 +48,7 @@ export const resolvers = {
     ...SearchQuery,
   },
   Mutation: {
+    ...ComicBookMutation,
     ...PullListMutation,
   },
   ...ComicBookResolver,

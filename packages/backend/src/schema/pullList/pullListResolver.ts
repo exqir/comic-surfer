@@ -11,23 +11,13 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import { map, toNullable } from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as TE from 'fp-ts/lib/TaskEither'
-import { ObjectId, MongoError } from 'mongodb'
+import { MongoError } from 'mongodb'
 
 interface PullListQuery {
   // TODO: This actually returns a PullList but this is not what the function returns
   // but what is returned once all field resolvers are done
   pullList: Resolver<PullListDbObject, {}>
 }
-
-export const PullListQuery: PullListQuery = {
-  pullList: (_, __, { dataSources, db, user }) =>
-    pipe(
-      db,
-      map(runRTEtoNullable(dataSources.pullList.getByUser(user))),
-      toNullable,
-    ),
-}
-
 interface PullListMutation {
   subscribeComicSeries: Resolver<
     PullListDbObject,
@@ -41,6 +31,21 @@ interface PullListMutation {
     PullListDbObject,
     MutationUnsubscribeComicSeriesArgs
   >
+}
+
+interface PullListResolver {
+  PullList: {
+    list: Resolver<ComicSeriesDbObject[], {}, PullListDbObject>
+  }
+}
+
+export const PullListQuery: PullListQuery = {
+  pullList: (_, __, { dataSources, db, user }) =>
+    pipe(
+      db,
+      map(runRTEtoNullable(dataSources.pullList.getByUser(user))),
+      toNullable,
+    ),
 }
 
 export const PullListMutation: PullListMutation = {
@@ -64,6 +69,9 @@ export const PullListMutation: PullListMutation = {
                 }
               >,
             ),
+            // TODO: Should only insert a new series if the series is not already in the db,
+            // even if there is another mutation for this specific use case.
+            // The url could be used to identify an already existing series.
             RTE.chain((comicSeries) =>
               dataSources.comicSeries.insert({
                 ...comicSeries,
@@ -105,12 +113,6 @@ export const PullListMutation: PullListMutation = {
       ),
       toNullable,
     ),
-}
-
-interface PullListResolver {
-  PullList: {
-    list: Resolver<ComicSeriesDbObject[], {}, PullListDbObject>
-  }
 }
 
 export const PullListResolver: PullListResolver = {

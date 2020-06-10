@@ -70,6 +70,53 @@ describe('[ComicBookAPI.insert]', () => {
   })
 })
 
+describe('[ComicBookAPI.insertMany]', () => {
+  it('should insert ComicBooks using dataLayer and return left in case of Error', async () => {
+    const mockComicBook = { ...defaultComicBook }
+    delete mockComicBook._id
+    const { insertMany } = config.context.dataLayer
+    insertMany.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+
+    const res = ds.insertMany([mockComicBook])
+
+    expect.assertions(2)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
+    )
+    expect(insertMany).toBeCalledWith(collection, [mockComicBook])
+    // TODO: The mock function is actually being called which can be tested by
+    // a mock implementation and via debugger. However, this information
+    // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
+    // expect(config.context.logger.error.mock).toBeCalledWith('TestError')
+  })
+
+  it('should insert ComicBook using dataLayer and return right with result', async () => {
+    const mockComicBook = { ...defaultComicBook }
+    delete mockComicBook._id
+    const { insertMany } = config.context.dataLayer
+    insertMany.mockReturnValueOnce(
+      createMockReaderWithReturnValue<ComicBookDbObject>([
+        {
+          ...mockComicBook,
+          _id: new ObjectID(),
+        },
+      ]),
+    )
+
+    const res = ds.insertMany([mockComicBook])
+
+    expect.assertions(2)
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject([mockComicBook])),
+      runRTEwithMockDb,
+    )
+    expect(insertMany).toBeCalledWith(collection, [mockComicBook])
+  })
+})
+
 describe('[ComicBookAPI.getById]', () => {
   it('should query dataLayer for ComicBook with id and return left in case of Error', async () => {
     const mockComicBook = { ...defaultComicBook }

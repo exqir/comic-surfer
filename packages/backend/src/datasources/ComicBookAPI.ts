@@ -9,6 +9,14 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
     super(comicBookCollection)
   }
 
+  public insertMany = (documents: Omit<ComicBookDbObject, '_id'>[]) => {
+    const { insertMany } = this.dataLayer!
+    return pipe(
+      insertMany<Omit<ComicBookDbObject, '_id'>>(this.collection, documents),
+      this.logError,
+    )
+  }
+
   public updateReleaseDate = (id: ObjectID, newDate: Date) => {
     const { updateOne } = this.dataLayer!
     return pipe(
