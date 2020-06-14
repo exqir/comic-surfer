@@ -174,7 +174,7 @@ describe('[ComicSeriesAPI.addComicBook]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { _id: mockComicSeriesId },
-      { $push: { singleIssues: mockComicBookId } },
+      { $addToSet: { singleIssues: mockComicBookId } },
     )
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
@@ -204,7 +204,7 @@ describe('[ComicSeriesAPI.addComicBook]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { _id: mockComicSeries._id },
-      { $push: { singleIssues: mockComicBook._id } },
+      { $addToSet: { singleIssues: mockComicBook._id } },
     )
   })
 })

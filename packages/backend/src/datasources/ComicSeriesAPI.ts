@@ -9,15 +9,13 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
     super(comicSeriesCollection)
   }
 
-  // TODO: check if comic book is already in comic series
-  // e.g. list: { $ne: comicSeriesId }
   public addComicBook = (id: ObjectID, comicBookId: ObjectID) => {
     const { updateOne } = this.dataLayer!
     return pipe(
       updateOne<ComicSeriesDbObject>(
         this.collection,
         { _id: toObjectId(id) },
-        { $push: { singleIssues: toObjectId(comicBookId) } },
+        { $addToSet: { singleIssues: toObjectId(comicBookId) } },
       ),
       this.logError,
     )

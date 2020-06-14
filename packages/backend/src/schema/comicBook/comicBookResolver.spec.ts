@@ -100,8 +100,6 @@ const defaultComicSeries: ComicSeriesDbObject = {
   publisher: null,
 }
 
-// TODO: scrapComicBook test
-
 describe('[Mutation.scrapComicBook]', () => {
   const { context } = createMockConfig()
   context.dataSources.comicBook = ({

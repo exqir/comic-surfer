@@ -23,9 +23,7 @@ export class PullListAPI extends MongoDataSource<PullListDbObject> {
       updateOne<PullListDbObject>(
         this.collection,
         { owner: user },
-        // TODO: check if series is already in pull list
-        // e.g. list: { $ne: comicSeriesId }
-        { $push: { list: toObjectId(comicSeriesId) } },
+        { $addToSet: { list: toObjectId(comicSeriesId) } },
       ),
       this.logError,
     )

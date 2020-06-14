@@ -18,7 +18,6 @@ const scraper = new ScrapeService({
   searchPath,
 })
 
-// TODO: Add expect for number of assertions like in integration test
 describe('ScrapeService', () => {
   it('should return left in case of Error', async () => {
     mockScraper.mockRejectedValueOnce(new Error('Failed'))

@@ -205,7 +205,7 @@ describe('[PullListAPI.addComicSeries]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { owner: mockPullList.owner },
-      { $push: { list: mockComicSeriesId } },
+      { $addToSet: { list: mockComicSeriesId } },
     )
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
@@ -239,7 +239,7 @@ describe('[PullListAPI.addComicSeries]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { owner: mockPullList.owner },
-      { $push: { list: mockComicSeries._id } },
+      { $addToSet: { list: mockComicSeries._id } },
     )
   })
 })

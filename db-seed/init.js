@@ -1,10 +1,3 @@
-db.creator.insertOne({
-  firstname: 'Jeff',
-  lastname: 'Lemire',
-  comicSeries: [],
-})
-const creator = db.creator.findOne({ firstname: 'Jeff' })
-
 db.publisher.insertOne({
   name: 'Image',
   iconUrl: '/image/icon.jpg',
@@ -29,7 +22,7 @@ db.comicBook.insertOne({
   title: 'Descender #1',
   issueNo: '1',
   releaseDate: new Date('2020-01-15'),
-  creators: [],
+  creators: [{ name: 'Jeff Lemire' }],
   coverImgUrl: '/descender/1/cover.jpg',
   url: '/descender/1',
   publisher: publisher._id,
@@ -44,7 +37,7 @@ db.comicSeries.updateOne(
 // prettier-ignore
 db.comicBook.updateOne(
   { _id: comicBook._id },
-  { $set: { comicSeries: comicSeries._id, }, $push: { creators: creator._id } }
+  { $set: { comicSeries: comicSeries._id, } }
 )
 // prettier-ignore
 db.publisher.updateOne(
