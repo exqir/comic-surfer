@@ -4,11 +4,13 @@ const { promisify } = require('util')
 
 const glob = promisify(_glob)
 
-glob('**/*.@(root|server).graphql', { absolute: true }).then(files =>
-  files.forEach(file => {
+glob('**/*.@(root|server).graphql', { absolute: true }).then((files) =>
+  files.forEach((file) => {
     readFile(file)
-      .then(buffer => buffer.toString().replace(/ @[\w]*/g, ''))
-      .then(cleaned =>
+      .then((buffer) =>
+        buffer.toString().replace(/ @[\w]*(\([\w\s:]*\))*/g, ''),
+      )
+      .then((cleaned) =>
         writeFile(file.replace(/.server.graphql/, '.client.graphql'), cleaned),
       )
   }),

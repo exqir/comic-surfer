@@ -12,8 +12,6 @@ import {
   ComicSeriesQuery,
   ComicSeriesResolver,
 } from './comicSeries/comicSeriesResolver'
-import Creator from './creator/creator.server.graphql'
-import { CreatorResolver } from './creator/creatorResolver'
 import Publisher from './publisher/publisher.server.graphql'
 import {
   PublisherQuery,
@@ -28,15 +26,7 @@ import {
 import Search from './search/search.server.graphql'
 import { SearchQuery } from './search/searchResolver'
 
-export default [
-  Root,
-  ComicBook,
-  ComicSeries,
-  Creator,
-  Publisher,
-  PullList,
-  Search,
-]
+export default [Root, ComicBook, ComicSeries, Publisher, PullList, Search]
 
 export const resolvers = {
   Date: GraphQLDate,
@@ -53,7 +43,6 @@ export const resolvers = {
   },
   ...ComicBookResolver,
   ...ComicSeriesResolver,
-  ...CreatorResolver,
   ...PublisherResolver,
   ...PullListResolver,
 }

@@ -36,10 +36,7 @@ export type ComicSeries = {
 
 export type Creator = {
    __typename?: 'Creator';
-  _id: Scalars['ID'];
-  firstname?: Maybe<Scalars['String']>;
-  lastname: Scalars['String'];
-  comicSeries: Array<ComicSeries>;
+  name: Scalars['String'];
 };
 
 

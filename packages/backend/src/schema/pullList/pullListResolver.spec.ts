@@ -110,17 +110,17 @@ describe('[Mutation.subscribeComicSeries]', () => {
 
     const res = await PullListMutation.subscribeComicSeries(
       {},
-      { comicSeriesUrl: '/series' },
+      { comicSeriesUrl: defaultComicSeries.url },
       { ...context, user: mockPullList.owner },
       {} as GraphQLResolveInfo,
     )
 
     expect(context.services.scrape.getComicSeries).toHaveBeenCalledWith(
-      '/series',
+      defaultComicSeries.url,
     )
     expect(context.dataSources.comicSeries.insert).toHaveBeenCalledWith({
       ...defaultComicSeriesScrapResult,
-      url: '/series',
+      url: defaultComicSeries.url,
       publisher: null,
       collections: [],
       singleIssues: [],
@@ -141,17 +141,17 @@ describe('[Mutation.subscribeComicSeries]', () => {
 
     const res = await PullListMutation.subscribeComicSeries(
       {},
-      { comicSeriesUrl: '/series' },
+      { comicSeriesUrl: defaultComicSeries.url },
       { ...context, user: mockPullList.owner },
       {} as GraphQLResolveInfo,
     )
 
     expect(context.services.scrape.getComicSeries).toHaveBeenCalledWith(
-      '/series',
+      defaultComicSeries.url,
     )
     expect(context.dataSources.comicSeries.insert).toHaveBeenCalledWith({
       ...defaultComicSeriesScrapResult,
-      url: '/series',
+      url: defaultComicSeries.url,
       publisher: null,
       collections: [],
       singleIssues: [],

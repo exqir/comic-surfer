@@ -11,7 +11,6 @@ import typeDefs, { resolvers } from './schema'
 import {
   ComicBookAPI,
   ComicSeriesAPI,
-  CreatorAPI,
   PublisherAPI,
   PullListAPI,
 } from './datasources'
@@ -49,7 +48,6 @@ const apolloServer = new ApolloServer({
   dataSources: () => ({
     comicBook: new ComicBookAPI(),
     comicSeries: new ComicSeriesAPI(),
-    creator: new CreatorAPI(),
     publisher: new PublisherAPI(),
     pullList: new PullListAPI(),
   }),

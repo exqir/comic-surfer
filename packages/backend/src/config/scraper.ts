@@ -100,7 +100,7 @@ interface ComicBookConfig extends ScrapeOptions {
 export interface ComicBookScrapeData {
   meta: {
     type: string
-    date: number
+    date: Date
   }[]
   creators: {
     type: string

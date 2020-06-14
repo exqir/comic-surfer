@@ -10,7 +10,6 @@ import typeDefs, { resolvers } from '../schema'
 import {
   ComicBookAPI,
   ComicSeriesAPI,
-  CreatorAPI,
   PublisherAPI,
   PullListAPI,
 } from '../datasources'
@@ -123,14 +122,13 @@ export const createMockConfig = () => ({
  * Creates an `ApolloServer` for integration tests.
  * From: https://github.com/apollographql/fullstack-tutorial/blob/master/final/server/src/__tests__/__utils.js
  * @param context Context object to be merged with default mock config.
- * @returns { server: ApolloServer, comicBook: ComicBookAPI, comicSeries: ComicSeriesAPI, creator: CreatorAPI, publisher: PublisherAPI, pullList: PullListAPI }
+ * @returns { server: ApolloServer, comicBook: ComicBookAPI, comicSeries: ComicSeriesAPI, publisher: PublisherAPI, pullList: PullListAPI }
  */
 export const constructTestServer = (context: {} = {}) => {
   const defaultContext = createMockConfig().context
   delete defaultContext.dataSources
   const comicBook = new ComicBookAPI()
   const comicSeries = new ComicSeriesAPI()
-  const creator = new CreatorAPI()
   const publisher = new PublisherAPI()
   const pullList = new PullListAPI()
 
@@ -140,7 +138,6 @@ export const constructTestServer = (context: {} = {}) => {
     dataSources: () => ({
       comicBook,
       comicSeries,
-      creator,
       publisher,
       pullList,
     }),
@@ -150,5 +147,5 @@ export const constructTestServer = (context: {} = {}) => {
     }),
   })
 
-  return { server, comicBook, comicSeries, creator, publisher, pullList }
+  return { server, comicBook, comicSeries, publisher, pullList }
 }

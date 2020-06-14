@@ -49,10 +49,7 @@ export type ComicSeries = {
 
 export type Creator = {
    __typename?: 'Creator';
-  _id: Scalars['ID'];
-  firstname: Maybe<Scalars['String']>;
-  lastname: Scalars['String'];
-  comicSeries: Array<ComicSeries>;
+  name: Scalars['String'];
 };
 
 
@@ -158,7 +155,7 @@ export type ComicBookDbObject = {
   title: string,
   issueNo: Maybe<string>,
   releaseDate: Maybe<Date>,
-  creators: Array<CreatorDbObject['_id']>,
+  creators: Array<CreatorDbObject>,
   comicSeries: Maybe<ComicSeriesDbObject['_id']>,
   publisher: Maybe<PublisherDbObject['_id']>,
   coverImgUrl: Maybe<string>,
@@ -166,10 +163,7 @@ export type ComicBookDbObject = {
 };
 
 export type CreatorDbObject = {
-  _id: ObjectID,
-  firstname: Maybe<string>,
-  lastname: string,
-  comicSeries: Array<ComicSeriesDbObject['_id']>,
+  name: string,
 };
 
 export type ComicSeriesDbObject = {

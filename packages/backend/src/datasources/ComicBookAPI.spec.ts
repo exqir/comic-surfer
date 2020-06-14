@@ -255,3 +255,68 @@ describe('[ComicBookAPI.updateReleaseDate]', () => {
     )
   })
 })
+
+describe('[ComicBookAPI.enhanceWithScrapResult]', () => {
+  it('should update ComicBook using dataLayer and return left in case of Error', async () => {
+    const mockComicBook = { ...defaultComicBook }
+    const scrapResult = {
+      coverImgUrl: '/image',
+      releaseDate: new Date('2020-05-30'),
+      creators: [{ name: 'John Rambo' }],
+    }
+    const { updateOne } = config.context.dataLayer
+    updateOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+
+    const res = ds.enhanceWithScrapResult(mockComicBook.url, scrapResult)
+
+    expect.assertions(2)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { url: mockComicBook.url },
+      { $set: scrapResult },
+    )
+    // TODO: The mock function is actually being called which can be tested by
+    // a mock implementation and via debugger. However, this information
+    // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
+    // expect(config.context.logger.error.mock).toBeCalledWith('TestError')
+  })
+
+  it('should update ComicBook using dataLayer and return right with result', async () => {
+    const mockComicBook = { ...defaultComicBook }
+    const scrapResult = {
+      coverImgUrl: '/image',
+      releaseDate: new Date('2020-05-30'),
+      creators: [{ name: 'John Rambo' }],
+    }
+    const { updateOne } = config.context.dataLayer
+    updateOne.mockReturnValueOnce(
+      createMockReaderWithReturnValue<ComicBookDbObject>({
+        ...mockComicBook,
+        ...scrapResult,
+      }),
+    )
+
+    const res = ds.enhanceWithScrapResult(mockComicBook.url, scrapResult)
+
+    expect.assertions(4)
+    await pipe(
+      res,
+      RTE.map((d) => {
+        expect(d!.releaseDate).toEqual(scrapResult.releaseDate)
+        expect(d!.coverImgUrl).toEqual(scrapResult.coverImgUrl)
+        expect(d!.creators).toEqual(scrapResult.creators)
+      }),
+      runRTEwithMockDb,
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { url: mockComicBook.url },
+      { $set: scrapResult },
+    )
+  })
+})

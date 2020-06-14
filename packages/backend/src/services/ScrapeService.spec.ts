@@ -167,7 +167,7 @@ describe('[ScrapeService.getComicBook]', () => {
   it('should return ComicBook scrape results', async () => {
     const mockResult = {
       meta: [
-        { type: 'Page Count', date: 32 },
+        { type: 'Page Count', date: new Date(32) },
         { type: 'Release Date', date: new Date('2020-05-30') },
       ],
       creators: [
@@ -177,7 +177,7 @@ describe('[ScrapeService.getComicBook]', () => {
         },
         {
           type: 'Written by',
-          artist: 'John Rambo',
+          name: 'John Rambo',
         },
       ],
       coverImgUrl: '/image.jpg',
@@ -198,7 +198,7 @@ describe('[ScrapeService.getComicBook]', () => {
     map((d) =>
       expect(d).toMatchObject({
         releaseDate: mockResult.meta[1].date,
-        creators: [mockResult.creators[0].name, mockResult.creators[1].name],
+        creators: [{ name: mockResult.creators[1].name }],
         coverImgUrl: mockResult.coverImgUrl,
       }),
     )(result)

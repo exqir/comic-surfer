@@ -15,9 +15,13 @@ type ComicBook @entity {
   title: String! @column
   issueNo: String @column
   releaseDate: Date @column
-  creators: [Creator!]! @link
+  creators: [Creator!]! @embedded
   comicSeries: ComicSeries @link
   publisher: Publisher @link
   coverImgUrl: String @column
   url: String! @column
+}
+
+type Creator @entity(embedded: true) {
+  name: String! @column
 }

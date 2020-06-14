@@ -1,6 +1,0 @@
-type Creator @entity {
-  _id: ID! @id
-  firstname: String @column
-  lastname: String! @column
-  comicSeries: [ComicSeries!]! @link
-}

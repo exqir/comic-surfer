@@ -6,7 +6,6 @@ import {
   MutationScrapComicBookArgs,
   MutationScrapComicBookListArgs,
   ComicBookDbObject,
-  CreatorDbObject,
   PublisherDbObject,
   ComicSeriesDbObject,
 } from 'types/server-schema'
@@ -22,7 +21,7 @@ interface ComicBookQuery {
 }
 
 interface ComicBookMutation {
-  // scrapComicBook: Resolver<ComicBookDbObject, MutationScrapComicBookArgs>
+  scrapComicBook: Resolver<ComicBookDbObject, MutationScrapComicBookArgs>
   scrapComicBookList: Resolver<
     ComicBookDbObject[],
     MutationScrapComicBookListArgs
@@ -31,7 +30,6 @@ interface ComicBookMutation {
 
 interface ComicBookResolver {
   ComicBook: {
-    creators: Resolver<CreatorDbObject[], {}, ComicBookDbObject>
     publisher: Resolver<PublisherDbObject, {}, ComicBookDbObject>
     comicSeries: Resolver<ComicSeriesDbObject, {}, ComicBookDbObject>
   }
@@ -47,6 +45,33 @@ export const ComicBookQuery: ComicBookQuery = {
 }
 
 export const ComicBookMutation: ComicBookMutation = {
+  scrapComicBook: (_, { comicBookUrl }, { dataSources, db, services }) =>
+    pipe(
+      db,
+      map(
+        runRTEtoNullable(
+          pipe(
+            RTE.fromTaskEither(
+              services.scrape.getComicBook(comicBookUrl) as TE.TaskEither<
+                MongoError,
+                {
+                  coverImgUrl: string
+                  releaseDate: Date | null
+                  creators: { name: string }[]
+                }
+              >,
+            ),
+            RTE.chain((comicBook) =>
+              dataSources.comicBook.enhanceWithScrapResult(
+                comicBookUrl,
+                comicBook,
+              ),
+            ),
+          ),
+        ),
+      ),
+      toNullable,
+    ),
   scrapComicBookList: (
     _,
     { comicSeriesId, comicBookListUrl },
@@ -90,12 +115,6 @@ export const ComicBookMutation: ComicBookMutation = {
 
 export const ComicBookResolver: ComicBookResolver = {
   ComicBook: {
-    creators: ({ creators }, _, { dataSources, db }) =>
-      pipe(
-        db,
-        map(runRTEtoNullable(dataSources.creator.getByIds(creators))),
-        toNullable,
-      ),
     publisher: ({ publisher }, _, { dataSources, db }) =>
       chainMaybeToNullable(
         publisher,

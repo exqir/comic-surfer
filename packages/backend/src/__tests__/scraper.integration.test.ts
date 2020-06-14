@@ -74,8 +74,8 @@ describe('[Scraper.getComicBook]', () => {
       scraper.getComicBook('/cx-comic-book.html'),
       map((res) => {
         expect(res).toMatchObject({
-          releaseDate: new Date('September 7, 2016'),
-          creators: ['DC', 'Joshua Williamson', 'Mike Henderson'],
+          releaseDate: new Date('November 2, 2016'),
+          creators: [{ name: 'Joshua Williamson' }, { name: 'Mike Henderson' }],
           coverImgUrl: '/cover.png',
         })
       }),

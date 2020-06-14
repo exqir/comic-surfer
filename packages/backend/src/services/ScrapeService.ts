@@ -104,8 +104,8 @@ export class ScrapeService {
     Error,
     {
       coverImgUrl: string
-      releaseDate: number
-      creators: string[]
+      releaseDate: Date | null
+      creators: { name: string }[]
     }
   > => {
     const url = `${this.baseUrl}${path}`
@@ -115,11 +115,11 @@ export class ScrapeService {
       this.scrape<ComicBookScrapeData>(url, config),
       map(({ meta, creators, coverImgUrl }) => ({
         coverImgUrl,
-        releaseDate: meta.reduce(
-          (_, { type, date }) => (type.includes('Release Date') ? date : _),
-          0,
-        ),
-        creators: creators.map(({ name }) => name),
+        releaseDate:
+          meta.find(({ type }) => type.includes('Release Date'))?.date ?? null,
+        creators: creators
+          .filter(({ type }) => !type.includes('Publish'))
+          .map(({ name }) => ({ name })),
       })),
     )
   }

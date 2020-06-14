@@ -28,4 +28,23 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
       this.logError,
     )
   }
+
+  public enhanceWithScrapResult = (
+    url: string,
+    update: {
+      coverImgUrl: string
+      releaseDate: Date | null
+      creators: { name: string }[]
+    },
+  ) => {
+    const { updateOne } = this.dataLayer!
+    return pipe(
+      updateOne<ComicBookDbObject>(
+        this.collection,
+        { url },
+        { $set: { ...update } },
+      ),
+      this.logError,
+    )
+  }
 }

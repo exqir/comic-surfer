@@ -1,6 +1,0 @@
-type Creator {
-  _id: ID!
-  firstname: String
-  lastname: String!
-  comicSeries: [ComicSeries!]!
-}

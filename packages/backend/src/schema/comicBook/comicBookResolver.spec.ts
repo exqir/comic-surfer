@@ -11,17 +11,11 @@ import {
 } from './comicBookResolver'
 import {
   ComicBookDbObject,
-  CreatorDbObject,
   PublisherDbObject,
   ComicSeriesDbObject,
 } from 'types/server-schema'
 import { GraphQLResolveInfo } from 'graphql'
-import {
-  CreatorAPI,
-  ComicBookAPI,
-  PublisherAPI,
-  ComicSeriesAPI,
-} from 'datasources'
+import { ComicBookAPI, PublisherAPI, ComicSeriesAPI } from 'datasources'
 import { ScrapeService } from 'services/ScrapeService'
 
 const defaultComicBook: ComicBookDbObject = {
@@ -87,6 +81,14 @@ const defaultComicBookListScrapResult = [
   },
 ]
 
+const defaultComicBookScrapResult = [
+  {
+    coverImgUrl: '/image',
+    releaseDate: new Date(),
+    creators: [{ name: 'John Rambo' }],
+  },
+]
+
 const defaultComicSeries: ComicSeriesDbObject = {
   _id: new ObjectID(),
   title: 'Comic',
@@ -97,6 +99,69 @@ const defaultComicSeries: ComicSeriesDbObject = {
   singleIssues: [],
   publisher: null,
 }
+
+// TODO: scrapComicBook test
+
+describe('[Mutation.scrapComicBook]', () => {
+  const { context } = createMockConfig()
+  context.dataSources.comicBook = ({
+    enhanceWithScrapResult: jest.fn(),
+  } as unknown) as ComicBookAPI
+  context.services.scrape = ({
+    getComicBook: jest
+      .fn()
+      .mockReturnValue(
+        createMockTaskWithReturnValue(defaultComicBookScrapResult),
+      ),
+  } as unknown) as ScrapeService
+
+  it('should call ComicBookAPI and return null in case of Error', async () => {
+    const mockComicBook = { ...defaultComicBook }
+    const { enhanceWithScrapResult } = context.dataSources.comicBook
+    ;(enhanceWithScrapResult as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
+
+    const res = await ComicBookMutation.scrapComicBook(
+      {},
+      { comicBookUrl: mockComicBook.url },
+      context,
+      {} as GraphQLResolveInfo,
+    )
+
+    expect(context.services.scrape.getComicBook).toHaveBeenCalledWith(
+      mockComicBook.url,
+    )
+    expect(enhanceWithScrapResult).toHaveBeenLastCalledWith(
+      mockComicBook.url,
+      defaultComicBookScrapResult,
+    )
+    expect(res).toEqual(null)
+  })
+
+  it('should call ComicBookAPI and return its result', async () => {
+    const mockComicBook = { ...defaultComicBook }
+    const { enhanceWithScrapResult } = context.dataSources.comicBook
+    ;(enhanceWithScrapResult as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue<ComicBookDbObject[]>([mockComicBook]),
+    )
+
+    const res = await ComicBookMutation.scrapComicBook(
+      {},
+      { comicBookUrl: mockComicBook.url },
+      context,
+      {} as GraphQLResolveInfo,
+    )
+    expect(context.services.scrape.getComicBook).toHaveBeenCalledWith(
+      mockComicBook.url,
+    )
+    expect(enhanceWithScrapResult).toHaveBeenLastCalledWith(
+      mockComicBook.url,
+      defaultComicBookScrapResult,
+    )
+    expect(res).toMatchObject([mockComicBook])
+  })
+})
 
 describe('[Mutation.scrapComicBookList]', () => {
   const { context } = createMockConfig()
@@ -162,56 +227,6 @@ describe('[Mutation.scrapComicBookList]', () => {
       },
     ])
     expect(res).toMatchObject([mockComicBook])
-  })
-})
-
-const defaultCreator: CreatorDbObject = {
-  _id: new ObjectID(),
-  firstname: 'John',
-  lastname: 'Rambo',
-  comicSeries: [],
-}
-
-describe('[ComicBook.creators]', () => {
-  const { context } = createMockConfig()
-  context.dataSources.creator = ({
-    getByIds: jest.fn(),
-  } as unknown) as CreatorAPI
-
-  it('should call CreatorAPI and return null in case of Error', async () => {
-    const mockCreator = { ...defaultCreator }
-    const { getByIds } = context.dataSources.creator
-    ;(getByIds as jest.Mock).mockReturnValueOnce(
-      createMockReaderWithReturnValue({}, true),
-    )
-
-    const res = await ComicBookResolver.ComicBook.creators(
-      { ...defaultComicBook, creators: [mockCreator._id] },
-      {},
-      context,
-      {} as GraphQLResolveInfo,
-    )
-
-    expect(getByIds).toHaveBeenLastCalledWith([mockCreator._id])
-    expect(res).toEqual(null)
-  })
-
-  it('should call CreatorAPI and return its result', async () => {
-    const mockCreator = { ...defaultCreator }
-    const { getByIds } = context.dataSources.creator
-    ;(getByIds as jest.Mock).mockReturnValueOnce(
-      createMockReaderWithReturnValue<CreatorDbObject>([mockCreator]),
-    )
-
-    const res = await ComicBookResolver.ComicBook.creators(
-      { ...defaultComicBook, creators: [mockCreator._id] },
-      {},
-      context,
-      {} as GraphQLResolveInfo,
-    )
-
-    expect(getByIds).toHaveBeenLastCalledWith([mockCreator._id])
-    expect(res).toMatchObject([mockCreator])
   })
 })
 
