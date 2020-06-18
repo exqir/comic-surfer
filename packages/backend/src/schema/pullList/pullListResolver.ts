@@ -10,8 +10,6 @@ import { runRTEtoNullable } from 'lib'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { map, toNullable } from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
-import * as TE from 'fp-ts/lib/TaskEither'
-import { MongoError } from 'mongodb'
 
 interface PullListQuery {
   // TODO: This actually returns a PullList but this is not what the function returns
@@ -59,20 +57,11 @@ export const PullListMutation: PullListMutation = {
       map(
         runRTEtoNullable(
           pipe(
-            RTE.fromTaskEither(
-              services.scrape.getComicSeries(comicSeriesUrl) as TE.TaskEither<
-                MongoError,
-                {
-                  title: string
-                  collectionsUrl: string
-                  singleIssuesUrl: string
-                }
-              >,
-            ),
+            RTE.fromTaskEither(services.scrape.getComicSeries(comicSeriesUrl)),
             // TODO: Should only insert a new series if the series is not already in the db,
             // even if there is another mutation for this specific use case.
             // The url could be used to identify an already existing series.
-            RTE.chain((comicSeries) =>
+            RTE.chainW((comicSeries) =>
               dataSources.comicSeries.insert({
                 ...comicSeries,
                 url: comicSeriesUrl,
@@ -81,7 +70,7 @@ export const PullListMutation: PullListMutation = {
                 singleIssues: [],
               }),
             ),
-            RTE.chain((comicSeries) =>
+            RTE.chainW((comicSeries) =>
               dataSources.pullList.addComicSeries(user, comicSeries._id),
             ),
           ),

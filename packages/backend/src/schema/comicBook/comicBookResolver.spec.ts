@@ -166,6 +166,9 @@ describe('[Mutation.scrapComicBookList]', () => {
   context.dataSources.comicBook = ({
     insertMany: jest.fn(),
   } as unknown) as ComicBookAPI
+  context.dataSources.comicSeries = ({
+    addComicBooks: jest.fn(),
+  } as unknown) as ComicSeriesAPI
   context.services.scrape = ({
     getComicBookList: jest
       .fn()
@@ -206,6 +209,10 @@ describe('[Mutation.scrapComicBookList]', () => {
     ;(insertMany as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<ComicBookDbObject[]>([mockComicBook]),
     )
+    const { addComicBooks } = context.dataSources.comicSeries
+    ;(addComicBooks as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}),
+    )
 
     const res = await ComicBookMutation.scrapComicBookList(
       {},
@@ -223,6 +230,9 @@ describe('[Mutation.scrapComicBookList]', () => {
         coverImgUrl: null,
         releaseDate: null,
       },
+    ])
+    expect(addComicBooks).toHaveBeenLastCalledWith(defaultComicSeries._id, [
+      mockComicBook._id,
     ])
     expect(res).toMatchObject([mockComicBook])
   })

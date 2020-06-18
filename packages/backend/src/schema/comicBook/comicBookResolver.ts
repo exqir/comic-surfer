@@ -11,7 +11,7 @@ import {
 } from 'types/server-schema'
 import { runRTEtoNullable, mapOtoRTEnullable, chainMaybeToNullable } from 'lib'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
-import * as TE from 'fp-ts/lib/TaskEither'
+import { TaskEither } from 'fp-ts/lib/TaskEither'
 import { MongoError } from 'mongodb'
 
 interface ComicBookQuery {
@@ -51,17 +51,8 @@ export const ComicBookMutation: ComicBookMutation = {
       map(
         runRTEtoNullable(
           pipe(
-            RTE.fromTaskEither(
-              services.scrape.getComicBook(comicBookUrl) as TE.TaskEither<
-                MongoError,
-                {
-                  coverImgUrl: string
-                  releaseDate: Date | null
-                  creators: { name: string }[]
-                }
-              >,
-            ),
-            RTE.chain((comicBook) =>
+            RTE.fromTaskEither(services.scrape.getComicBook(comicBookUrl)),
+            RTE.chainW((comicBook) =>
               dataSources.comicBook.enhanceWithScrapResult(
                 comicBookUrl,
                 comicBook,
@@ -83,18 +74,17 @@ export const ComicBookMutation: ComicBookMutation = {
         runRTEtoNullable(
           pipe(
             RTE.fromTaskEither(
-              services.scrape.getComicBookList(
-                comicBookListUrl,
-              ) as TE.TaskEither<
+              services.scrape.getComicBookList(comicBookListUrl) as TaskEither<
                 MongoError,
                 {
                   title: string
-                  issueNo: string
                   url: string
+                  issueNo: string
                 }[]
               >,
             ),
             RTE.chain((comicBooks) =>
+              // TODO: only insert comicBooks that are not already in the DB
               dataSources.comicBook.insertMany(
                 comicBooks.map((book) => ({
                   ...book,
@@ -104,6 +94,12 @@ export const ComicBookMutation: ComicBookMutation = {
                   coverImgUrl: null,
                   releaseDate: null,
                 })),
+              ),
+            ),
+            RTE.chainFirst((comicBooks) =>
+              dataSources.comicSeries.addComicBooks(
+                comicSeriesId,
+                comicBooks.map(({ _id }) => _id),
               ),
             ),
           ),

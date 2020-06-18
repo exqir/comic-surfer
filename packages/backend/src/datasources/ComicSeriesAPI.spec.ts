@@ -208,3 +208,56 @@ describe('[ComicSeriesAPI.addComicBook]', () => {
     )
   })
 })
+
+describe('[ComicSeriesAPI.addComicBooks]', () => {
+  it('should add ComicBooks as issues to ComicSeries using dataLayer and return left in case of Error', async () => {
+    const mockComicSeriesId = new ObjectID()
+    const mockComicBookId = new ObjectID()
+    const { updateOne } = config.context.dataLayer
+    updateOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+
+    const res = ds.addComicBooks(mockComicSeriesId, [mockComicBookId])
+
+    expect.assertions(2)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      runRTEwithMockDb,
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { _id: mockComicSeriesId },
+      { $addToSet: { singleIssues: { $each: [mockComicBookId] } } },
+    )
+    // TODO: The mock function is actually being called which can be tested by
+    // a mock implementation and via debugger. However, this information
+    // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
+    // expect(config.context.logger.error.mock).toBeCalledWith('TestError')
+  })
+
+  it('should add ComicBooks as issues to ComicSeries using dataLayer and return right with result', async () => {
+    const mockComicBook = { _id: new ObjectID(), title: 'Comic', url: '/path' }
+    const mockComicSeries = {
+      ...defaultComicSeries,
+      issues: [mockComicBook._id],
+    }
+    const { updateOne } = config.context.dataLayer
+    updateOne.mockReturnValueOnce(
+      createMockReaderWithReturnValue<ComicSeriesDbObject>(mockComicSeries),
+    )
+
+    const res = ds.addComicBooks(mockComicSeries._id, [mockComicBook._id])
+
+    expect.assertions(2)
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(mockComicSeries)),
+      runRTEwithMockDb,
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { _id: mockComicSeries._id },
+      { $addToSet: { singleIssues: { $each: [mockComicBook._id] } } },
+    )
+  })
+})
