@@ -3,22 +3,29 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import handler from 'serve-handler'
 import http from 'http'
 import scrapeIt from 'scrape-it'
-import { ScrapeService } from '../services/ScrapeService'
+import { comixology } from '../services/ComixologyScaper'
 import { createMockConfig } from 'tests/_utils'
 
 const PORT = 9000
 const URL = `http://localhost:${PORT}`
-const scraper = new ScrapeService({
-  scraper: scrapeIt,
-  logger: createMockConfig().context.services.logger,
-  baseUrl: URL,
-  searchPath: '/cx-comic-series-search.html?search=',
-})
+const scraper = comixology(
+  scrapeIt,
+  createMockConfig().context.services.logger,
+  URL,
+)
 let server: http.Server
 
 beforeAll((done) => {
   server = http.createServer((request, response) => {
-    return handler(request, response, { public: '__fixtures__' })
+    return handler(request, response, {
+      public: '__fixtures__',
+      rewrites: [
+        {
+          source: '/search/series',
+          destination: '/cx-comic-series-search.html',
+        },
+      ],
+    })
   })
 
   server.listen(PORT, done)
@@ -35,9 +42,10 @@ describe('[Scraper.getComicSeries]', () => {
       scraper.getComicSeries('/cx-comic-series.html'),
       map((res) => {
         expect(res).toMatchObject({
+          url: `${URL}/cx-comic-series.html`,
           title: 'Title',
-          collectionsUrl: '/collections.html',
-          singleIssuesUrl: '/issues.html',
+          collectionsUrl: `${URL}/collections.html`,
+          singleIssuesUrl: `${URL}/issues.html`,
         })
       }),
     )()
@@ -53,13 +61,15 @@ describe('[Scraper.getComicBookList]', () => {
         expect(res).toMatchObject([
           {
             title: 'Comic Book 2',
-            url: '/issue-2.html',
+            url: `${URL}/issue-2.html`,
             issueNo: '2',
+            coverImgUrl: '/issue-2-cover.jpg',
           },
           {
             title: 'Comic Book 1',
-            url: '/issue-1.html',
+            url: `${URL}/issue-1.html`,
             issueNo: '1',
+            coverImgUrl: '/issue-1-cover.jpg',
           },
         ])
       }),
@@ -74,6 +84,10 @@ describe('[Scraper.getComicBook]', () => {
       scraper.getComicBook('/cx-comic-book.html'),
       map((res) => {
         expect(res).toMatchObject({
+          title: 'Batman',
+          url: `${URL}/cx-comic-book.html`,
+          issueNo: '78',
+          publisher: { name: 'DC', url: `${URL}/dc` },
           releaseDate: new Date('November 2, 2016'),
           creators: [{ name: 'Joshua Williamson' }, { name: 'Mike Henderson' }],
           coverImgUrl: '/cover.png',
@@ -92,11 +106,11 @@ describe('[Scraper.getComicSeriesSearch]', () => {
         expect(res).toMatchObject([
           {
             title: 'Series 1',
-            url: '/series-1.html',
+            url: `${URL}/series-1.html`,
           },
           {
             title: 'Series 2',
-            url: '/series-2.html',
+            url: `${URL}/series-2.html`,
           },
         ])
       }),

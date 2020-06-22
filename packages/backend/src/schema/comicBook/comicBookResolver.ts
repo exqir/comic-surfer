@@ -13,6 +13,7 @@ import { runRTEtoNullable, mapOtoRTEnullable, chainMaybeToNullable } from 'lib'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { TaskEither } from 'fp-ts/lib/TaskEither'
 import { MongoError } from 'mongodb'
+import { ComicBookListData } from 'services/ScrapeService'
 
 interface ComicBookQuery {
   // TODO: This actually returns a ComicBook but this is not what the function returns
@@ -76,11 +77,7 @@ export const ComicBookMutation: ComicBookMutation = {
             RTE.fromTaskEither(
               services.scrape.getComicBookList(comicBookListUrl) as TaskEither<
                 MongoError,
-                {
-                  title: string
-                  url: string
-                  issueNo: string
-                }[]
+                ComicBookListData[]
               >,
             ),
             RTE.chain((comicBooks) =>

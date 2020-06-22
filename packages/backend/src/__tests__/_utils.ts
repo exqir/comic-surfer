@@ -13,7 +13,7 @@ import {
   PublisherAPI,
   PullListAPI,
 } from '../datasources'
-import { ScrapeService } from 'services/ScrapeService'
+import { IScraper } from 'services/ScrapeService'
 
 /**
  * Creates a `ReaderTaskEither<Db, MongoError, T>` that returns `value` as right
@@ -92,13 +92,12 @@ const mockDataLayer = {
   deleteMany: jest.fn(),
 }
 
-const mockScraper = ({
-  scrape: jest.fn(),
+const mockScraper: IScraper = {
   getComicSeries: jest.fn(),
   getComicBookList: jest.fn(),
   getComicBook: jest.fn(),
   getComicSeriesSearch: jest.fn(),
-} as any) as ScrapeService
+}
 
 /**
  * Creates a mock GraphQL config object.

@@ -12,7 +12,7 @@ import {
   PullListQuery,
   PullListMutation,
 } from './pullListResolver'
-import { ScrapeService } from 'services/ScrapeService'
+import { IScraper } from 'services/ScrapeService'
 
 const defaultPullList: PullListDbObject = {
   _id: new ObjectID(),
@@ -65,6 +65,7 @@ describe('[Query.pullList]', () => {
 
 const defaultComicSeriesScrapResult = {
   title: 'Title',
+  url: '/path',
   collectionsUrl: '/collections',
   singleIssuesUrl: '/isses',
 }
@@ -99,7 +100,7 @@ describe('[Mutation.subscribeComicSeries]', () => {
       .mockReturnValue(
         createMockTaskWithReturnValue(defaultComicSeriesScrapResult),
       ),
-  } as unknown) as ScrapeService
+  } as unknown) as IScraper
 
   it('should call PullListAPI and return null in case of Error', async () => {
     const mockPullList = { ...defaultPullList }
@@ -120,7 +121,6 @@ describe('[Mutation.subscribeComicSeries]', () => {
     )
     expect(context.dataSources.comicSeries.insert).toHaveBeenCalledWith({
       ...defaultComicSeriesScrapResult,
-      url: defaultComicSeries.url,
       publisher: null,
       collections: [],
       singleIssues: [],
@@ -151,7 +151,6 @@ describe('[Mutation.subscribeComicSeries]', () => {
     )
     expect(context.dataSources.comicSeries.insert).toHaveBeenCalledWith({
       ...defaultComicSeriesScrapResult,
-      url: defaultComicSeries.url,
       publisher: null,
       collections: [],
       singleIssues: [],

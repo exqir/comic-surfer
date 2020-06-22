@@ -15,14 +15,13 @@ import {
   PullListAPI,
 } from './datasources'
 import { GraphQLContext } from 'types/app'
-import { ScrapeService } from 'services/ScrapeService'
+import { comixology } from 'services/ComixologyScaper'
 import { none, some } from 'fp-ts/lib/Option'
 import { createLogger } from 'services/LogService'
 
 const dbConnectionString = process.env.MONGO_URL || 'mongodb://mongo:27017'
 const dbName = process.env.DB_NAME || 'riddler'
-const baseUrl = process.env.SCRAP_BASE_URL || 'https://m.comixology.eu'
-const searchPath = process.env.SCRAP_SEARCH_PATH || '/search/series?search='
+const baseUrl = process.env.COMIXOLOGY_BASE_URL || 'https://m.comixology.eu'
 
 let db: Option<Db>
 const logger = createLogger('Comic-Surfer', 'de-DE')
@@ -55,12 +54,7 @@ const apolloServer = new ApolloServer({
     db,
     dataLayer: mongad,
     services: {
-      scrape: new ScrapeService({
-        scraper: scrapeIt,
-        logger,
-        baseUrl,
-        searchPath,
-      }),
+      scrape: comixology(scrapeIt, logger, baseUrl),
       logger,
     },
     // TODO: Use issuer from https://docs.magic.link/admin-sdk/node-js/sdk/users-module/getmetadatabytoken

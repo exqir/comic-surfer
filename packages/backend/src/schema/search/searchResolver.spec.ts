@@ -2,7 +2,7 @@ import { createMockConfig, createMockTaskWithReturnValue } from 'tests/_utils'
 import { Search } from 'types/server-schema'
 import { GraphQLResolveInfo } from 'graphql'
 import { SearchQuery } from './searchResolver'
-import { ScrapeService } from 'services/ScrapeService'
+import { IScraper } from 'services/ScrapeService'
 
 const defaultSearch: Search = {
   title: 'Comic',
@@ -13,7 +13,7 @@ describe('[Query.getSearch]', () => {
   const { context } = createMockConfig()
   context.services.scrape = ({
     getComicSeriesSearch: jest.fn(),
-  } as unknown) as ScrapeService
+  } as unknown) as IScraper
 
   it('should call ScrapeService and return null in case of Error', async () => {
     const { getComicSeriesSearch } = context.services.scrape

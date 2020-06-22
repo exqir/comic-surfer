@@ -5,7 +5,7 @@ import { ComicBookAPI, ComicSeriesAPI } from '../datasources'
 import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import { PublisherAPI } from 'datasources/PublisherAPI'
 import { PullListAPI } from 'datasources/PullListAPI'
-import { ScrapeService } from 'services/ScrapeService'
+import { IScraper } from 'services/ScrapeService'
 
 export interface Logger {
   log: (...args: any[]) => void
@@ -58,7 +58,7 @@ export interface DataSources {
 }
 
 export interface Services {
-  scrape: ScrapeService
+  scrape: IScraper
   logger: Logger
 }
 

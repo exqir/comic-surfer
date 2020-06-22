@@ -64,7 +64,6 @@ export const PullListMutation: PullListMutation = {
             RTE.chainW((comicSeries) =>
               dataSources.comicSeries.insert({
                 ...comicSeries,
-                url: comicSeriesUrl,
                 publisher: null,
                 collections: [],
                 singleIssues: [],

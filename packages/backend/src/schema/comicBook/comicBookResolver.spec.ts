@@ -16,7 +16,7 @@ import {
 } from 'types/server-schema'
 import { GraphQLResolveInfo } from 'graphql'
 import { ComicBookAPI, PublisherAPI, ComicSeriesAPI } from 'datasources'
-import { ScrapeService } from 'services/ScrapeService'
+import { IScraper } from 'services/ScrapeService'
 
 const defaultComicBook: ComicBookDbObject = {
   _id: new ObjectID(),
@@ -111,7 +111,7 @@ describe('[Mutation.scrapComicBook]', () => {
       .mockReturnValue(
         createMockTaskWithReturnValue(defaultComicBookScrapResult),
       ),
-  } as unknown) as ScrapeService
+  } as unknown) as IScraper
 
   it('should call ComicBookAPI and return null in case of Error', async () => {
     const mockComicBook = { ...defaultComicBook }
@@ -175,7 +175,7 @@ describe('[Mutation.scrapComicBookList]', () => {
       .mockReturnValue(
         createMockTaskWithReturnValue(defaultComicBookListScrapResult),
       ),
-  } as unknown) as ScrapeService
+  } as unknown) as IScraper
 
   it('should call ComicBookAPI and return null in case of Error', async () => {
     const { insertMany } = context.dataSources.comicBook
