@@ -173,7 +173,7 @@ export function comixology(
       try {
         const { data, response } = await scraper<T>(url, config)
         if (response.statusCode !== 200) {
-          throw Error(
+          throw new Error(
             `Failed to scrap ${url}: Responded with ${response.statusCode}`,
           )
         }

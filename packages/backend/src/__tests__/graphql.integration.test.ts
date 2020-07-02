@@ -10,7 +10,7 @@ import { ComicBook } from 'types/server-schema'
 
 const GET_COMICBOOK = gql`
   query comicBook($id: String!) {
-    getComicBook(id: $id) {
+    comicBook(id: $id) {
       _id
       title
       url

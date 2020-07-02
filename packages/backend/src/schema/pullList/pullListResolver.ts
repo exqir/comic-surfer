@@ -8,8 +8,10 @@ import {
 } from 'types/server-schema'
 import { runRTEtoNullable } from 'lib'
 import { pipe } from 'fp-ts/lib/pipeable'
-import { map, toNullable } from 'fp-ts/lib/Option'
+import { map, toNullable, fold } from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import { identity } from 'fp-ts/lib/function'
+import { AuthenticationError } from 'apollo-server'
 
 interface PullListQuery {
   // TODO: This actually returns a PullList but this is not what the function returns
@@ -41,7 +43,18 @@ export const PullListQuery: PullListQuery = {
   pullList: (_, __, { dataSources, db, user }) =>
     pipe(
       db,
-      map(runRTEtoNullable(dataSources.pullList.getByUser(user))),
+      map(
+        runRTEtoNullable(
+          dataSources.pullList.getByUser(
+            pipe(
+              user,
+              fold(() => {
+                throw new AuthenticationError('')
+              }, identity),
+            ),
+          ),
+        ),
+      ),
       toNullable,
     ),
 }
@@ -70,7 +83,15 @@ export const PullListMutation: PullListMutation = {
               }),
             ),
             RTE.chainW((comicSeries) =>
-              dataSources.pullList.addComicSeries(user, comicSeries._id),
+              dataSources.pullList.addComicSeries(
+                pipe(
+                  user,
+                  fold(() => {
+                    throw new AuthenticationError('')
+                  }, identity),
+                ),
+                comicSeries._id,
+              ),
             ),
           ),
         ),
@@ -86,7 +107,15 @@ export const PullListMutation: PullListMutation = {
       db,
       map(
         runRTEtoNullable(
-          dataSources.pullList.addComicSeries(user, comicSeriesId),
+          dataSources.pullList.addComicSeries(
+            pipe(
+              user,
+              fold(() => {
+                throw new AuthenticationError('')
+              }, identity),
+            ),
+            comicSeriesId,
+          ),
         ),
       ),
       toNullable,
@@ -96,7 +125,15 @@ export const PullListMutation: PullListMutation = {
       db,
       map(
         runRTEtoNullable(
-          dataSources.pullList.removeComicSeries(user, comicSeriesId),
+          dataSources.pullList.removeComicSeries(
+            pipe(
+              user,
+              fold(() => {
+                throw new AuthenticationError('')
+              }, identity),
+            ),
+            comicSeriesId,
+          ),
         ),
       ),
       toNullable,

@@ -44,4 +44,6 @@ db.publisher.updateOne(
   { _id: publisher._id },
   { $push: { comicSeries: comicSeries._id } }
 )
+// Sealed { issuer: 'some-user-id' } for with dev secret
+// Fe26.2**bacf7acc45a3dae5b11b56085d4902f8f0e1b284f22632873393af6a72a5eb75*TtCd6ZvEXJMvsFXumkBxOw*xSPWBOpQLhUCwOEoctj_MA1u-pAQuOVhG-0uZgstrao**369bf4bbc9ccbe511010b1a1a37942216b4f85e7e5c6f88c0276f2e0da46f2ba*cCy4AVzkjFWN0dwYRGfochpFii00xv7SmRfoLM1MuoI
 db.pullList.insertOne({ owner: 'some-user-id', list: [comicSeries._id] })

@@ -13,6 +13,7 @@ import {
   PullListMutation,
 } from './pullListResolver'
 import { IScraper } from 'services/ScrapeService'
+import { some } from 'fp-ts/lib/Option'
 
 const defaultPullList: PullListDbObject = {
   _id: new ObjectID(),
@@ -36,7 +37,7 @@ describe('[Query.pullList]', () => {
     const res = await PullListQuery.pullList(
       {},
       {},
-      { ...context, user: mockPullList.owner },
+      { ...context, user: some(mockPullList.owner) },
       {} as GraphQLResolveInfo,
     )
 
@@ -54,7 +55,7 @@ describe('[Query.pullList]', () => {
     const res = await PullListQuery.pullList(
       {},
       {},
-      { ...context, user: mockPullList.owner },
+      { ...context, user: some(mockPullList.owner) },
       {} as GraphQLResolveInfo,
     )
 
@@ -112,7 +113,7 @@ describe('[Mutation.subscribeComicSeries]', () => {
     const res = await PullListMutation.subscribeComicSeries(
       {},
       { comicSeriesUrl: defaultComicSeries.url },
-      { ...context, user: mockPullList.owner },
+      { ...context, user: some(mockPullList.owner) },
       {} as GraphQLResolveInfo,
     )
 
@@ -142,7 +143,7 @@ describe('[Mutation.subscribeComicSeries]', () => {
     const res = await PullListMutation.subscribeComicSeries(
       {},
       { comicSeriesUrl: defaultComicSeries.url },
-      { ...context, user: mockPullList.owner },
+      { ...context, user: some(mockPullList.owner) },
       {} as GraphQLResolveInfo,
     )
 
@@ -179,7 +180,7 @@ describe('[Mutation.subscribeExistingComicSeries]', () => {
     const res = await PullListMutation.subscribeExistingComicSeries(
       {},
       { comicSeriesId: defaultComicSeries._id },
-      { ...context, user: mockPullList.owner },
+      { ...context, user: some(mockPullList.owner) },
       {} as GraphQLResolveInfo,
     )
 
@@ -200,7 +201,7 @@ describe('[Mutation.subscribeExistingComicSeries]', () => {
     const res = await PullListMutation.subscribeExistingComicSeries(
       {},
       { comicSeriesId: defaultComicSeries._id },
-      { ...context, user: mockPullList.owner },
+      { ...context, user: some(mockPullList.owner) },
       {} as GraphQLResolveInfo,
     )
 
@@ -228,7 +229,7 @@ describe('[Mutation.unsubscribeComicSeries]', () => {
     const res = await PullListMutation.unsubscribeComicSeries(
       {},
       { comicSeriesId: defaultComicSeries._id },
-      { ...context, user: mockPullList.owner },
+      { ...context, user: some(mockPullList.owner) },
       {} as GraphQLResolveInfo,
     )
 
@@ -249,7 +250,7 @@ describe('[Mutation.unsubscribeComicSeries]', () => {
     const res = await PullListMutation.unsubscribeComicSeries(
       {},
       { comicSeriesId: defaultComicSeries._id },
-      { ...context, user: mockPullList.owner },
+      { ...context, user: some(mockPullList.owner) },
       {} as GraphQLResolveInfo,
     )
 

@@ -18,6 +18,7 @@ import { GraphQLContext } from 'types/app'
 import { comixology } from 'services/ComixologyScaper'
 import { none, some } from 'fp-ts/lib/Option'
 import { createLogger } from 'services/LogService'
+import { Authentication } from 'services/Authentication'
 
 const dbConnectionString = process.env.MONGO_URL || 'mongodb://mongo:27017'
 const dbName = process.env.DB_NAME || 'riddler'
@@ -50,7 +51,7 @@ const apolloServer = new ApolloServer({
     publisher: new PublisherAPI(),
     pullList: new PullListAPI(),
   }),
-  context: async (): Promise<Omit<GraphQLContext, 'dataSources'>> => ({
+  context: async ({ req }): Promise<Omit<GraphQLContext, 'dataSources'>> => ({
     db,
     dataLayer: mongad,
     services: {
@@ -59,7 +60,7 @@ const apolloServer = new ApolloServer({
     },
     // TODO: Use issuer from https://docs.magic.link/admin-sdk/node-js/sdk/users-module/getmetadatabytoken
     // Example with Next: https://github.com/vercel/next.js/tree/canary/examples/with-magic
-    user: 'some-user-id',
+    user: await Authentication.getUserFromSession(req)(),
   }),
 })
 

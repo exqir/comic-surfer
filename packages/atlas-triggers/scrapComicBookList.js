@@ -1,7 +1,7 @@
 exports = function scrapComicBookList(changeEvent) {
   const { _id, singleIssuesUrl, collectionsUrl } = changeEvent.fullDocument
-  const query = `mutation scrapComicBookList($comicBookId: ID!, $comicBookUrl: String!) {
-        scrapComicBookList(comicSeriesId: $comicBookId, comicBookListUrl: $comicBookUrl) {
+  const query = `mutation scrapComicBookList($comicSeriesId: ID!, $comicBookListUrl: String!) {
+        scrapComicBookList(comicSeriesId: $comicSeriesId, comicBookListUrl: $comicBookListUrl) {
             _id
         }
     }
@@ -13,7 +13,7 @@ exports = function scrapComicBookList(changeEvent) {
       // TODO: Can this be different then the name in the query?
       operationName: 'scrapComicBookListSingleIssuesUrl',
       query,
-      variables: { comicBookId: _id, comicBookUrl: singleIssuesUrl },
+      variables: { comicSeriesId: _id, comicBookListUrl: singleIssuesUrl },
     },
     encodeBodyAsJSON: true,
   })
@@ -23,7 +23,7 @@ exports = function scrapComicBookList(changeEvent) {
     body: {
       operationName: 'scrapComicBookListCollectionsUrl',
       query,
-      variables: { comicBookId: _id, comicBookUrl: collectionsUrl },
+      variables: { comicSeriesId: _id, comicBookListUrl: collectionsUrl },
     },
     encodeBodyAsJSON: true,
   })

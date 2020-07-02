@@ -8,16 +8,20 @@
   },
   "dependencies": {
     "@graphql-codegen/typescript-mongodb": "^1.13.1",
+    "@hapi/iron": "^6.0.0",
+    "@magic-sdk/admin": "^1.2.2",
     "apollo-server": "^2.14.2",
+    "cookie": "^0.4.1",
     "fp-ts": "^2.5.3",
     "graphql": "^14.5.8",
     "graphql-import-node": "^0.0.4",
     "graphql-iso-date": "^3.6.1",
-    "mongad": "^0.1.0",
+    "mongad": "^0.2.2",
     "mongodb": "^3.5.5",
     "scrape-it": "^5.2.0"
   },
   "devDependencies": {
+    "@types/cookie": "^0.4.0",
     "@types/graphql-iso-date": "^3.3.3",
     "@types/jest": "^24.0.20",
     "@types/mongodb": "^3.3.7",
