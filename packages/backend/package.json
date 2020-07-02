@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "ts-node -r tsconfig-paths/register src/index.ts",
-    "start": "ts-node -r tsconfig-paths/register src/index.ts",
+    "start": "ts-node -r tsconfig-paths/register -r dotenv/config src/index.ts",
     "test": "jest"
   },
   "dependencies": {
@@ -12,6 +12,7 @@
     "@magic-sdk/admin": "^1.2.2",
     "apollo-server": "^2.14.2",
     "cookie": "^0.4.1",
+    "dotenv": "^8.2.0",
     "fp-ts": "^2.5.3",
     "graphql": "^14.5.8",
     "graphql-import-node": "^0.0.4",
