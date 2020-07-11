@@ -5,7 +5,7 @@ import { right, left, Either, fold } from 'fp-ts/lib/Either'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { KeyValueCache } from 'apollo-server-core'
 import { ApolloServer } from 'apollo-server'
-import { DataSources, Services } from 'types/app'
+import { DataSources, Services, DataLayer } from 'types/app'
 import typeDefs, { resolvers } from '../schema'
 import {
   ComicBookAPI,
@@ -105,7 +105,7 @@ const mockScraper: IScraper = {
 export const createMockConfig = () => ({
   context: {
     // req: {} as NextApiRequest,
-    dataLayer: mockDataLayer,
+    dataLayer: (mockDataLayer as unknown) as DataLayer,
     dataSources: {} as DataSources,
     services: {
       scrape: mockScraper,

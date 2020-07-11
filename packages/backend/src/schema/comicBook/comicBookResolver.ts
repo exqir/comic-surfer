@@ -1,6 +1,6 @@
 import { pipe } from 'fp-ts/lib/pipeable'
 import { toNullable, map } from 'fp-ts/lib/Option'
-import { Resolver } from 'types/app'
+import { Resolver, DataSources } from 'types/app'
 import {
   QueryComicBookArgs,
   MutationScrapComicBookArgs,
@@ -45,6 +45,34 @@ export const ComicBookQuery: ComicBookQuery = {
     ),
 }
 
+function insertComicBookIfNotExisting(
+  dataSources: DataSources,
+  comicSeriesId: ComicSeriesDbObject['_id'],
+) {
+  return (comicBooks: ComicBookListData[]) => {
+    return pipe(
+      dataSources.comicBook.getByUrls(comicBooks.map(({ url }) => url)),
+      RTE.map((existingComicBooks) => {
+        const existingUrls = existingComicBooks.map(({ url }) => url)
+        return comicBooks.filter(({ url }) => !existingUrls.includes(url))
+      }),
+      RTE.chain((comicBooks) =>
+        // TODO: only insert comicBooks that are not already in the DB
+        dataSources.comicBook.insertMany(
+          comicBooks.map((book) => ({
+            ...book,
+            comicSeries: comicSeriesId,
+            creators: [],
+            publisher: null,
+            coverImgUrl: null,
+            releaseDate: null,
+          })),
+        ),
+      ),
+    )
+  }
+}
+
 export const ComicBookMutation: ComicBookMutation = {
   scrapComicBook: (_, { comicBookUrl }, { dataSources, db, services }) =>
     pipe(
@@ -80,19 +108,7 @@ export const ComicBookMutation: ComicBookMutation = {
                 ComicBookListData[]
               >,
             ),
-            RTE.chain((comicBooks) =>
-              // TODO: only insert comicBooks that are not already in the DB
-              dataSources.comicBook.insertMany(
-                comicBooks.map((book) => ({
-                  ...book,
-                  comicSeries: comicSeriesId,
-                  creators: [],
-                  publisher: null,
-                  coverImgUrl: null,
-                  releaseDate: null,
-                })),
-              ),
-            ),
+            RTE.chain(insertComicBookIfNotExisting(dataSources, comicSeriesId)),
             RTE.chainFirst((comicBooks) =>
               dataSources.comicSeries.addComicBooks(
                 comicSeriesId,

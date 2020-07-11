@@ -1,11 +1,11 @@
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
-import { Db, MongoError, FilterQuery, ObjectID, WithId } from 'mongodb'
+import { Db } from 'mongodb'
 import { Option } from 'fp-ts/lib/Option'
 import { ComicBookAPI, ComicSeriesAPI } from '../datasources'
-import { ReaderTaskEither } from 'fp-ts/lib/ReaderTaskEither'
 import { PublisherAPI } from 'datasources/PublisherAPI'
 import { PullListAPI } from 'datasources/PullListAPI'
 import { IScraper } from 'services/ScrapeService'
+import mongad from 'mongad'
 
 export interface Logger {
   log: (...args: any[]) => void
@@ -13,42 +13,7 @@ export interface Logger {
   error: (...args: any[]) => void
 }
 
-export interface DataLayer {
-  findOne: <T extends object>(
-    collection: string,
-    query: FilterQuery<T>,
-  ) => ReaderTaskEither<Db, MongoError, T | null>
-  findMany: <T extends object>(
-    collection: string,
-    query: FilterQuery<T>,
-  ) => ReaderTaskEither<Db, MongoError, T[]>
-  insertOne: <T extends object>(
-    collection: string,
-    document: T,
-  ) => ReaderTaskEither<Db, MongoError, WithId<T>>
-  insertMany: <T extends object>(
-    collection: string,
-    documents: T[],
-  ) => ReaderTaskEither<Db, MongoError, WithId<T>[]>
-  updateOne: <T extends object>(
-    collection: string,
-    query: FilterQuery<T>,
-    update: {},
-  ) => ReaderTaskEither<Db, MongoError, T | null>
-  updateMany: <T extends object>(
-    collection: string,
-    query: FilterQuery<T>,
-    update: {},
-  ) => ReaderTaskEither<Db, MongoError, T[]>
-  deleteOne: <T extends object>(
-    collection: string,
-    query: FilterQuery<T>,
-  ) => ReaderTaskEither<Db, MongoError, T | null>
-  deleteMany: <T extends object>(
-    collection: string,
-    query: FilterQuery<T>,
-  ) => ReaderTaskEither<Db, MongoError, T[]>
-}
+export type DataLayer = typeof mongad
 
 export interface DataSources {
   comicBook: ComicBookAPI

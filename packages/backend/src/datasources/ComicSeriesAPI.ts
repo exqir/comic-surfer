@@ -34,4 +34,21 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
       this.logError,
     )
   }
+
+  public insertIfNotExisting = (
+    series: Omit<ComicSeriesDbObject, '_id' | 'singleIssues' | 'collections'>,
+  ) => {
+    const { updateOne } = this.dataLayer!
+    return pipe(
+      updateOne<ComicSeriesDbObject>(
+        this.collection,
+        { url: series.url },
+        {
+          $setOnInsert: { ...series, singleIssues: [], collections: [] },
+        },
+        { upsert: true },
+      ),
+      this.logError,
+    )
+  }
 }

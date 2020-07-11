@@ -47,4 +47,12 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
       this.logError,
     )
   }
+
+  public getByUrls = (urls: string[]) => {
+    const { findMany } = this.dataLayer!
+    return pipe(
+      findMany<ComicBookDbObject>(this.collection, { url: { $in: urls } }),
+      this.logError,
+    )
+  }
 }

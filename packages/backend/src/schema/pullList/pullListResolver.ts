@@ -71,15 +71,10 @@ export const PullListMutation: PullListMutation = {
         runRTEtoNullable(
           pipe(
             RTE.fromTaskEither(services.scrape.getComicSeries(comicSeriesUrl)),
-            // TODO: Should only insert a new series if the series is not already in the db,
-            // even if there is another mutation for this specific use case.
-            // The url could be used to identify an already existing series.
             RTE.chainW((comicSeries) =>
-              dataSources.comicSeries.insert({
+              dataSources.comicSeries.insertIfNotExisting({
                 ...comicSeries,
                 publisher: null,
-                collections: [],
-                singleIssues: [],
               }),
             ),
             RTE.chainW((comicSeries) =>
@@ -90,7 +85,9 @@ export const PullListMutation: PullListMutation = {
                     throw new AuthenticationError('')
                   }, identity),
                 ),
-                comicSeries._id,
+                // comicSeries can not be null as insertIfNotExisting will upsert the series
+                // therefore the return type for updateOne should not contain null anymore
+                (comicSeries as ComicSeriesDbObject)._id,
               ),
             ),
           ),

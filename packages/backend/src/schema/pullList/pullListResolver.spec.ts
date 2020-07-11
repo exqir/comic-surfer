@@ -88,7 +88,7 @@ describe('[Mutation.subscribeComicSeries]', () => {
     addComicSeries: jest.fn(),
   } as unknown) as PullListAPI
   context.dataSources.comicSeries = ({
-    insert: jest.fn().mockReturnValue(
+    insertIfNotExisting: jest.fn().mockReturnValue(
       createMockReaderWithReturnValue({
         ...defaultComicSeries,
         ...defaultComicSeriesScrapResult,
@@ -120,11 +120,11 @@ describe('[Mutation.subscribeComicSeries]', () => {
     expect(context.services.scrape.getComicSeries).toHaveBeenCalledWith(
       defaultComicSeries.url,
     )
-    expect(context.dataSources.comicSeries.insert).toHaveBeenCalledWith({
+    expect(
+      context.dataSources.comicSeries.insertIfNotExisting,
+    ).toHaveBeenCalledWith({
       ...defaultComicSeriesScrapResult,
       publisher: null,
-      collections: [],
-      singleIssues: [],
     })
     expect(addComicSeries).toHaveBeenLastCalledWith(
       mockPullList.owner,
@@ -150,11 +150,11 @@ describe('[Mutation.subscribeComicSeries]', () => {
     expect(context.services.scrape.getComicSeries).toHaveBeenCalledWith(
       defaultComicSeries.url,
     )
-    expect(context.dataSources.comicSeries.insert).toHaveBeenCalledWith({
+    expect(
+      context.dataSources.comicSeries.insertIfNotExisting,
+    ).toHaveBeenCalledWith({
       ...defaultComicSeriesScrapResult,
       publisher: null,
-      collections: [],
-      singleIssues: [],
     })
     expect(addComicSeries).toHaveBeenLastCalledWith(
       mockPullList.owner,

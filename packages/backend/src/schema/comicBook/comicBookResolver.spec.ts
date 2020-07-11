@@ -76,8 +76,13 @@ describe('[Query.comicBook]', () => {
 const defaultComicBookListScrapResult = [
   {
     title: 'Title',
-    url: '/issue',
+    url: '/issue-1',
     issueNo: '1',
+  },
+  {
+    title: 'Title',
+    url: '/issue-2',
+    issueNo: '2',
   },
 ]
 
@@ -165,6 +170,14 @@ describe('[Mutation.scrapComicBookList]', () => {
   const { context } = createMockConfig()
   context.dataSources.comicBook = ({
     insertMany: jest.fn(),
+    getByUrls: jest.fn().mockReturnValue(
+      createMockReaderWithReturnValue<ComicBookDbObject[]>([
+        {
+          ...defaultComicBook,
+          url: defaultComicBookListScrapResult[1].url,
+        },
+      ]),
+    ),
   } as unknown) as ComicBookAPI
   context.dataSources.comicSeries = ({
     addComicBooks: jest.fn(),
