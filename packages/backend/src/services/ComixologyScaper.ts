@@ -165,16 +165,16 @@ export function comixology(
   const _convertUrl = convertUrl(baseUrl, logger)
 
   function getUrl(path: string) {
-    return new URL(path, baseUrl).href
+    return new URL(path, baseUrl)
   }
 
-  function scrape<T>(url: string, config: ScrapeOptions) {
+  function scrape<T>(url: URL, config: ScrapeOptions) {
     return async () => {
       try {
-        const { data, response } = await scraper<T>(url, config)
+        const { data, response } = await scraper<T>(url.href, config)
         if (response.statusCode !== 200) {
           throw new Error(
-            `Failed to scrap ${url}: Responded with ${response.statusCode}`,
+            `Failed to scrap ${url.href}: Responded with ${response.statusCode}`,
           )
         }
         return right<Error, T>(data)
@@ -193,7 +193,7 @@ export function comixology(
         scrape<ComicSeriesScrapData>(url, comicSeriesConfig(_convertUrl)),
         map(({ title, urls }) => ({
           title,
-          url,
+          url: url.href,
           collectionsUrl: urls.reduce(
             (_, { name, url }) =>
               name.toLowerCase().includes('collected') ? url : _,
@@ -208,11 +208,10 @@ export function comixology(
       )
     },
     getComicBookList: (path: string) => {
+      const url = getUrl(path)
+      url.searchParams.set('sort', 'desc')
       return pipe(
-        scrape<ComicBookListScrapData>(
-          getUrl(path),
-          comicBookListConfig(_convertUrl),
-        ),
+        scrape<ComicBookListScrapData>(url, comicBookListConfig(_convertUrl)),
         map(({ comicBookList }) => comicBookList),
       )
     },
@@ -223,7 +222,7 @@ export function comixology(
         scrape<ComicBookScrapData>(url, comicBookConfig(_convertUrl)),
         map(({ meta, creators, ...rest }) => ({
           ...rest,
-          url,
+          url: url.href,
           releaseDate:
             meta.find(({ type }) => type.includes('Release Date'))?.date ??
             null,
