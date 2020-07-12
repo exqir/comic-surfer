@@ -56,11 +56,18 @@ export type Creator = {
 export type Mutation = {
    __typename?: 'Mutation';
   _empty: Maybe<Scalars['String']>;
+  scrapCollectionsList: Array<ComicBook>;
   scrapComicBook: Maybe<ComicBook>;
-  scrapComicBookList: Array<ComicBook>;
+  scrapSingleIssuesList: Array<ComicBook>;
   subscribeComicSeries: PullList;
   subscribeExistingComicSeries: PullList;
   unsubscribeComicSeries: PullList;
+};
+
+
+export type MutationScrapCollectionsListArgs = {
+  comicSeriesId: Scalars['ID'];
+  comicBookListUrl: Scalars['String'];
 };
 
 
@@ -69,7 +76,7 @@ export type MutationScrapComicBookArgs = {
 };
 
 
-export type MutationScrapComicBookListArgs = {
+export type MutationScrapSingleIssuesListArgs = {
   comicSeriesId: Scalars['ID'];
   comicBookListUrl: Scalars['String'];
 };

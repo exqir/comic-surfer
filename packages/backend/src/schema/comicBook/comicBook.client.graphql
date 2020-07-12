@@ -4,7 +4,11 @@ extend type Query {
 
 extend type Mutation {
   scrapComicBook(comicBookUrl: String!): ComicBook
-  scrapComicBookList(
+  scrapSingleIssuesList(
+    comicSeriesId: ID!
+    comicBookListUrl: String!
+  ): [ComicBook!]!
+  scrapCollectionsList(
     comicSeriesId: ID!
     comicBookListUrl: String!
   ): [ComicBook!]!

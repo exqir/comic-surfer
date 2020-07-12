@@ -35,6 +35,20 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
     )
   }
 
+  public addComicBookCollections = (id: ObjectID, comicBookIds: ObjectID[]) => {
+    const { updateOne } = this.dataLayer!
+    return pipe(
+      updateOne<ComicSeriesDbObject>(
+        this.collection,
+        { _id: toObjectId(id) },
+        {
+          $addToSet: { collections: { $each: comicBookIds.map(toObjectId) } },
+        },
+      ),
+      this.logError,
+    )
+  }
+
   public insertIfNotExisting = (
     series: Omit<ComicSeriesDbObject, '_id' | 'singleIssues' | 'collections'>,
   ) => {

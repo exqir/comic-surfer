@@ -4,10 +4,11 @@ import { Resolver, DataSources } from 'types/app'
 import {
   QueryComicBookArgs,
   MutationScrapComicBookArgs,
-  MutationScrapComicBookListArgs,
   ComicBookDbObject,
   PublisherDbObject,
   ComicSeriesDbObject,
+  MutationScrapSingleIssuesListArgs,
+  MutationScrapCollectionsListArgs,
 } from 'types/server-schema'
 import { runRTEtoNullable, mapOtoRTEnullable, chainMaybeToNullable } from 'lib'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
@@ -23,9 +24,13 @@ interface ComicBookQuery {
 
 interface ComicBookMutation {
   scrapComicBook: Resolver<ComicBookDbObject, MutationScrapComicBookArgs>
-  scrapComicBookList: Resolver<
+  scrapSingleIssuesList: Resolver<
     ComicBookDbObject[],
-    MutationScrapComicBookListArgs
+    MutationScrapSingleIssuesListArgs
+  >
+  scrapCollectionsList: Resolver<
+    ComicBookDbObject[],
+    MutationScrapCollectionsListArgs
   >
 }
 
@@ -92,7 +97,7 @@ export const ComicBookMutation: ComicBookMutation = {
       ),
       toNullable,
     ),
-  scrapComicBookList: (
+  scrapSingleIssuesList: (
     _,
     { comicSeriesId, comicBookListUrl },
     { dataSources, db, services },
@@ -111,6 +116,34 @@ export const ComicBookMutation: ComicBookMutation = {
             RTE.chain(insertComicBookIfNotExisting(dataSources, comicSeriesId)),
             RTE.chainFirst((comicBooks) =>
               dataSources.comicSeries.addComicBooks(
+                comicSeriesId,
+                comicBooks.map(({ _id }) => _id),
+              ),
+            ),
+          ),
+        ),
+      ),
+      toNullable,
+    ),
+  scrapCollectionsList: (
+    _,
+    { comicSeriesId, comicBookListUrl },
+    { dataSources, db, services },
+  ) =>
+    pipe(
+      db,
+      map(
+        runRTEtoNullable(
+          pipe(
+            RTE.fromTaskEither(
+              services.scrape.getComicBookList(comicBookListUrl) as TaskEither<
+                MongoError,
+                ComicBookListData[]
+              >,
+            ),
+            RTE.chain(insertComicBookIfNotExisting(dataSources, comicSeriesId)),
+            RTE.chainFirst((comicBooks) =>
+              dataSources.comicSeries.addComicBookCollections(
                 comicSeriesId,
                 comicBooks.map(({ _id }) => _id),
               ),
