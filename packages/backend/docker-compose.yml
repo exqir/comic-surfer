@@ -24,6 +24,7 @@ services:
     image: nginx:latest
     volumes:
       - ./__fixtures__:/usr/share/nginx/html/
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
       - '8080:80'
     environment:
