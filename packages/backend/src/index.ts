@@ -67,6 +67,15 @@ const apolloServer = new ApolloServer({
     // Example with Next: https://github.com/vercel/next.js/tree/canary/examples/with-magic
     user: await Authentication.getUserFromSession(req)(),
   }),
+  cors: {
+    credentials: true,
+    origin: [
+      process.env.NODE_ENV !== 'production' && 'http://localhost:3000',
+      /comic-surfer.now.sh/,
+      /exqir.now.sh/,
+      /exqir.vercel.app/,
+    ].filter((val): val is string | RegExp => Boolean(val)),
+  },
 })
 
 apolloServer
