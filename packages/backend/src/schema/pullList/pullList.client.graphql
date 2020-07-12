@@ -6,6 +6,8 @@ extend type Mutation {
   subscribeComicSeries(comicSeriesUrl: String!): PullList!
   subscribeExistingComicSeries(comicSeriesId: ID!): PullList!
   unsubscribeComicSeries(comicSeriesId: ID!): PullList!
+  login: PullList!
+  logout: Boolean!
 }
 
 type PullList {

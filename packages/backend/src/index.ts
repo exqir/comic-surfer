@@ -51,7 +51,12 @@ const apolloServer = new ApolloServer({
     publisher: new PublisherAPI(),
     pullList: new PullListAPI(),
   }),
-  context: async ({ req }): Promise<Omit<GraphQLContext, 'dataSources'>> => ({
+  context: async ({
+    req,
+    res,
+  }): Promise<Omit<GraphQLContext, 'dataSources'>> => ({
+    req,
+    res,
     db,
     dataLayer: mongad,
     services: {

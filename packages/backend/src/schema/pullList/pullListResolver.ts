@@ -10,8 +10,10 @@ import { runRTEtoNullable } from 'lib'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { map, toNullable, fold } from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import * as IO from 'fp-ts/lib/IO'
 import { identity } from 'fp-ts/lib/function'
 import { AuthenticationError } from 'apollo-server'
+import { Authentication } from 'services/Authentication'
 
 interface PullListQuery {
   // TODO: This actually returns a PullList but this is not what the function returns
@@ -31,6 +33,8 @@ interface PullListMutation {
     PullListDbObject,
     MutationUnsubscribeComicSeriesArgs
   >
+  login: Resolver<PullListDbObject, {}>
+  logout: Resolver<boolean, {}>
 }
 
 interface PullListResolver {
@@ -135,6 +139,41 @@ export const PullListMutation: PullListMutation = {
       ),
       toNullable,
     ),
+  login: (_, __, { dataSources, db, req, res }) =>
+    pipe(
+      db,
+      map(
+        runRTEtoNullable(
+          pipe(
+            Authentication.getSessionFromHeaders(req),
+            RTE.fromTaskEither,
+            RTE.chain((session) =>
+              RTE.apFirst(
+                RTE.fromTaskEither(
+                  Authentication.setSessionCookie(session, res),
+                ),
+              )(RTE.right(Authentication.getSessionIssuer(session))),
+            ),
+            RTE.chainW((issuer) =>
+              pipe(
+                dataSources.pullList.getByUser(issuer),
+                RTE.chain((pullList) =>
+                  pullList
+                    ? RTE.right(pullList)
+                    : dataSources.pullList.insert({ owner: issuer, list: [] }),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+      toNullable,
+    ),
+  logout: (_, __, { res }) =>
+    pipe(
+      Authentication.removeSessionCookie(res),
+      IO.map(() => true),
+    )(),
 }
 
 export const PullListResolver: PullListResolver = {

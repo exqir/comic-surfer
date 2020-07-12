@@ -1,5 +1,6 @@
 import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
 import { MongoError, Db } from 'mongodb'
+import { Response, Request } from 'express'
 import { some, map, Option } from 'fp-ts/lib/Option'
 import { right, left, Either, fold } from 'fp-ts/lib/Either'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
@@ -104,7 +105,8 @@ const mockScraper: IScraper = {
  */
 export const createMockConfig = () => ({
   context: {
-    // req: {} as NextApiRequest,
+    req: {} as Request,
+    res: {} as Response,
     dataLayer: (mockDataLayer as unknown) as DataLayer,
     dataSources: {} as DataSources,
     services: {

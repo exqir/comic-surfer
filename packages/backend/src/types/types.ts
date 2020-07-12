@@ -1,5 +1,6 @@
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
 import { Db } from 'mongodb'
+import { Response, Request } from 'express'
 import { Option } from 'fp-ts/lib/Option'
 import { ComicBookAPI, ComicSeriesAPI } from '../datasources'
 import { PublisherAPI } from 'datasources/PublisherAPI'
@@ -31,7 +32,8 @@ export interface Services {
  * Context provided to all requests handled by the GraphQL server.
  */
 export interface GraphQLContext {
-  // req:
+  req: Request
+  res: Response
   dataLayer: DataLayer
   dataSources: DataSources
   services: Services

@@ -1,6 +1,6 @@
 exports = function scrapComicBook(changeEvent) {
   const { url } = changeEvent.fullDocument
-  const mutation = `mutation scrapComicBook($comicBookUrl: String!) {
+  const query = `mutation scrapComicBook($comicBookUrl: String!) {
       scrapComicBook(comicBookUrl: $comicBookUrl) {
         _id
       }

@@ -8,14 +8,15 @@
     "test": "jest"
   },
   "dependencies": {
+    "magic-sdk": "^2.3.1",
     "next": "^9.4.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1"
   },
   "devDependencies": {
     "@types/jest": "^24.0.20",
-    "@types/react": "^16.9.11",
     "@types/node": "^14.0.1",
+    "@types/react": "^16.9.11",
     "jest": "^24.9.0",
     "jest-transform-graphql": "^2.1.0",
     "next-plugin-graphql": "0.0.2",

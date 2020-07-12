@@ -56,6 +56,8 @@ export type Creator = {
 export type Mutation = {
    __typename?: 'Mutation';
   _empty: Maybe<Scalars['String']>;
+  login: PullList;
+  logout: Scalars['Boolean'];
   scrapCollectionsList: Array<ComicBook>;
   scrapComicBook: Maybe<ComicBook>;
   scrapSingleIssuesList: Array<ComicBook>;

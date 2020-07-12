@@ -23,10 +23,11 @@ type Session = {
   issuer: string
 }
 
+// TODO: can fail
 function encryptSession(session: Session): T.Task<string> {
   return () => Iron.seal(session, TOKEN_SECRET, Iron.defaults)
 }
-
+// TODO: can fail
 function decryptSession(token: string): T.Task<Session> {
   return () => Iron.unseal(token, TOKEN_SECRET, Iron.defaults)
 }
@@ -103,26 +104,32 @@ function getSessionByToken(token: string): TE.TaskEither<Error, Session> {
   )
 }
 
-function setSessionCookie(
-  req: Request,
-  res: Response,
-): TE.TaskEither<Error, void> {
+function getSessionFromHeaders(req: Request) {
   return pipe(
     getTokenFromHeaders(req),
     TE.fromEither,
     TE.chain(getSessionByToken),
-    TE.chain((session) =>
-      pipe(
-        encryptSession(session),
-        T.map<string, E.Either<Error, string>>(E.right),
-      ),
-    ),
-    TE.map((token) => setTokenCookie(res)(token)()),
+  )
+}
+
+function setSessionCookie(
+  session: Session,
+  res: Response,
+): TE.TaskEither<Error, string> {
+  return pipe(
+    encryptSession(session),
+    T.map<string, E.Either<Error, string>>(E.right),
+    TE.map((token) => {
+      setTokenCookie(res)(token)()
+      return token
+    }),
   )
 }
 
 export const Authentication = {
+  getSessionFromHeaders,
   setSessionCookie,
   getUserFromSession,
+  getSessionIssuer,
   removeSessionCookie: removeTokenCookie,
 }
