@@ -1,4 +1,4 @@
-import { ComicBookDbObject } from 'types/server-schema'
+import { ComicBookDbObject, ComicSeriesDbObject } from 'types/server-schema'
 import { MongoDataSource, toObjectId } from './MongoDataSource'
 import { ObjectID } from 'mongodb'
 import { pipe } from 'fp-ts/lib/pipeable'
@@ -52,6 +52,32 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
     const { findMany } = this.dataLayer!
     return pipe(
       findMany<ComicBookDbObject>(this.collection, { url: { $in: urls } }),
+      this.logError,
+    )
+  }
+
+  public getBySeriesAndRelease = (
+    series: ComicSeriesDbObject['_id'][],
+    month: number,
+    year: number,
+  ) => {
+    const { findMany } = this.dataLayer!
+    return pipe(
+      findMany<ComicBookDbObject>(this.collection, {
+        $and: [
+          { comicSeries: { $in: series } },
+          {
+            releaseDate: {
+              $gte: new Date(`${year}-${month}-01`),
+              $lt: new Date(
+                month + 1 > 12
+                  ? `${year + 1}-01-01`
+                  : `${year}-${month + 1}-01`,
+              ),
+            },
+          },
+        ],
+      }),
       this.logError,
     )
   }

@@ -110,6 +110,7 @@ export type Query = {
   publisher?: Maybe<Publisher>;
   publishers: Array<Publisher>;
   pullList?: Maybe<PullList>;
+  releases: Array<ComicBook>;
   search: Array<Search>;
 };
 
@@ -131,6 +132,12 @@ export type QueryPublisherArgs = {
 
 export type QueryPublishersArgs = {
   names?: Maybe<Array<Scalars['String']>>;
+};
+
+
+export type QueryReleasesArgs = {
+  month?: Maybe<Scalars['Int']>;
+  year?: Maybe<Scalars['Int']>;
 };
 
 

@@ -5,10 +5,12 @@ import {
   MutationSubscribeComicSeriesArgs,
   MutationSubscribeExistingComicSeriesArgs,
   MutationUnsubscribeComicSeriesArgs,
+  ComicBookDbObject,
+  QueryReleasesArgs,
 } from 'types/server-schema'
 import { runRTEtoNullable } from 'lib'
 import { pipe } from 'fp-ts/lib/pipeable'
-import { map, toNullable, fold } from 'fp-ts/lib/Option'
+import { map, toNullable, fold, Option } from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as IO from 'fp-ts/lib/IO'
 import { identity } from 'fp-ts/lib/function'
@@ -19,6 +21,7 @@ interface PullListQuery {
   // TODO: This actually returns a PullList but this is not what the function returns
   // but what is returned once all field resolvers are done
   pullList: Resolver<PullListDbObject, {}>
+  releases: Resolver<ComicBookDbObject[], QueryReleasesArgs>
 }
 interface PullListMutation {
   subscribeComicSeries: Resolver<
@@ -43,19 +46,40 @@ interface PullListResolver {
   }
 }
 
+function getUserOrThrow(user: Option<string>) {
+  return pipe(
+    user,
+    fold(() => {
+      throw new AuthenticationError('')
+    }, identity),
+  )
+}
+
 export const PullListQuery: PullListQuery = {
   pullList: (_, __, { dataSources, db, user }) =>
     pipe(
       db,
       map(
+        runRTEtoNullable(dataSources.pullList.getByUser(getUserOrThrow(user))),
+      ),
+      toNullable,
+    ),
+  releases: (_, { month, year }, { dataSources, db, user }) =>
+    pipe(
+      db,
+      map(
         runRTEtoNullable(
-          dataSources.pullList.getByUser(
-            pipe(
-              user,
-              fold(() => {
-                throw new AuthenticationError('')
-              }, identity),
-            ),
+          pipe(
+            dataSources.pullList.getByUser(getUserOrThrow(user)),
+            RTE.chain((pullList) => {
+              if (pullList === null) throw new Error()
+              return dataSources.comicBook.getBySeriesAndRelease(
+                pullList.list,
+                // TODO: Validate month and year
+                month ?? new Date().getMonth() + 1,
+                year ?? new Date().getFullYear(),
+              )
+            }),
           ),
         ),
       ),
@@ -83,12 +107,7 @@ export const PullListMutation: PullListMutation = {
             ),
             RTE.chainW((comicSeries) =>
               dataSources.pullList.addComicSeries(
-                pipe(
-                  user,
-                  fold(() => {
-                    throw new AuthenticationError('')
-                  }, identity),
-                ),
+                getUserOrThrow(user),
                 // comicSeries can not be null as insertIfNotExisting will upsert the series
                 // therefore the return type for updateOne should not contain null anymore
                 (comicSeries as ComicSeriesDbObject)._id,
@@ -109,12 +128,7 @@ export const PullListMutation: PullListMutation = {
       map(
         runRTEtoNullable(
           dataSources.pullList.addComicSeries(
-            pipe(
-              user,
-              fold(() => {
-                throw new AuthenticationError('')
-              }, identity),
-            ),
+            getUserOrThrow(user),
             comicSeriesId,
           ),
         ),
@@ -127,12 +141,7 @@ export const PullListMutation: PullListMutation = {
       map(
         runRTEtoNullable(
           dataSources.pullList.removeComicSeries(
-            pipe(
-              user,
-              fold(() => {
-                throw new AuthenticationError('')
-              }, identity),
-            ),
+            getUserOrThrow(user),
             comicSeriesId,
           ),
         ),
