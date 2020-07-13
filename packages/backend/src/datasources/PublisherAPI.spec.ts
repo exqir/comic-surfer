@@ -27,7 +27,9 @@ describe('[PublisherAPI.insert]', () => {
     const mockPublisher = { ...defaultPublisher }
     delete mockPublisher._id
     const { insertOne } = config.context.dataLayer
-    insertOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(insertOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.insert(mockPublisher)
 
@@ -48,7 +50,7 @@ describe('[PublisherAPI.insert]', () => {
     const mockPublisher = { ...defaultPublisher }
     delete mockPublisher._id
     const { insertOne } = config.context.dataLayer
-    insertOne.mockReturnValueOnce(
+    ;(insertOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PublisherDbObject>({
         ...mockPublisher,
         _id: new ObjectID(),
@@ -71,7 +73,9 @@ describe('[PublisherAPI.getById]', () => {
   it('should query dataLayer for Publisher with id and return left in case of Error', async () => {
     const mockPublisher = { ...defaultPublisher }
     const { findOne } = config.context.dataLayer
-    findOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(findOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.getById(mockPublisher._id)
 
@@ -91,7 +95,7 @@ describe('[PublisherAPI.getById]', () => {
   it('should query dataLayer for Publisher with id and return right with result', async () => {
     const mockPublisher = { ...defaultPublisher }
     const { findOne } = config.context.dataLayer
-    findOne.mockReturnValueOnce(
+    ;(findOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PublisherDbObject>(mockPublisher),
     )
 
@@ -111,7 +115,9 @@ describe('[PublisherAPI.getByIds]', () => {
   it('should query dataLayer for Publisher with ids and return left in case of Error', async () => {
     const mockPublisher = { ...defaultPublisher }
     const { findMany } = config.context.dataLayer
-    findMany.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(findMany as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.getByIds([mockPublisher._id])
 
@@ -133,7 +139,7 @@ describe('[PublisherAPI.getByIds]', () => {
   it('should query dataLayer for Publisher with ids and return right with result', async () => {
     const mockPublisher = [{ ...defaultPublisher }]
     const { findMany } = config.context.dataLayer
-    findMany.mockReturnValueOnce(
+    ;(findMany as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PublisherDbObject>(mockPublisher),
     )
 
@@ -154,7 +160,9 @@ describe('[PublisherAPI.getByIds]', () => {
 describe('[PublisherAPI.getAll]', () => {
   it('should query dataLayer for all Publishers and return left in case of Error', async () => {
     const { findMany } = config.context.dataLayer
-    findMany.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(findMany as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.getAll()
 
@@ -174,7 +182,7 @@ describe('[PublisherAPI.getAll]', () => {
   it('should query dataLayer for all Publishers and return right with result', async () => {
     const mockPublisher = [{ ...defaultPublisher }]
     const { findMany } = config.context.dataLayer
-    findMany.mockReturnValueOnce(
+    ;(findMany as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PublisherDbObject>(mockPublisher),
     )
 
@@ -194,7 +202,9 @@ describe('[PublisherAPI.getByName]', () => {
   it('should query dataLayer for Publisher with id and return left in case of Error', async () => {
     const mockPublisher = { ...defaultPublisher }
     const { findOne } = config.context.dataLayer
-    findOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(findOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.getByName(mockPublisher.name)
 
@@ -214,7 +224,7 @@ describe('[PublisherAPI.getByName]', () => {
   it('should query dataLayer for Publisher with id and return right with result', async () => {
     const mockPublisher = { ...defaultPublisher }
     const { findOne } = config.context.dataLayer
-    findOne.mockReturnValueOnce(
+    ;(findOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PublisherDbObject>(mockPublisher),
     )
 
@@ -234,7 +244,9 @@ describe('[PublisherAPI.getByNames]', () => {
   it('should query dataLayer for Publisher with ids and return left in case of Error', async () => {
     const mockPublisher = { ...defaultPublisher }
     const { findMany } = config.context.dataLayer
-    findMany.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(findMany as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.getByNames([mockPublisher.name])
 
@@ -256,7 +268,7 @@ describe('[PublisherAPI.getByNames]', () => {
   it('should query dataLayer for Publisher with ids and return right with result', async () => {
     const mockPublisher = [{ ...defaultPublisher }]
     const { findMany } = config.context.dataLayer
-    findMany.mockReturnValueOnce(
+    ;(findMany as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PublisherDbObject>(mockPublisher),
     )
 
@@ -279,7 +291,9 @@ describe('[PublisherAPI.addComicSeries]', () => {
     const mockPublisherId = new ObjectID()
     const mockComicSeriesId = new ObjectID()
     const { updateOne } = config.context.dataLayer
-    updateOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.addComicSeries(mockPublisherId, mockComicSeriesId)
 
@@ -311,7 +325,7 @@ describe('[PublisherAPI.addComicSeries]', () => {
       series: [mockComicSeries._id],
     }
     const { updateOne } = config.context.dataLayer
-    updateOne.mockReturnValueOnce(
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PublisherDbObject>(mockPublisher),
     )
 

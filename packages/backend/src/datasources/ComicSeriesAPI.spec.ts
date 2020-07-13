@@ -32,7 +32,9 @@ describe('[ComicSeriesAPI.insert]', () => {
     const mockComicSeries = { ...defaultComicSeries }
     delete mockComicSeries._id
     const { insertOne } = config.context.dataLayer
-    insertOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(insertOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.insert(mockComicSeries)
 
@@ -53,7 +55,7 @@ describe('[ComicSeriesAPI.insert]', () => {
     const mockComicSeries = { ...defaultComicSeries }
     delete mockComicSeries._id
     const { insertOne } = config.context.dataLayer
-    insertOne.mockReturnValueOnce(
+    ;(insertOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<ComicSeriesDbObject>({
         ...mockComicSeries,
         _id: new ObjectID(),
@@ -76,7 +78,9 @@ describe('[ComicSeriesAPI.getById]', () => {
   it('should query dataLayer for ComicSeries with id and return left in case of Error', async () => {
     const mockComicSeries = { ...defaultComicSeries }
     const { findOne } = config.context.dataLayer
-    findOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(findOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.getById(mockComicSeries._id)
 
@@ -96,7 +100,7 @@ describe('[ComicSeriesAPI.getById]', () => {
   it('should query dataLayer for ComicSeries with id and return right with result', async () => {
     const mockComicSeries = { ...defaultComicSeries }
     const { findOne } = config.context.dataLayer
-    findOne.mockReturnValueOnce(
+    ;(findOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<ComicSeriesDbObject>(mockComicSeries),
     )
 
@@ -116,7 +120,9 @@ describe('[ComicSeriesAPI.getByIds]', () => {
   it('should query dataLayer for ComicSeries with ids and return left in case of Error', async () => {
     const mockComicSeries = { ...defaultComicSeries }
     const { findMany } = config.context.dataLayer
-    findMany.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(findMany as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.getByIds([mockComicSeries._id])
 
@@ -138,7 +144,7 @@ describe('[ComicSeriesAPI.getByIds]', () => {
   it('should query dataLayer for ComicSeries with ids and return right with result', async () => {
     const mockComicSeries = [{ ...defaultComicSeries }]
     const { findMany } = config.context.dataLayer
-    findMany.mockReturnValueOnce(
+    ;(findMany as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<ComicSeriesDbObject>(mockComicSeries),
     )
 
@@ -161,7 +167,9 @@ describe('[ComicSeriesAPI.addComicBook]', () => {
     const mockComicSeriesId = new ObjectID()
     const mockComicBookId = new ObjectID()
     const { updateOne } = config.context.dataLayer
-    updateOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.addComicBook(mockComicSeriesId, mockComicBookId)
 
@@ -189,7 +197,7 @@ describe('[ComicSeriesAPI.addComicBook]', () => {
       issues: [mockComicBook._id],
     }
     const { updateOne } = config.context.dataLayer
-    updateOne.mockReturnValueOnce(
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<ComicSeriesDbObject>(mockComicSeries),
     )
 
@@ -214,7 +222,9 @@ describe('[ComicSeriesAPI.addComicBooks]', () => {
     const mockComicSeriesId = new ObjectID()
     const mockComicBookId = new ObjectID()
     const { updateOne } = config.context.dataLayer
-    updateOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.addComicBooks(mockComicSeriesId, [mockComicBookId])
 
@@ -242,7 +252,7 @@ describe('[ComicSeriesAPI.addComicBooks]', () => {
       issues: [mockComicBook._id],
     }
     const { updateOne } = config.context.dataLayer
-    updateOne.mockReturnValueOnce(
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<ComicSeriesDbObject>(mockComicSeries),
     )
 

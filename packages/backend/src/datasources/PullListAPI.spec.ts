@@ -24,7 +24,9 @@ describe('[PullListAPI.insert]', () => {
     const mockPullList = { ...defaultPullList }
     delete mockPullList._id
     const { insertOne } = config.context.dataLayer
-    insertOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(insertOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.insert(mockPullList)
 
@@ -45,7 +47,7 @@ describe('[PullListAPI.insert]', () => {
     const mockPullList = { ...defaultPullList }
     delete mockPullList._id
     const { insertOne } = config.context.dataLayer
-    insertOne.mockReturnValueOnce(
+    ;(insertOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PullListDbObject>({
         ...mockPullList,
         _id: new ObjectID(),
@@ -68,7 +70,9 @@ describe('[PullListAPI.getById]', () => {
   it('should query dataLayer for PullList with id and return left in case of Error', async () => {
     const mockPullList = { ...defaultPullList }
     const { findOne } = config.context.dataLayer
-    findOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(findOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.getById(mockPullList._id)
 
@@ -88,7 +92,7 @@ describe('[PullListAPI.getById]', () => {
   it('should query dataLayer for PullList with id and return right with result', async () => {
     const mockPullList = { ...defaultPullList }
     const { findOne } = config.context.dataLayer
-    findOne.mockReturnValueOnce(
+    ;(findOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PullListDbObject>(mockPullList),
     )
 
@@ -108,7 +112,9 @@ describe('[PullListAPI.getByIds]', () => {
   it('should query dataLayer for PullList with ids and return left in case of Error', async () => {
     const mockPullList = { ...defaultPullList }
     const { findMany } = config.context.dataLayer
-    findMany.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(findMany as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.getByIds([mockPullList._id])
 
@@ -130,7 +136,7 @@ describe('[PullListAPI.getByIds]', () => {
   it('should query dataLayer for PullList with ids and return right with result', async () => {
     const mockPullList = [{ ...defaultPullList }]
     const { findMany } = config.context.dataLayer
-    findMany.mockReturnValueOnce(
+    ;(findMany as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PullListDbObject>(mockPullList),
     )
 
@@ -151,7 +157,9 @@ describe('[PullListAPI.getByIds]', () => {
 describe('[PullListAPI.getByUser]', () => {
   it('should query dataLayer for PullList of user and return left in case of Error', async () => {
     const { findOne } = config.context.dataLayer
-    findOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(findOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.getByUser('')
 
@@ -171,7 +179,7 @@ describe('[PullListAPI.getByUser]', () => {
   it('should query dataLayer for PullList of user and return right with result', async () => {
     const mockPullList = { ...defaultPullList }
     const { findOne } = config.context.dataLayer
-    findOne.mockReturnValueOnce(
+    ;(findOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PullListDbObject>(mockPullList),
     )
 
@@ -192,7 +200,9 @@ describe('[PullListAPI.addComicSeries]', () => {
     const mockPullList = { ...defaultPullList }
     const mockComicSeriesId = new ObjectID()
     const { updateOne } = config.context.dataLayer
-    updateOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.addComicSeries(mockPullList.owner, mockComicSeriesId)
 
@@ -224,7 +234,7 @@ describe('[PullListAPI.addComicSeries]', () => {
       list: [mockComicSeries._id],
     }
     const { updateOne } = config.context.dataLayer
-    updateOne.mockReturnValueOnce(
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PullListDbObject>(mockPullList),
     )
 
@@ -249,7 +259,9 @@ describe('[PullListAPI.removeComicSeries]', () => {
     const mockPullList = { ...defaultPullList }
     const mockComicSeriesId = new ObjectID()
     const { updateOne } = config.context.dataLayer
-    updateOne.mockReturnValueOnce(createMockReaderWithReturnValue({}, true))
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}, true),
+    )
 
     const res = ds.removeComicSeries(mockPullList.owner, mockComicSeriesId)
 
@@ -281,7 +293,7 @@ describe('[PullListAPI.removeComicSeries]', () => {
       list: [],
     }
     const { updateOne } = config.context.dataLayer
-    updateOne.mockReturnValueOnce(
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<PullListDbObject>(mockPullList),
     )
 
