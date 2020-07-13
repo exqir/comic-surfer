@@ -26,6 +26,7 @@ db.comicBook.insertOne({
   coverImgUrl: '/descender/1/cover.jpg',
   url: '/descender/1',
   publisher: publisher._id,
+  type: 'SINGLEISSUE',
 })
 const comicBook = db.comicBook.findOne({ title: 'Descender #1' })
 

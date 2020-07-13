@@ -5,7 +5,7 @@ import {
   createMockReaderWithReturnValue,
   runRTEwithMockDb,
 } from 'tests/_utils'
-import { ComicBookDbObject } from 'types/server-schema'
+import { ComicBookDbObject, ComicBookType } from 'types/server-schema'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
@@ -20,6 +20,7 @@ const defaultComicBook: ComicBookDbObject = {
   publisher: null,
   releaseDate: null,
   comicSeries: null,
+  type: ComicBookType.SINGLEISSUE,
 }
 
 const ds = new ComicBookAPI()

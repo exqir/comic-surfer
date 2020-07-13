@@ -14,6 +14,11 @@ extend type Mutation {
   ): [ComicBook!]!
 }
 
+enum ComicBookType {
+  SINGLEISSUE
+  COLLECTION
+}
+
 type ComicBook {
   _id: ID!
   title: String!
@@ -24,6 +29,7 @@ type ComicBook {
   publisher: Publisher
   coverImgUrl: String
   url: String!
+  type: ComicBookType!
 }
 
 type Creator {

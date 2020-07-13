@@ -14,6 +14,11 @@ extend type Mutation {
   ): [ComicBook!]!
 }
 
+enum ComicBookType {
+  SINGLEISSUE
+  COLLECTION
+}
+
 type ComicBook @entity {
   _id: ID! @id
   title: String! @column
@@ -24,6 +29,7 @@ type ComicBook @entity {
   publisher: Publisher @link
   coverImgUrl: String @column
   url: String! @column
+  type: ComicBookType! @column
 }
 
 type Creator @entity(embedded: true) {

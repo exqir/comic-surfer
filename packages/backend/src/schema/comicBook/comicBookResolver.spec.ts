@@ -13,6 +13,7 @@ import {
   ComicBookDbObject,
   PublisherDbObject,
   ComicSeriesDbObject,
+  ComicBookType,
 } from 'types/server-schema'
 import { GraphQLResolveInfo } from 'graphql'
 import { ComicBookAPI, PublisherAPI, ComicSeriesAPI } from 'datasources'
@@ -28,6 +29,7 @@ const defaultComicBook: ComicBookDbObject = {
   publisher: null,
   releaseDate: null,
   comicSeries: null,
+  type: ComicBookType.SINGLEISSUE,
 }
 
 describe('[Query.comicBook]', () => {
@@ -211,6 +213,7 @@ describe('[Mutation.scrapSingleIssuesList]', () => {
         publisher: null,
         coverImgUrl: null,
         releaseDate: null,
+        type: ComicBookType.SINGLEISSUE,
       },
     ])
     expect(res).toEqual(null)
@@ -242,6 +245,7 @@ describe('[Mutation.scrapSingleIssuesList]', () => {
         publisher: null,
         coverImgUrl: null,
         releaseDate: null,
+        type: ComicBookType.SINGLEISSUE,
       },
     ])
     expect(addComicBooks).toHaveBeenLastCalledWith(defaultComicSeries._id, [
@@ -296,6 +300,7 @@ describe('[Mutation.scrapCollectionsList]', () => {
         publisher: null,
         coverImgUrl: null,
         releaseDate: null,
+        type: ComicBookType.COLLECTION,
       },
     ])
     expect(res).toEqual(null)
@@ -327,6 +332,7 @@ describe('[Mutation.scrapCollectionsList]', () => {
         publisher: null,
         coverImgUrl: null,
         releaseDate: null,
+        type: ComicBookType.COLLECTION,
       },
     ])
     expect(

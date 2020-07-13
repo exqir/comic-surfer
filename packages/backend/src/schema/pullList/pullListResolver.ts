@@ -7,6 +7,7 @@ import {
   MutationUnsubscribeComicSeriesArgs,
   ComicBookDbObject,
   QueryReleasesArgs,
+  ComicBookType,
 } from 'types/server-schema'
 import { runRTEtoNullable } from 'lib'
 import { pipe } from 'fp-ts/lib/pipeable'
@@ -64,7 +65,7 @@ export const PullListQuery: PullListQuery = {
       ),
       toNullable,
     ),
-  releases: (_, { month, year }, { dataSources, db, user }) =>
+  releases: (_, { month, year, type }, { dataSources, db, user }) =>
     pipe(
       db,
       map(
@@ -72,12 +73,14 @@ export const PullListQuery: PullListQuery = {
           pipe(
             dataSources.pullList.getByUser(getUserOrThrow(user)),
             RTE.chain((pullList) => {
-              if (pullList === null) throw new Error()
+              if (pullList === null)
+                throw new Error('No pullList for the user exists')
               return dataSources.comicBook.getBySeriesAndRelease(
                 pullList.list,
                 // TODO: Validate month and year
                 month ?? new Date().getMonth() + 1,
                 year ?? new Date().getFullYear(),
+                type ?? ComicBookType.SINGLEISSUE,
               )
             }),
           ),

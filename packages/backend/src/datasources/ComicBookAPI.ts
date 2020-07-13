@@ -1,4 +1,8 @@
-import { ComicBookDbObject, ComicSeriesDbObject } from 'types/server-schema'
+import {
+  ComicBookDbObject,
+  ComicSeriesDbObject,
+  ComicBookType,
+} from 'types/server-schema'
 import { MongoDataSource, toObjectId } from './MongoDataSource'
 import { ObjectID } from 'mongodb'
 import { pipe } from 'fp-ts/lib/pipeable'
@@ -60,6 +64,7 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
     series: ComicSeriesDbObject['_id'][],
     month: number,
     year: number,
+    type: ComicBookType,
   ) => {
     const { findMany } = this.dataLayer!
     return pipe(
@@ -76,6 +81,7 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
               ),
             },
           },
+          { type },
         ],
       }),
       this.logError,

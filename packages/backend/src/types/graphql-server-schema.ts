@@ -33,7 +33,13 @@ export type ComicBook = {
   publisher: Maybe<Publisher>;
   coverImgUrl: Maybe<Scalars['String']>;
   url: Scalars['String'];
+  type: ComicBookType;
 };
+
+export enum ComicBookType {
+  SINGLEISSUE = 'SINGLEISSUE',
+  COLLECTION = 'COLLECTION'
+}
 
 export type ComicSeries = {
    __typename?: 'ComicSeries';
@@ -151,6 +157,7 @@ export type QueryPublishersArgs = {
 export type QueryReleasesArgs = {
   month: Maybe<Scalars['Int']>;
   year: Maybe<Scalars['Int']>;
+  type: Maybe<ComicBookType>;
 };
 
 
@@ -176,6 +183,7 @@ export type ComicBookDbObject = {
   publisher: Maybe<PublisherDbObject['_id']>,
   coverImgUrl: Maybe<string>,
   url: string,
+  type: string,
 };
 
 export type CreatorDbObject = {

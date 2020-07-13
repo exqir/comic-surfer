@@ -1,6 +1,6 @@
 extend type Query {
   pullList: PullList
-  releases(month: Int, year: Int): [ComicBook!]!
+  releases(month: Int, year: Int, type: ComicBookType): [ComicBook!]!
 }
 
 extend type Mutation {

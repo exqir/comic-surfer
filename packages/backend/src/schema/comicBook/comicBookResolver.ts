@@ -9,6 +9,7 @@ import {
   ComicSeriesDbObject,
   MutationScrapSingleIssuesListArgs,
   MutationScrapCollectionsListArgs,
+  ComicBookType,
 } from 'types/server-schema'
 import { runRTEtoNullable, mapOtoRTEnullable, chainMaybeToNullable } from 'lib'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
@@ -53,6 +54,7 @@ export const ComicBookQuery: ComicBookQuery = {
 function insertComicBookIfNotExisting(
   dataSources: DataSources,
   comicSeriesId: ComicSeriesDbObject['_id'],
+  type: ComicBookType,
 ) {
   return (comicBooks: ComicBookListData[]) => {
     return pipe(
@@ -62,7 +64,6 @@ function insertComicBookIfNotExisting(
         return comicBooks.filter(({ url }) => !existingUrls.includes(url))
       }),
       RTE.chain((comicBooks) =>
-        // TODO: only insert comicBooks that are not already in the DB
         dataSources.comicBook.insertMany(
           comicBooks.map((book) => ({
             ...book,
@@ -71,6 +72,7 @@ function insertComicBookIfNotExisting(
             publisher: null,
             coverImgUrl: null,
             releaseDate: null,
+            type,
           })),
         ),
       ),
@@ -113,7 +115,13 @@ export const ComicBookMutation: ComicBookMutation = {
                 ComicBookListData[]
               >,
             ),
-            RTE.chain(insertComicBookIfNotExisting(dataSources, comicSeriesId)),
+            RTE.chain(
+              insertComicBookIfNotExisting(
+                dataSources,
+                comicSeriesId,
+                ComicBookType.SINGLEISSUE,
+              ),
+            ),
             RTE.chainFirst((comicBooks) =>
               dataSources.comicSeries.addComicBooks(
                 comicSeriesId,
@@ -141,7 +149,13 @@ export const ComicBookMutation: ComicBookMutation = {
                 ComicBookListData[]
               >,
             ),
-            RTE.chain(insertComicBookIfNotExisting(dataSources, comicSeriesId)),
+            RTE.chain(
+              insertComicBookIfNotExisting(
+                dataSources,
+                comicSeriesId,
+                ComicBookType.COLLECTION,
+              ),
+            ),
             RTE.chainFirst((comicBooks) =>
               dataSources.comicSeries.addComicBookCollections(
                 comicSeriesId,

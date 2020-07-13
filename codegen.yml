@@ -18,3 +18,5 @@ generates:
         ID: ObjectID
         Date: Date
       avoidOptionals: true
+      namingConvention:
+        enumValues: upper-case#upperCase

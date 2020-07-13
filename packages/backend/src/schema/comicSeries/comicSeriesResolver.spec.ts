@@ -5,6 +5,7 @@ import {
   ComicSeriesDbObject,
   ComicBookDbObject,
   PublisherDbObject,
+  ComicBookType,
 } from 'types/server-schema'
 import { ComicSeriesAPI } from 'datasources/ComicSeriesAPI'
 import { GraphQLResolveInfo } from 'graphql'
@@ -74,6 +75,7 @@ const defaultComicBook: ComicBookDbObject = {
   publisher: null,
   releaseDate: null,
   comicSeries: null,
+  type: ComicBookType.SINGLEISSUE,
 }
 
 describe('[ComicSeries.singleIssues]', () => {
