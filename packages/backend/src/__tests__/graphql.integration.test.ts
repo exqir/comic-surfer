@@ -5,7 +5,7 @@ import {
   createMockReaderWithReturnValue,
 } from 'tests/_utils'
 import { ObjectID } from 'mongodb'
-import { ComicBook } from 'types/server-schema'
+import { ComicBook, ComicBookType } from 'types/server-schema'
 // import comicBook from 'schema/comicBook';
 
 const GET_COMICBOOK = gql`
@@ -32,6 +32,7 @@ describe('Queries', () => {
       creators: [],
       comicSeries: null,
       publisher: null,
+      type: ComicBookType.SINGLEISSUE,
     }
     const { server, comicBook } = constructTestServer()
     comicBook.getById = jest

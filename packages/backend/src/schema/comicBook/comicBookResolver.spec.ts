@@ -75,18 +75,21 @@ describe('[Query.comicBook]', () => {
   })
 })
 
-const defaultComicBookListScrapResult = [
-  {
-    title: 'Title',
-    url: '/issue-1',
-    issueNo: '1',
-  },
-  {
-    title: 'Title',
-    url: '/issue-2',
-    issueNo: '2',
-  },
-]
+const defaultComicBookListScrapResult = {
+  nextPage: null,
+  comicBookList: [
+    {
+      title: 'Title',
+      url: '/issue-1',
+      issueNo: '1',
+    },
+    {
+      title: 'Title',
+      url: '/issue-2',
+      issueNo: '2',
+    },
+  ],
+}
 
 const defaultComicBookScrapResult = [
   {
@@ -176,7 +179,7 @@ describe('[Mutation.scrapSingleIssuesList]', () => {
       createMockReaderWithReturnValue<ComicBookDbObject[]>([
         {
           ...defaultComicBook,
-          url: defaultComicBookListScrapResult[1].url,
+          url: defaultComicBookListScrapResult.comicBookList[1].url,
         },
       ]),
     ),
@@ -207,7 +210,7 @@ describe('[Mutation.scrapSingleIssuesList]', () => {
 
     expect(insertMany).toHaveBeenLastCalledWith([
       {
-        ...defaultComicBookListScrapResult[0],
+        ...defaultComicBookListScrapResult.comicBookList[0],
         comicSeries: defaultComicSeries._id,
         creators: [],
         publisher: null,
@@ -239,7 +242,7 @@ describe('[Mutation.scrapSingleIssuesList]', () => {
 
     expect(insertMany).toHaveBeenLastCalledWith([
       {
-        ...defaultComicBookListScrapResult[0],
+        ...defaultComicBookListScrapResult.comicBookList[0],
         comicSeries: defaultComicSeries._id,
         creators: [],
         publisher: null,
@@ -263,7 +266,7 @@ describe('[Mutation.scrapCollectionsList]', () => {
       createMockReaderWithReturnValue<ComicBookDbObject[]>([
         {
           ...defaultComicBook,
-          url: defaultComicBookListScrapResult[1].url,
+          url: defaultComicBookListScrapResult.comicBookList[1].url,
         },
       ]),
     ),
@@ -294,7 +297,7 @@ describe('[Mutation.scrapCollectionsList]', () => {
 
     expect(insertMany).toHaveBeenLastCalledWith([
       {
-        ...defaultComicBookListScrapResult[0],
+        ...defaultComicBookListScrapResult.comicBookList[0],
         comicSeries: defaultComicSeries._id,
         creators: [],
         publisher: null,
@@ -326,7 +329,7 @@ describe('[Mutation.scrapCollectionsList]', () => {
 
     expect(insertMany).toHaveBeenLastCalledWith([
       {
-        ...defaultComicBookListScrapResult[0],
+        ...defaultComicBookListScrapResult.comicBookList[0],
         comicSeries: defaultComicSeries._id,
         creators: [],
         publisher: null,

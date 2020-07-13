@@ -56,7 +56,7 @@ function insertComicBookIfNotExisting(
   comicSeriesId: ComicSeriesDbObject['_id'],
   type: ComicBookType,
 ) {
-  return (comicBooks: ComicBookListData[]) => {
+  return ({ comicBookList: comicBooks }: ComicBookListData) => {
     return pipe(
       dataSources.comicBook.getByUrls(comicBooks.map(({ url }) => url)),
       RTE.map((existingComicBooks) => {
@@ -112,7 +112,7 @@ export const ComicBookMutation: ComicBookMutation = {
             RTE.fromTaskEither(
               services.scrape.getComicBookList(comicBookListUrl) as TaskEither<
                 MongoError,
-                ComicBookListData[]
+                ComicBookListData
               >,
             ),
             RTE.chain(
@@ -146,7 +146,7 @@ export const ComicBookMutation: ComicBookMutation = {
             RTE.fromTaskEither(
               services.scrape.getComicBookList(comicBookListUrl) as TaskEither<
                 MongoError,
-                ComicBookListData[]
+                ComicBookListData
               >,
             ),
             RTE.chain(

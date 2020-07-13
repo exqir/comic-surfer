@@ -29,7 +29,7 @@ describe('[Query.getSearch]', () => {
     )
 
     expect(getComicSeriesSearch).toHaveBeenLastCalledWith('query')
-    expect(res).toEqual(null)
+    expect(res).toEqual([])
   })
 
   it('should call ScrapeService and return its result', async () => {

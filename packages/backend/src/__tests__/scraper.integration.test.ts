@@ -58,20 +58,23 @@ describe('[Scraper.getComicBookList]', () => {
     return pipe(
       scraper.getComicBookList('/cx-comic-book-list.html'),
       map((res) => {
-        expect(res).toMatchObject([
-          {
-            title: 'Comic Book 2',
-            url: `${URL}/issue-2.html`,
-            issueNo: '2',
-            coverImgUrl: '/issue-2-cover.jpg',
-          },
-          {
-            title: 'Comic Book 1',
-            url: `${URL}/issue-1.html`,
-            issueNo: '1',
-            coverImgUrl: '/issue-1-cover.jpg',
-          },
-        ])
+        expect(res).toMatchObject({
+          nextPage: '/next-page',
+          comicBookList: [
+            {
+              title: 'Comic Book 2',
+              url: `${URL}/issue-2.html`,
+              issueNo: '2',
+              coverImgUrl: '/issue-2-cover.jpg',
+            },
+            {
+              title: 'Comic Book 1',
+              url: `${URL}/issue-1.html`,
+              issueNo: '1',
+              coverImgUrl: '/issue-1-cover.jpg',
+            },
+          ],
+        })
       }),
     )()
   })

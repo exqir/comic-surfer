@@ -8,10 +8,13 @@ export type ComicSeriesData = {
 }
 
 export type ComicBookListData = {
-  title: string
-  url: string
-  issueNo: string
-  coverImgUrl: string
+  nextPage: string
+  comicBookList: {
+    title: string
+    url: string
+    issueNo: string
+    coverImgUrl: string
+  }[]
 }
 
 export type ComicBookData = {
@@ -31,7 +34,7 @@ export type ComicSeriesSearchData = {
 
 export interface IScraper {
   getComicSeries: (path: string) => TaskEither<Error, ComicSeriesData>
-  getComicBookList: (path: string) => TaskEither<Error, ComicBookListData[]>
+  getComicBookList: (path: string) => TaskEither<Error, ComicBookListData>
   getComicBook: (path: string) => TaskEither<Error, ComicBookData>
   getComicSeriesSearch: (
     path: string,

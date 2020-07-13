@@ -49,6 +49,7 @@ const comicSeriesConfig = (convertFn: convertFn) => ({
 })
 
 interface ComicBookListScrapData {
+  nextPage: string
   comicBookList: {
     title: string
     url: string
@@ -58,6 +59,10 @@ interface ComicBookListScrapData {
 }
 
 const comicBookListConfig = (convertFn: convertFn) => ({
+  nextPage: {
+    selector: '.pagination-page.next .pagination-link',
+    attr: 'href',
+  },
   comicBookList: {
     listItem: '.comic-item',
     data: {
@@ -212,7 +217,6 @@ export function comixology(
       url.searchParams.set('sort', 'desc')
       return pipe(
         scrape<ComicBookListScrapData>(url, comicBookListConfig(_convertUrl)),
-        map(({ comicBookList }) => comicBookList),
       )
     },
     getComicBook: (path: string) => {
