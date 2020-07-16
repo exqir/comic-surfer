@@ -2,9 +2,13 @@ import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
 import { Db } from 'mongodb'
 import { Response, Request } from 'express'
 import { Option } from 'fp-ts/lib/Option'
-import { ComicBookAPI, ComicSeriesAPI } from '../datasources'
-import { PublisherAPI } from 'datasources/PublisherAPI'
-import { PullListAPI } from 'datasources/PullListAPI'
+import {
+  ComicBookAPI,
+  ComicSeriesAPI,
+  PublisherAPI,
+  PullListAPI,
+  QueueRepository,
+} from '../datasources'
 import { IScraper } from 'services/ScrapeService'
 import mongad from 'mongad'
 
@@ -21,6 +25,7 @@ export interface DataSources {
   comicSeries: ComicSeriesAPI
   publisher: PublisherAPI
   pullList: PullListAPI
+  queue: QueueRepository
 }
 
 export interface Services {

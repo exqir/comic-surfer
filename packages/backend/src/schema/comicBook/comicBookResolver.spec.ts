@@ -16,7 +16,13 @@ import {
   ComicBookType,
 } from 'types/server-schema'
 import { GraphQLResolveInfo } from 'graphql'
-import { ComicBookAPI, PublisherAPI, ComicSeriesAPI } from 'datasources'
+import {
+  ComicBookAPI,
+  PublisherAPI,
+  ComicSeriesAPI,
+  QueueRepository,
+} from 'datasources'
+import { TaskType } from 'datasources/QueueRepository'
 import { IScraper } from 'services/ScrapeService'
 
 const defaultComicBook: ComicBookDbObject = {
@@ -76,7 +82,7 @@ describe('[Query.comicBook]', () => {
 })
 
 const defaultComicBookListScrapResult = {
-  nextPage: null,
+  nextPage: '/next',
   comicBookList: [
     {
       title: 'Title',
@@ -187,6 +193,9 @@ describe('[Mutation.scrapSingleIssuesList]', () => {
   context.dataSources.comicSeries = ({
     addComicBooks: jest.fn(),
   } as unknown) as ComicSeriesAPI
+  context.dataSources.queue = ({
+    insert: jest.fn().mockReturnValue(createMockReaderWithReturnValue({})),
+  } as unknown) as QueueRepository
   context.services.scrape = ({
     getComicBookList: jest
       .fn()
@@ -256,6 +265,40 @@ describe('[Mutation.scrapSingleIssuesList]', () => {
     ])
     expect(res).toMatchObject([mockComicBook])
   })
+
+  it('should call QueueRepository and return its result', async () => {
+    const mockComicBook = { ...defaultComicBook }
+    const { insertMany, getByUrls } = context.dataSources.comicBook
+    ;(insertMany as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue<ComicBookDbObject[]>([
+        mockComicBook,
+        mockComicBook,
+      ]),
+    )
+    ;(getByUrls as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue<ComicBookDbObject[]>([]),
+    )
+    const { addComicBooks } = context.dataSources.comicSeries
+    ;(addComicBooks as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}),
+    )
+
+    const res = await ComicBookMutation.scrapSingleIssuesList(
+      {},
+      { comicSeriesId: defaultComicSeries._id, comicBookListUrl: '/issues' },
+      context,
+      {} as GraphQLResolveInfo,
+    )
+
+    expect(context.dataSources.queue.insert).toHaveBeenCalledWith({
+      type: TaskType.SCRAPSINGLEISSUELIST,
+      data: {
+        url: defaultComicBookListScrapResult.nextPage,
+        comicSeriesId: defaultComicSeries._id,
+      },
+    })
+    expect(res).toMatchObject([mockComicBook, mockComicBook])
+  })
 })
 
 describe('[Mutation.scrapCollectionsList]', () => {
@@ -274,6 +317,9 @@ describe('[Mutation.scrapCollectionsList]', () => {
   context.dataSources.comicSeries = ({
     addComicBookCollections: jest.fn(),
   } as unknown) as ComicSeriesAPI
+  context.dataSources.queue = ({
+    insert: jest.fn().mockReturnValue(createMockReaderWithReturnValue({})),
+  } as unknown) as QueueRepository
   context.services.scrape = ({
     getComicBookList: jest
       .fn()
@@ -342,6 +388,40 @@ describe('[Mutation.scrapCollectionsList]', () => {
       addComicBookCollections,
     ).toHaveBeenLastCalledWith(defaultComicSeries._id, [mockComicBook._id])
     expect(res).toMatchObject([mockComicBook])
+  })
+
+  it('should call QueueRepository and return its result', async () => {
+    const mockComicBook = { ...defaultComicBook }
+    const { insertMany, getByUrls } = context.dataSources.comicBook
+    ;(insertMany as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue<ComicBookDbObject[]>([
+        mockComicBook,
+        mockComicBook,
+      ]),
+    )
+    ;(getByUrls as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue<ComicBookDbObject[]>([]),
+    )
+    const { addComicBookCollections } = context.dataSources.comicSeries
+    ;(addComicBookCollections as jest.Mock).mockReturnValueOnce(
+      createMockReaderWithReturnValue({}),
+    )
+
+    const res = await ComicBookMutation.scrapCollectionsList(
+      {},
+      { comicSeriesId: defaultComicSeries._id, comicBookListUrl: '/issues' },
+      context,
+      {} as GraphQLResolveInfo,
+    )
+
+    expect(context.dataSources.queue.insert).toHaveBeenCalledWith({
+      type: TaskType.SCRAPCOLLECTIONLIST,
+      data: {
+        url: defaultComicBookListScrapResult.nextPage,
+        comicSeriesId: defaultComicSeries._id,
+      },
+    })
+    expect(res).toMatchObject([mockComicBook, mockComicBook])
   })
 })
 

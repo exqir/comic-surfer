@@ -49,6 +49,8 @@ const comicSeriesConfig = (convertFn: convertFn) => ({
 })
 
 interface ComicBookListScrapData {
+  // TODO: nextPage will be an empty string if not available on the page
+  // Comixology has `#` as href if their is pagination but no next page
   nextPage: string
   comicBookList: {
     title: string

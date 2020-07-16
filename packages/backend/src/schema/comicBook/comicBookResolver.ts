@@ -16,6 +16,7 @@ import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { TaskEither } from 'fp-ts/lib/TaskEither'
 import { MongoError } from 'mongodb'
 import { ComicBookListData } from 'services/ScrapeService'
+import { TaskType } from 'datasources/QueueRepository'
 
 interface ComicBookQuery {
   // TODO: This actually returns a ComicBook but this is not what the function returns
@@ -56,16 +57,16 @@ function insertComicBookIfNotExisting(
   comicSeriesId: ComicSeriesDbObject['_id'],
   type: ComicBookType,
 ) {
-  return ({ comicBookList: comicBooks }: ComicBookListData) => {
+  return ({ comicBookList: comicBooks, nextPage }: ComicBookListData) => {
     return pipe(
       dataSources.comicBook.getByUrls(comicBooks.map(({ url }) => url)),
       RTE.map((existingComicBooks) => {
         const existingUrls = existingComicBooks.map(({ url }) => url)
         return comicBooks.filter(({ url }) => !existingUrls.includes(url))
       }),
-      RTE.chain((comicBooks) =>
+      RTE.chain((remainingComicBooks) =>
         dataSources.comicBook.insertMany(
-          comicBooks.map((book) => ({
+          remainingComicBooks.map((book) => ({
             ...book,
             comicSeries: comicSeriesId,
             creators: [],
@@ -76,8 +77,39 @@ function insertComicBookIfNotExisting(
           })),
         ),
       ),
+      RTE.map((remainingComicBooks) => ({
+        comicBooks: remainingComicBooks,
+        containsKnownBooks: comicBooks.length !== remainingComicBooks.length,
+        nextPage,
+      })),
     )
   }
+}
+
+function addNextPageToQueue(
+  dataSources: DataSources,
+  comicSeriesId: ComicSeriesDbObject['_id'],
+  type: ComicBookType,
+) {
+  return ({
+    containsKnownBooks,
+    nextPage,
+  }: {
+    comicBooks: ComicBookDbObject[]
+    containsKnownBooks: boolean
+    nextPage: string
+  }) =>
+    containsKnownBooks || nextPage === '' || nextPage === '#'
+      ? // Because we use chainFirst the value will never be used in this case
+        // We just use MongoError to keep the expected Type consistent between the different cases
+        RTE.right({})
+      : dataSources.queue.insert({
+          type:
+            type === ComicBookType.SINGLEISSUE
+              ? TaskType.SCRAPSINGLEISSUELIST
+              : TaskType.SCRAPCOLLECTIONLIST,
+          data: { url: nextPage, comicSeriesId },
+        })
 }
 
 export const ComicBookMutation: ComicBookMutation = {
@@ -122,12 +154,20 @@ export const ComicBookMutation: ComicBookMutation = {
                 ComicBookType.SINGLEISSUE,
               ),
             ),
-            RTE.chainFirst((comicBooks) =>
+            RTE.chainFirst(
+              addNextPageToQueue(
+                dataSources,
+                comicSeriesId,
+                ComicBookType.SINGLEISSUE,
+              ),
+            ),
+            RTE.chainFirst(({ comicBooks }) =>
               dataSources.comicSeries.addComicBooks(
                 comicSeriesId,
                 comicBooks.map(({ _id }) => _id),
               ),
             ),
+            RTE.map(({ comicBooks }) => comicBooks),
           ),
         ),
       ),
@@ -156,12 +196,20 @@ export const ComicBookMutation: ComicBookMutation = {
                 ComicBookType.COLLECTION,
               ),
             ),
-            RTE.chainFirst((comicBooks) =>
+            RTE.chainFirst(
+              addNextPageToQueue(
+                dataSources,
+                comicSeriesId,
+                ComicBookType.COLLECTION,
+              ),
+            ),
+            RTE.chainFirst(({ comicBooks }) =>
               dataSources.comicSeries.addComicBookCollections(
                 comicSeriesId,
                 comicBooks.map(({ _id }) => _id),
               ),
             ),
+            RTE.map(({ comicBooks }) => comicBooks),
           ),
         ),
       ),

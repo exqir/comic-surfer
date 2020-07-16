@@ -1,4 +1,4 @@
-exports = function scrapComicBookList(changeEvent) {
+exports = function onComicSeriesInsert(changeEvent) {
   const { _id, singleIssuesUrl, collectionsUrl } = changeEvent.fullDocument
   const singleIssuesMutation = `mutation scrapSingleIssuesList($comicSeriesId: ID!, $comicBookListUrl: String!) {
       scrapSingleIssuesList(comicSeriesId: $comicSeriesId, comicBookListUrl: $comicBookListUrl) {
