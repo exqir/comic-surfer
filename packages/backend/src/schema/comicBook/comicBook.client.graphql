@@ -12,6 +12,7 @@ extend type Mutation {
     comicSeriesId: ID!
     comicBookListUrl: String!
   ): [ComicBook!]!
+  updateComicBooks: [ComicBook!]!
 }
 
 enum ComicBookType {

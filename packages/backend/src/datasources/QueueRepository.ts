@@ -5,12 +5,16 @@ import { pipe } from 'fp-ts/lib/pipeable'
 export enum TaskType {
   SCRAPSINGLEISSUELIST = 'SCRAP_SINGLE_ISSUE_LIST',
   SCRAPCOLLECTIONLIST = 'SCRAP_COLLECTION_LIST',
+  SCRAPCOMICBOOK = 'SCRAP_COMIC_BOOK',
 }
 
-type Queue = WithId<{
-  type: TaskType.SCRAPSINGLEISSUELIST | TaskType.SCRAPCOLLECTIONLIST
-  data: { url: string; comicSeriesId: ObjectID }
-}>
+type Queue = WithId<
+  | {
+      type: TaskType.SCRAPSINGLEISSUELIST | TaskType.SCRAPCOLLECTIONLIST
+      data: { url: string; comicSeriesId: ObjectID }
+    }
+  | { type: TaskType.SCRAPCOMICBOOK; data: { url: string } }
+>
 
 export const queueCollection = 'queue'
 export class QueueRepository extends MongoDataSource<Queue> {

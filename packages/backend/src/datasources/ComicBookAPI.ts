@@ -81,15 +81,44 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
           { comicSeries: { $in: series } },
           {
             releaseDate: {
-              $gte: new Date(`${year}-${month}-01`),
-              $lt: new Date(
-                month + 1 > 12
-                  ? `${year + 1}-01-01`
-                  : `${year}-${month + 1}-01`,
-              ),
+              $gte: new Date(year, month, 1),
+              $lt: new Date(year, month + 1, 1),
             },
           },
           { type },
+        ],
+      }),
+      this.logError,
+    )
+  }
+
+  public getUpcoming = () => {
+    const { findMany } = this.dataLayer!
+    const date = new Date()
+    return pipe(
+      findMany<ComicBookDbObject>(this.collection, {
+        $and: [
+          {
+            // releaseDate between now and a month from now
+            releaseDate: {
+              $gte: new Date(),
+              $lt: new Date(
+                date.getFullYear(),
+                date.getMonth() + 1,
+                date.getDay(),
+              ),
+            },
+          },
+          {
+            // lastModified more then two weeks ago
+            lastModified: {
+              $lte: new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDay() - 14,
+              ),
+            },
+          },
         ],
       }),
       this.logError,

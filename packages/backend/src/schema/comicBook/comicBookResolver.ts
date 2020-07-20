@@ -17,6 +17,7 @@ import { TaskEither } from 'fp-ts/lib/TaskEither'
 import { MongoError } from 'mongodb'
 import { ComicBookListData } from 'services/ScrapeService'
 import { TaskType } from 'datasources/QueueRepository'
+import { comicBook } from 'config/scraper'
 
 interface ComicBookQuery {
   // TODO: This actually returns a ComicBook but this is not what the function returns
@@ -34,6 +35,7 @@ interface ComicBookMutation {
     ComicBookDbObject[],
     MutationScrapCollectionsListArgs
   >
+  updateComicBooks: Resolver<ComicBookDbObject[], {}>
 }
 
 interface ComicBookResolver {
@@ -210,6 +212,26 @@ export const ComicBookMutation: ComicBookMutation = {
               ),
             ),
             RTE.map(({ comicBooks }) => comicBooks),
+          ),
+        ),
+      ),
+      toNullable,
+    ),
+  updateComicBooks: (_, __, { dataSources, db }) =>
+    pipe(
+      db,
+      map(
+        runRTEtoNullable(
+          pipe(
+            dataSources.comicBook.getUpcoming(),
+            RTE.chainFirst((comicBooks) =>
+              dataSources.queue.insertMany(
+                comicBooks.map(({ url }) => ({
+                  type: TaskType.SCRAPCOMICBOOK,
+                  data: { url },
+                })),
+              ),
+            ),
           ),
         ),
       ),
