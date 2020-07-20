@@ -22,6 +22,7 @@ const defaultComicSeries: ComicSeriesDbObject = {
   singleIssuesUrl: null,
   singleIssues: [],
   publisher: null,
+  lastModified: new Date(),
 }
 
 const ds = new ComicSeriesAPI()
@@ -182,7 +183,10 @@ describe('[ComicSeriesAPI.addComicBook]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { _id: mockComicSeriesId },
-      { $addToSet: { singleIssues: mockComicBookId } },
+      {
+        $addToSet: { singleIssues: mockComicBookId },
+        $currentDate: { lastModified: true },
+      },
     )
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
@@ -212,7 +216,10 @@ describe('[ComicSeriesAPI.addComicBook]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { _id: mockComicSeries._id },
-      { $addToSet: { singleIssues: mockComicBook._id } },
+      {
+        $addToSet: { singleIssues: mockComicBook._id },
+        $currentDate: { lastModified: true },
+      },
     )
   })
 })
@@ -237,7 +244,10 @@ describe('[ComicSeriesAPI.addComicBooks]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { _id: mockComicSeriesId },
-      { $addToSet: { singleIssues: { $each: [mockComicBookId] } } },
+      {
+        $addToSet: { singleIssues: { $each: [mockComicBookId] } },
+        $currentDate: { lastModified: true },
+      },
     )
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
@@ -267,7 +277,10 @@ describe('[ComicSeriesAPI.addComicBooks]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { _id: mockComicSeries._id },
-      { $addToSet: { singleIssues: { $each: [mockComicBook._id] } } },
+      {
+        $addToSet: { singleIssues: { $each: [mockComicBook._id] } },
+        $currentDate: { lastModified: true },
+      },
     )
   })
 })

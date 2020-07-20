@@ -11,4 +11,5 @@ type ComicSeries {
   publisher: Publisher
   collections: [ComicBook!]!
   singleIssues: [ComicBook!]!
+  lastModified: Date!
 }

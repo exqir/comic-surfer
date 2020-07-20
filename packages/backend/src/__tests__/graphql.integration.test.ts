@@ -33,6 +33,7 @@ describe('Queries', () => {
       comicSeries: null,
       publisher: null,
       type: ComicBookType.SINGLEISSUE,
+      lastModified: new Date(),
     }
     const { server, comicBook } = constructTestServer()
     comicBook.getById = jest

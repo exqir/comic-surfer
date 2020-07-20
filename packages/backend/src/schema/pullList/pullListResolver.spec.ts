@@ -80,6 +80,7 @@ const defaultComicSeries: ComicSeriesDbObject = {
   singleIssuesUrl: null,
   singleIssues: [],
   publisher: null,
+  lastModified: new Date(),
 }
 
 describe('[Mutation.subscribeComicSeries]', () => {

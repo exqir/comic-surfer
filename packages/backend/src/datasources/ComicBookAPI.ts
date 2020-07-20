@@ -13,10 +13,15 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
     super(comicBookCollection)
   }
 
-  public insertMany = (documents: Omit<ComicBookDbObject, '_id'>[]) => {
+  public insertMany = (
+    documents: Omit<ComicBookDbObject, '_id' | 'lastModified'>[],
+  ) => {
     const { insertMany } = this.dataLayer!
     return pipe(
-      insertMany<Omit<ComicBookDbObject, '_id'>>(this.collection, documents),
+      insertMany<Omit<ComicBookDbObject, '_id'>>(
+        this.collection,
+        documents.map((doc) => ({ ...doc, lastModified: new Date() })),
+      ),
       this.logError,
     )
   }
@@ -27,7 +32,10 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
       updateOne<ComicBookDbObject>(
         this.collection,
         { _id: toObjectId(id) },
-        { $set: { releaseDate: newDate } },
+        {
+          $set: { releaseDate: newDate },
+          $currentDate: { lastModified: true },
+        },
       ),
       this.logError,
     )
@@ -46,7 +54,7 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
       updateOne<ComicBookDbObject>(
         this.collection,
         { url },
-        { $set: { ...update } },
+        { $set: { ...update }, $currentDate: { lastModified: true } },
       ),
       this.logError,
     )

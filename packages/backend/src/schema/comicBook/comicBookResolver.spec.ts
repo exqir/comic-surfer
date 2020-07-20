@@ -36,6 +36,7 @@ const defaultComicBook: ComicBookDbObject = {
   releaseDate: null,
   comicSeries: null,
   type: ComicBookType.SINGLEISSUE,
+  lastModified: new Date(),
 }
 
 describe('[Query.comicBook]', () => {
@@ -114,6 +115,7 @@ const defaultComicSeries: ComicSeriesDbObject = {
   singleIssuesUrl: null,
   singleIssues: [],
   publisher: null,
+  lastModified: new Date(),
 }
 
 describe('[Mutation.scrapComicBook]', () => {

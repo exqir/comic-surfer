@@ -15,7 +15,10 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
       updateOne<ComicSeriesDbObject>(
         this.collection,
         { _id: toObjectId(id) },
-        { $addToSet: { singleIssues: toObjectId(comicBookId) } },
+        {
+          $addToSet: { singleIssues: toObjectId(comicBookId) },
+          $currentDate: { lastModified: true },
+        },
       ),
       this.logError,
     )
@@ -29,6 +32,7 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
         { _id: toObjectId(id) },
         {
           $addToSet: { singleIssues: { $each: comicBookIds.map(toObjectId) } },
+          $currentDate: { lastModified: true },
         },
       ),
       this.logError,
@@ -42,7 +46,10 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
         this.collection,
         { _id: toObjectId(id) },
         {
-          $addToSet: { collections: { $each: comicBookIds.map(toObjectId) } },
+          $addToSet: {
+            collections: { $each: comicBookIds.map(toObjectId) },
+            $currentDate: { lastModified: true },
+          },
         },
       ),
       this.logError,
@@ -50,7 +57,10 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
   }
 
   public insertIfNotExisting = (
-    series: Omit<ComicSeriesDbObject, '_id' | 'singleIssues' | 'collections'>,
+    series: Omit<
+      ComicSeriesDbObject,
+      '_id' | 'singleIssues' | 'collections' | 'lastModified'
+    >,
   ) => {
     const { updateOne } = this.dataLayer!
     return pipe(
@@ -58,7 +68,12 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
         this.collection,
         { url: series.url },
         {
-          $setOnInsert: { ...series, singleIssues: [], collections: [] },
+          $setOnInsert: {
+            ...series,
+            singleIssues: [],
+            collections: [],
+            lastModified: new Date(),
+          },
         },
         { upsert: true },
       ),

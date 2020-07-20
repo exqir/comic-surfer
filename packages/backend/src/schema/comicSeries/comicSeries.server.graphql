@@ -11,4 +11,5 @@ type ComicSeries @entity {
   publisher: Publisher @link
   collections: [ComicBook!]! @link
   singleIssues: [ComicBook!]! @link
+  lastModified: Date! @column
 }

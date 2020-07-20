@@ -20,6 +20,7 @@ const defaultComicSeries: ComicSeriesDbObject = {
   singleIssuesUrl: null,
   singleIssues: [],
   publisher: null,
+  lastModified: new Date(),
 }
 
 describe('[Query.comicSeries]', () => {
@@ -76,6 +77,7 @@ const defaultComicBook: ComicBookDbObject = {
   releaseDate: null,
   comicSeries: null,
   type: ComicBookType.SINGLEISSUE,
+  lastModified: new Date(),
 }
 
 describe('[ComicSeries.singleIssues]', () => {

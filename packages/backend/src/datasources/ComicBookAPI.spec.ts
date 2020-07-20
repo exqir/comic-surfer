@@ -21,6 +21,7 @@ const defaultComicBook: ComicBookDbObject = {
   releaseDate: null,
   comicSeries: null,
   type: ComicBookType.SINGLEISSUE,
+  lastModified: new Date(),
 }
 
 const ds = new ComicBookAPI()
@@ -75,8 +76,7 @@ describe('[ComicBookAPI.insert]', () => {
 
 describe('[ComicBookAPI.insertMany]', () => {
   it('should insert ComicBooks using dataLayer and return left in case of Error', async () => {
-    const mockComicBook = { ...defaultComicBook }
-    delete mockComicBook._id
+    const { _id, lastModified, ...mockComicBook } = { ...defaultComicBook }
     const { insertMany } = config.context.dataLayer
     ;(insertMany as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue({}, true),
@@ -90,7 +90,9 @@ describe('[ComicBookAPI.insertMany]', () => {
       RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
       runRTEwithMockDb,
     )
-    expect(insertMany).toBeCalledWith(collection, [mockComicBook])
+    expect(insertMany).toBeCalledWith(collection, [
+      expect.objectContaining(mockComicBook),
+    ])
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
     // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
@@ -98,13 +100,13 @@ describe('[ComicBookAPI.insertMany]', () => {
   })
 
   it('should insert ComicBook using dataLayer and return right with result', async () => {
-    const mockComicBook = { ...defaultComicBook }
-    delete mockComicBook._id
+    const { _id, lastModified, ...mockComicBook } = { ...defaultComicBook }
     const { insertMany } = config.context.dataLayer
     ;(insertMany as jest.Mock).mockReturnValueOnce(
       createMockReaderWithReturnValue<ComicBookDbObject>([
         {
           ...mockComicBook,
+          lastModified,
           _id: new ObjectID(),
         },
       ]),
@@ -118,7 +120,9 @@ describe('[ComicBookAPI.insertMany]', () => {
       RTE.map((d) => expect(d).toMatchObject([mockComicBook])),
       runRTEwithMockDb,
     )
-    expect(insertMany).toBeCalledWith(collection, [mockComicBook])
+    expect(insertMany).toBeCalledWith(collection, [
+      expect.objectContaining(mockComicBook),
+    ])
   })
 })
 
@@ -229,7 +233,10 @@ describe('[ComicBookAPI.updateReleaseDate]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { _id: id },
-      { $set: { releaseDate: new Date('2020-05-30') } },
+      {
+        $set: { releaseDate: new Date('2020-05-30') },
+        $currentDate: { lastModified: true },
+      },
     )
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
@@ -262,7 +269,7 @@ describe('[ComicBookAPI.updateReleaseDate]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { _id: mockComicBook._id },
-      { $set: { releaseDate: newDate } },
+      { $set: { releaseDate: newDate }, $currentDate: { lastModified: true } },
     )
   })
 })
@@ -291,7 +298,7 @@ describe('[ComicBookAPI.enhanceWithScrapResult]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { url: mockComicBook.url },
-      { $set: scrapResult },
+      { $set: scrapResult, $currentDate: { lastModified: true } },
     )
     // TODO: The mock function is actually being called which can be tested by
     // a mock implementation and via debugger. However, this information
@@ -329,7 +336,7 @@ describe('[ComicBookAPI.enhanceWithScrapResult]', () => {
     expect(updateOne).toBeCalledWith(
       collection,
       { url: mockComicBook.url },
-      { $set: scrapResult },
+      { $set: scrapResult, $currentDate: { lastModified: true } },
     )
   })
 })

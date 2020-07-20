@@ -30,6 +30,7 @@ type ComicBook @entity {
   coverImgUrl: String @column
   url: String! @column
   type: ComicBookType! @column
+  lastModified: Date! @column
 }
 
 type Creator @entity(embedded: true) {

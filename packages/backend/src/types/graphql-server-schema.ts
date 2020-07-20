@@ -34,6 +34,7 @@ export type ComicBook = {
   coverImgUrl: Maybe<Scalars['String']>;
   url: Scalars['String'];
   type: ComicBookType;
+  lastModified: Scalars['Date'];
 };
 
 export enum ComicBookType {
@@ -51,6 +52,7 @@ export type ComicSeries = {
   publisher: Maybe<Publisher>;
   collections: Array<ComicBook>;
   singleIssues: Array<ComicBook>;
+  lastModified: Scalars['Date'];
 };
 
 export type Creator = {
@@ -184,6 +186,7 @@ export type ComicBookDbObject = {
   coverImgUrl: Maybe<string>,
   url: string,
   type: string,
+  lastModified: Date,
 };
 
 export type CreatorDbObject = {
@@ -199,6 +202,7 @@ export type ComicSeriesDbObject = {
   publisher: Maybe<PublisherDbObject['_id']>,
   collections: Array<ComicBookDbObject['_id']>,
   singleIssues: Array<ComicBookDbObject['_id']>,
+  lastModified: Date,
 };
 
 export type PublisherDbObject = {

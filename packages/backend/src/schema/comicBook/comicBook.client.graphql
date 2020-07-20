@@ -30,6 +30,7 @@ type ComicBook {
   coverImgUrl: String
   url: String!
   type: ComicBookType!
+  lastModified: Date!
 }
 
 type Creator {

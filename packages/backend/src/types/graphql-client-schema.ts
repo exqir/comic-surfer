@@ -21,6 +21,7 @@ export type ComicBook = {
   coverImgUrl?: Maybe<Scalars['String']>;
   url: Scalars['String'];
   type: ComicBookType;
+  lastModified: Scalars['Date'];
 };
 
 export enum ComicBookType {
@@ -38,6 +39,7 @@ export type ComicSeries = {
   publisher?: Maybe<Publisher>;
   collections: Array<ComicBook>;
   singleIssues: Array<ComicBook>;
+  lastModified: Scalars['Date'];
 };
 
 export type Creator = {
