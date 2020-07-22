@@ -12,8 +12,8 @@ exports = function onQueueInsert(changeEvent) {
       }
     }
     `
-  const comicBookMutation = `mutation scrapComicBook($comicBookUrl: String!) {
-      scrapComicBook(comicBookUrl: $comicBookUrl) {
+  const comicBookMutation = `mutation updateComicBookRelease($comicBookId: ID!) {
+      updateComicBookRelease(comicBookId: $comicBookId) {
           _id
       }
     }
@@ -51,14 +51,14 @@ exports = function onQueueInsert(changeEvent) {
         encodeBodyAsJSON: true,
       })
     }
-    case 'SCRAP_COMIC_BOOK': {
+    case 'UPDATE_COMIC_BOOK_RELEASE': {
       return context.http.post({
         url,
         body: {
-          operationName: 'scrapComicBook',
+          operationName: 'updateComicBookRelease',
           query: comicBookMutation,
           variables: {
-            comicBookUrl: data.url,
+            comicBookId: data.comicBookId,
           },
         },
         encodeBodyAsJSON: true,

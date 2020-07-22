@@ -13,8 +13,9 @@ import {
   ComicSeriesAPI,
   PublisherAPI,
   PullListAPI,
+  QueueRepository,
 } from './datasources'
-import { GraphQLContext } from 'types/app'
+import { GraphQLContext, DataSources } from 'types/app'
 import { comixology } from 'services/ComixologyScaper'
 import { none, some } from 'fp-ts/lib/Option'
 import { createLogger } from 'services/LogService'
@@ -50,6 +51,7 @@ const apolloServer = new ApolloServer({
     comicSeries: new ComicSeriesAPI(),
     publisher: new PublisherAPI(),
     pullList: new PullListAPI(),
+    queue: new QueueRepository(),
   }),
   context: async ({
     req,

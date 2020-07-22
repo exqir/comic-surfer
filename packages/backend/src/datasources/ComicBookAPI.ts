@@ -81,8 +81,8 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
           { comicSeries: { $in: series } },
           {
             releaseDate: {
-              $gte: new Date(year, month, 1),
-              $lt: new Date(year, month + 1, 1),
+              $gte: new Date(year, month - 1, 1),
+              $lt: new Date(year, month, 1),
             },
           },
           { type },
@@ -105,7 +105,7 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
               $lt: new Date(
                 date.getFullYear(),
                 date.getMonth() + 1,
-                date.getDay(),
+                date.getDate(),
               ),
             },
           },
@@ -115,7 +115,7 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
               $lte: new Date(
                 date.getFullYear(),
                 date.getMonth(),
-                date.getDay() - 14,
+                date.getDate() - 14,
               ),
             },
           },

@@ -9,6 +9,7 @@ import {
   ComicSeriesDbObject,
   MutationScrapSingleIssuesListArgs,
   MutationScrapCollectionsListArgs,
+  MutationUpdateComicBookReleaseArgs,
   ComicBookType,
 } from 'types/server-schema'
 import { runRTEtoNullable, mapOtoRTEnullable, chainMaybeToNullable } from 'lib'
@@ -17,7 +18,6 @@ import { TaskEither } from 'fp-ts/lib/TaskEither'
 import { MongoError } from 'mongodb'
 import { ComicBookListData } from 'services/ScrapeService'
 import { TaskType } from 'datasources/QueueRepository'
-import { comicBook } from 'config/scraper'
 
 interface ComicBookQuery {
   // TODO: This actually returns a ComicBook but this is not what the function returns
@@ -36,6 +36,10 @@ interface ComicBookMutation {
     MutationScrapCollectionsListArgs
   >
   updateComicBooks: Resolver<ComicBookDbObject[], {}>
+  updateComicBookRelease: Resolver<
+    ComicBookDbObject,
+    MutationUpdateComicBookReleaseArgs
+  >
 }
 
 interface ComicBookResolver {
@@ -226,10 +230,36 @@ export const ComicBookMutation: ComicBookMutation = {
             dataSources.comicBook.getUpcoming(),
             RTE.chainFirst((comicBooks) =>
               dataSources.queue.insertMany(
-                comicBooks.map(({ url }) => ({
-                  type: TaskType.SCRAPCOMICBOOK,
-                  data: { url },
+                comicBooks.map(({ _id, url }) => ({
+                  type: TaskType.UPDATECOMICBOOKRELEASE,
+                  data: { comicBookId: _id, url },
                 })),
+              ),
+            ),
+          ),
+        ),
+      ),
+      toNullable,
+    ),
+  updateComicBookRelease: (_, { comicBookId }, { dataSources, db, services }) =>
+    pipe(
+      db,
+      map(
+        runRTEtoNullable(
+          pipe(
+            dataSources.comicBook.getById(comicBookId),
+            RTE.chainTaskEitherK((comicBook) => {
+              if (comicBook === null) {
+                throw new Error('No ComicBook to update')
+              }
+              return services.scrape.getComicBook(comicBook.url)
+            }),
+            // RTE.fromTaskEither(),
+            RTE.chainW((comicBook) =>
+              dataSources.comicBook.updateReleaseDate(
+                comicBookId,
+                // TODO: only update when release date available
+                comicBook.releaseDate!,
               ),
             ),
           ),

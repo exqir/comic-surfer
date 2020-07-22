@@ -59,6 +59,7 @@ export type Mutation = {
   subscribeComicSeries: PullList;
   subscribeExistingComicSeries: PullList;
   unsubscribeComicSeries: PullList;
+  updateComicBookRelease?: Maybe<ComicBook>;
   updateComicBooks: Array<ComicBook>;
 };
 
@@ -92,6 +93,11 @@ export type MutationSubscribeExistingComicSeriesArgs = {
 
 export type MutationUnsubscribeComicSeriesArgs = {
   comicSeriesId: Scalars['ID'];
+};
+
+
+export type MutationUpdateComicBookReleaseArgs = {
+  comicBookId: Scalars['ID'];
 };
 
 export type Publisher = {

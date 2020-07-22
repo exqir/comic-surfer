@@ -26,19 +26,29 @@ db.comicBook.insertOne({
   coverImgUrl: '/descender/1/cover.jpg',
   url: '/descender/1',
   publisher: publisher._id,
+  comicSeries: comicSeries._id,
   type: 'SINGLEISSUE',
+  lastModified: new Date('2020-01-05'),
 })
-const comicBook = db.comicBook.findOne({ title: 'Descender #1' })
+db.comicBook.insertOne({
+  title: 'Descender #2',
+  issueNo: '2',
+  releaseDate: new Date('2020-08-15'),
+  creators: [{ name: 'Jeff Lemire' }],
+  coverImgUrl: '/descender/2/cover.jpg',
+  url: '/descender/2',
+  publisher: publisher._id,
+  comicSeries: comicSeries._id,
+  type: 'SINGLEISSUE',
+  lastModified: new Date('2020-07-07'),
+})
+const comicBook_1 = db.comicBook.findOne({ title: 'Descender #1' })
+const comicBook_2 = db.comicBook.findOne({ title: 'Descender #2' })
 
 // prettier-ignore
 db.comicSeries.updateOne(
   { _id: comicSeries._id },
-  { $push: { singleIssues: comicBook._id } }
-)
-// prettier-ignore
-db.comicBook.updateOne(
-  { _id: comicBook._id },
-  { $set: { comicSeries: comicSeries._id, } }
+  { $addToSet: { singleIssues: { $each: [comicBook_1._id, comicBook_2._id] } } }
 )
 // prettier-ignore
 db.publisher.updateOne(

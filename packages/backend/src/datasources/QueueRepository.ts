@@ -5,7 +5,7 @@ import { pipe } from 'fp-ts/lib/pipeable'
 export enum TaskType {
   SCRAPSINGLEISSUELIST = 'SCRAP_SINGLE_ISSUE_LIST',
   SCRAPCOLLECTIONLIST = 'SCRAP_COLLECTION_LIST',
-  SCRAPCOMICBOOK = 'SCRAP_COMIC_BOOK',
+  UPDATECOMICBOOKRELEASE = 'UPDATE_COMIC_BOOK_RELEASE',
 }
 
 type Queue = WithId<
@@ -13,7 +13,10 @@ type Queue = WithId<
       type: TaskType.SCRAPSINGLEISSUELIST | TaskType.SCRAPCOLLECTIONLIST
       data: { url: string; comicSeriesId: ObjectID }
     }
-  | { type: TaskType.SCRAPCOMICBOOK; data: { url: string } }
+  | {
+      type: TaskType.UPDATECOMICBOOKRELEASE
+      data: { comicBookId: ObjectID; url: string }
+    }
 >
 
 export const queueCollection = 'queue'
