@@ -61,6 +61,7 @@ export type Mutation = {
   unsubscribeComicSeries: PullList;
   updateComicBookRelease?: Maybe<ComicBook>;
   updateComicBooks: Array<ComicBook>;
+  updateComicSeries: Array<ComicSeries>;
 };
 
 

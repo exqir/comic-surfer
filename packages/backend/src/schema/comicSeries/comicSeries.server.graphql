@@ -2,6 +2,10 @@ extend type Query {
   comicSeries(id: ID!): ComicSeries
 }
 
+extend type Mutation {
+  updateComicSeries: [ComicSeries!]!
+}
+
 type ComicSeries @entity {
   _id: ID! @id
   title: String! @column

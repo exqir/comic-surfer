@@ -80,4 +80,22 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
       this.logError,
     )
   }
+
+  public getLeastUpdated = () => {
+    const { findMany } = this.dataLayer!
+    const date = new Date()
+    return pipe(
+      findMany<ComicSeriesDbObject>(this.collection, {
+        // lastModified more then a month ago
+        lastModified: {
+          $lte: new Date(
+            date.getFullYear(),
+            date.getMonth() - 1,
+            date.getDate(),
+          ),
+        },
+      }),
+      this.logError,
+    )
+  }
 }

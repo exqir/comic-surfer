@@ -254,7 +254,6 @@ export const ComicBookMutation: ComicBookMutation = {
               }
               return services.scrape.getComicBook(comicBook.url)
             }),
-            // RTE.fromTaskEither(),
             RTE.chainW((comicBook) =>
               dataSources.comicBook.updateReleaseDate(
                 comicBookId,
