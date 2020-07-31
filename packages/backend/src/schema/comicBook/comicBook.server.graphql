@@ -7,12 +7,12 @@ extend type Mutation {
   scrapSingleIssuesList(
     comicSeriesId: ID!
     comicBookListUrl: String!
-  ): [ComicBook!]!
+  ): [ComicBook!]
   scrapCollectionsList(
     comicSeriesId: ID!
     comicBookListUrl: String!
-  ): [ComicBook!]!
-  updateComicBooks: [ComicBook!]!
+  ): [ComicBook!]
+  updateComicBooks: [ComicBook!]
   updateComicBookRelease(comicBookId: ID!): ComicBook
 }
 

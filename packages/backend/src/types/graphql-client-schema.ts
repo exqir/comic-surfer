@@ -53,15 +53,15 @@ export type Mutation = {
   _empty?: Maybe<Scalars['String']>;
   login: PullList;
   logout: Scalars['Boolean'];
-  scrapCollectionsList: Array<ComicBook>;
+  scrapCollectionsList?: Maybe<Array<ComicBook>>;
   scrapComicBook?: Maybe<ComicBook>;
-  scrapSingleIssuesList: Array<ComicBook>;
+  scrapSingleIssuesList?: Maybe<Array<ComicBook>>;
   subscribeComicSeries: PullList;
   subscribeExistingComicSeries: PullList;
   unsubscribeComicSeries: PullList;
   updateComicBookRelease?: Maybe<ComicBook>;
-  updateComicBooks: Array<ComicBook>;
-  updateComicSeries: Array<ComicSeries>;
+  updateComicBooks?: Maybe<Array<ComicBook>>;
+  updateComicSeries?: Maybe<Array<ComicSeries>>;
 };
 
 
@@ -124,10 +124,10 @@ export type Query = {
   comicBook?: Maybe<ComicBook>;
   comicSeries?: Maybe<ComicSeries>;
   publisher?: Maybe<Publisher>;
-  publishers: Array<Publisher>;
+  publishers?: Maybe<Array<Publisher>>;
   pullList?: Maybe<PullList>;
-  releases: Array<ComicBook>;
-  search: Array<Search>;
+  releases?: Maybe<Array<ComicBook>>;
+  search?: Maybe<Array<Search>>;
 };
 
 

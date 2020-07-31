@@ -1,6 +1,5 @@
-# TODO: check which of the four paths are really needed
 extend type Query {
-  publishers(names: [String!]): [Publisher!]!
+  publishers(names: [String!]): [Publisher!]
   publisher(name: String!): Publisher
 }
 

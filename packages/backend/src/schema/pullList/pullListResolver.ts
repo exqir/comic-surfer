@@ -9,10 +9,11 @@ import {
   QueryReleasesArgs,
   ComicBookType,
 } from 'types/server-schema'
-import { runRTEtoNullable } from 'lib'
+import { runRTEtoNullable, run } from 'lib'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { map, toNullable, fold, Option } from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import * as RT from 'fp-ts/lib/ReaderTask'
 import * as IO from 'fp-ts/lib/IO'
 import { identity } from 'fp-ts/lib/function'
 import { AuthenticationError } from 'apollo-server'
@@ -46,6 +47,15 @@ interface PullListResolver {
     list: Resolver<ComicSeriesDbObject[], {}, PullListDbObject>
   }
 }
+
+const foldRTEorThrow = (error: Error) =>
+  RTE.fold(() => {
+    throw error
+  }, RT.of)
+
+const runRTEorThrow = (error: Error) => <T, L, R>(
+  rte: RTE.ReaderTaskEither<T, L, R>,
+) => (t: T) => pipe(rte, foldRTEorThrow(error), run(t))
 
 function getUserOrThrow(user: Option<string>) {
   return pipe(
@@ -99,7 +109,7 @@ export const PullListMutation: PullListMutation = {
     pipe(
       db,
       map(
-        runRTEtoNullable(
+        runRTEorThrow(new Error('Failed to subscribe to Comic Series'))(
           pipe(
             RTE.fromTaskEither(services.scrape.getComicSeries(comicSeriesUrl)),
             RTE.chainW((comicSeries) =>
@@ -129,7 +139,7 @@ export const PullListMutation: PullListMutation = {
     pipe(
       db,
       map(
-        runRTEtoNullable(
+        runRTEorThrow(new Error('Failed to subscribe to Comic Series'))(
           dataSources.pullList.addComicSeries(
             getUserOrThrow(user),
             comicSeriesId,
@@ -142,7 +152,7 @@ export const PullListMutation: PullListMutation = {
     pipe(
       db,
       map(
-        runRTEtoNullable(
+        runRTEorThrow(new Error('Failed to unsubscribe from Comic Series'))(
           dataSources.pullList.removeComicSeries(
             getUserOrThrow(user),
             comicSeriesId,
@@ -155,7 +165,7 @@ export const PullListMutation: PullListMutation = {
     pipe(
       db,
       map(
-        runRTEtoNullable(
+        runRTEorThrow(new Error('Failed to login user'))(
           pipe(
             Authentication.getSessionFromHeaders(req),
             RTE.fromTaskEither,

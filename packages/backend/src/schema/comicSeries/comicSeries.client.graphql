@@ -3,7 +3,7 @@ extend type Query {
 }
 
 extend type Mutation {
-  updateComicSeries: [ComicSeries!]!
+  updateComicSeries: [ComicSeries!]
 }
 
 type ComicSeries {
