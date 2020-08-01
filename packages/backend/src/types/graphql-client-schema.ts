@@ -62,6 +62,7 @@ export type Mutation = {
   updateComicBookRelease?: Maybe<ComicBook>;
   updateComicBooks?: Maybe<Array<ComicBook>>;
   updateComicSeries?: Maybe<Array<ComicSeries>>;
+  updateComicSeriesPublisher?: Maybe<ComicSeries>;
 };
 
 
@@ -99,6 +100,11 @@ export type MutationUnsubscribeComicSeriesArgs = {
 
 export type MutationUpdateComicBookReleaseArgs = {
   comicBookId: Scalars['ID'];
+};
+
+
+export type MutationUpdateComicSeriesPublisherArgs = {
+  comicSeriesId: Scalars['ID'];
 };
 
 export type Publisher = {

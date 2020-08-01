@@ -1,5 +1,11 @@
 exports = function onComicSeriesInsert(changeEvent) {
   const { _id, singleIssuesUrl, collectionsUrl } = changeEvent.fullDocument
+  const publisherMutation = `mutation updateComicSeriesPublisher($comicSeriesId: ID!) {
+      updateComicSeriesPublisher(comicSeriesId: $comicSeriesId) {
+        _id
+      }
+    }
+    `
   const singleIssuesMutation = `mutation scrapSingleIssuesList($comicSeriesId: ID!, $comicBookListUrl: String!) {
       scrapSingleIssuesList(comicSeriesId: $comicSeriesId, comicBookListUrl: $comicBookListUrl) {
         _id
@@ -12,6 +18,16 @@ exports = function onComicSeriesInsert(changeEvent) {
       }
     }
     `
+
+  context.http.post({
+    url: 'https://exqir2.uber.space/comic-surfer/api',
+    body: {
+      operationName: 'updateComicSeriesPublisher',
+      query: publisherMutation,
+      variables: { comicSeriesId: _id },
+    },
+    encodeBodyAsJSON: true,
+  })
 
   context.http.post({
     url: 'https://exqir2.uber.space/comic-surfer/api',

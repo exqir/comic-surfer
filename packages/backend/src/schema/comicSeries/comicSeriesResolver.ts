@@ -6,6 +6,7 @@ import {
   ComicBookDbObject,
   PublisherDbObject,
   ComicSeriesDbObject,
+  MutationUpdateComicSeriesPublisherArgs,
 } from 'types/server-schema'
 import { runRTEtoNullable, chainMaybeToNullable, mapOtoRTEnullable } from 'lib'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
@@ -20,6 +21,10 @@ interface ComicSeriesQuery {
 
 interface ComicSeriesMutation {
   updateComicSeries: Resolver<ComicSeriesDbObject[], {}>
+  updateComicSeriesPublisher: Resolver<
+    ComicSeriesDbObject,
+    MutationUpdateComicSeriesPublisherArgs
+  >
 }
 
 interface ComicSeriesResolver {
@@ -65,6 +70,59 @@ export const ComicSeriesMutation: ComicSeriesMutation = {
                 ),
               ),
             ),
+          ),
+        ),
+      ),
+      toNullable,
+    ),
+  updateComicSeriesPublisher: (
+    _,
+    { comicSeriesId },
+    { dataSources, db, services },
+  ) =>
+    pipe(
+      db,
+      map(
+        runRTEtoNullable(
+          pipe(
+            dataSources.comicSeries.getById(comicSeriesId),
+            RTE.chain((comicSeries) => {
+              if (
+                comicSeries === null ||
+                comicSeries.singleIssuesUrl === null
+              ) {
+                throw new Error(
+                  `Failed to find Comic Series with ID ${comicSeriesId}`,
+                )
+              }
+              return RTE.fromTaskEither(
+                services.scrape.getComicBookList(comicSeries.singleIssuesUrl),
+              )
+            }),
+            RTE.chain(({ comicBookList }) => {
+              if (comicBookList.length < 1) {
+                throw new Error(
+                  `Failed to find Comic Books for Comic Series with ID ${comicSeriesId}`,
+                )
+              }
+              return RTE.fromTaskEither(
+                services.scrape.getComicBook(comicBookList[0].url),
+              )
+            }),
+            RTE.chainW(({ publisher }) =>
+              dataSources.publisher.getByUrl(publisher!.url),
+            ),
+            RTE.chainW((publisher) => {
+              if (publisher === null) {
+                throw new Error(
+                  `Failed to find Publisher for Comic Series with ID ${comicSeriesId}`,
+                )
+              }
+              return dataSources.comicSeries.updatePublisher(
+                comicSeriesId,
+                publisher._id,
+              )
+            }),
           ),
         ),
       ),

@@ -14,6 +14,14 @@ export class PublisherAPI extends MongoDataSource<PublisherDbObject> {
     return pipe(findMany<PublisherDbObject>(this.collection, {}), this.logError)
   }
 
+  public getByUrl = (url: string) => {
+    const { findOne } = this.dataLayer!
+    return pipe(
+      findOne<PublisherDbObject>(this.collection, { cxUrl: url }),
+      this.logError,
+    )
+  }
+
   public getByName = (name: string) => {
     const { findOne } = this.dataLayer!
     return pipe(

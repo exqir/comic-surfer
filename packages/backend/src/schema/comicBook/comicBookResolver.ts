@@ -76,6 +76,7 @@ function insertComicBookIfNotExisting(
             ...book,
             comicSeries: comicSeriesId,
             creators: [],
+            // TODO: Get publisher by URL
             publisher: null,
             coverImgUrl: null,
             releaseDate: null,

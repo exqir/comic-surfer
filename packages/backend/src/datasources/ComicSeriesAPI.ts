@@ -98,4 +98,20 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
       this.logError,
     )
   }
+
+  public updatePublisher = (id: ObjectID, publisher: ObjectID) => {
+    const { updateOne } = this.dataLayer!
+    return pipe(
+      updateOne<ComicSeriesDbObject>(
+        this.collection,
+        { _id: id },
+        {
+          $set: {
+            publisher,
+          },
+        },
+      ),
+      this.logError,
+    )
+  }
 }
