@@ -98,13 +98,12 @@ const defaultComicBookListScrapResult = {
   ],
 }
 
-const defaultComicBookScrapResult = [
-  {
-    coverImgUrl: '/image',
-    releaseDate: new Date(),
-    creators: [{ name: 'John Rambo' }],
-  },
-]
+const defaultComicBookScrapResult = {
+  publisher: { url: '/image', name: 'Image' },
+  coverImgUrl: '/image',
+  releaseDate: new Date(),
+  creators: [{ name: 'John Rambo' }],
+}
 
 const defaultComicSeries: ComicSeriesDbObject = {
   _id: new ObjectID(),
@@ -118,11 +117,25 @@ const defaultComicSeries: ComicSeriesDbObject = {
   lastModified: new Date(),
 }
 
+const defaultPublisher: PublisherDbObject = {
+  _id: new ObjectID(),
+  name: 'Image',
+  iconUrl: null,
+  url: null,
+  cxUrl: null,
+  comicSeries: [],
+}
+
 describe('[Mutation.scrapComicBook]', () => {
   const { context } = createMockConfig()
   context.dataSources.comicBook = ({
     enhanceWithScrapResult: jest.fn(),
   } as unknown) as ComicBookAPI
+  context.dataSources.publisher = ({
+    getByUrl: jest
+      .fn()
+      .mockReturnValue(createMockReaderWithReturnValue(defaultPublisher)),
+  } as unknown) as PublisherAPI
   context.services.scrape = ({
     getComicBook: jest
       .fn()
@@ -148,10 +161,10 @@ describe('[Mutation.scrapComicBook]', () => {
     expect(context.services.scrape.getComicBook).toHaveBeenCalledWith(
       mockComicBook.url,
     )
-    expect(enhanceWithScrapResult).toHaveBeenLastCalledWith(
-      mockComicBook.url,
-      defaultComicBookScrapResult,
-    )
+    expect(enhanceWithScrapResult).toHaveBeenLastCalledWith(mockComicBook.url, {
+      ...defaultComicBookScrapResult,
+      publisher: defaultPublisher._id,
+    })
     expect(res).toEqual(null)
   })
 
@@ -159,7 +172,7 @@ describe('[Mutation.scrapComicBook]', () => {
     const mockComicBook = { ...defaultComicBook }
     const { enhanceWithScrapResult } = context.dataSources.comicBook
     ;(enhanceWithScrapResult as jest.Mock).mockReturnValueOnce(
-      createMockReaderWithReturnValue<ComicBookDbObject[]>([mockComicBook]),
+      createMockReaderWithReturnValue<ComicBookDbObject>(mockComicBook),
     )
 
     const res = await ComicBookMutation.scrapComicBook(
@@ -171,11 +184,11 @@ describe('[Mutation.scrapComicBook]', () => {
     expect(context.services.scrape.getComicBook).toHaveBeenCalledWith(
       mockComicBook.url,
     )
-    expect(enhanceWithScrapResult).toHaveBeenLastCalledWith(
-      mockComicBook.url,
-      defaultComicBookScrapResult,
-    )
-    expect(res).toMatchObject([mockComicBook])
+    expect(enhanceWithScrapResult).toHaveBeenLastCalledWith(mockComicBook.url, {
+      ...defaultComicBookScrapResult,
+      publisher: defaultPublisher._id,
+    })
+    expect(res).toMatchObject(mockComicBook)
   })
 })
 
@@ -426,15 +439,6 @@ describe('[Mutation.scrapCollectionsList]', () => {
     expect(res).toMatchObject([mockComicBook, mockComicBook])
   })
 })
-
-const defaultPublisher: PublisherDbObject = {
-  _id: new ObjectID(),
-  name: 'Image',
-  iconUrl: null,
-  url: null,
-  cxUrl: null,
-  comicSeries: [],
-}
 
 describe('[ComicBook.publisher]', () => {
   const { context } = createMockConfig()

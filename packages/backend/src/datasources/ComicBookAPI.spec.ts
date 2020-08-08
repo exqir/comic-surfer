@@ -278,6 +278,7 @@ describe('[ComicBookAPI.enhanceWithScrapResult]', () => {
   it('should update ComicBook using dataLayer and return left in case of Error', async () => {
     const mockComicBook = { ...defaultComicBook }
     const scrapResult = {
+      publisher: new ObjectID(),
       coverImgUrl: '/image',
       releaseDate: new Date('2020-05-30'),
       creators: [{ name: 'John Rambo' }],
@@ -309,6 +310,7 @@ describe('[ComicBookAPI.enhanceWithScrapResult]', () => {
   it('should update ComicBook using dataLayer and return right with result', async () => {
     const mockComicBook = { ...defaultComicBook }
     const scrapResult = {
+      publisher: new ObjectID(),
       coverImgUrl: '/image',
       releaseDate: new Date('2020-05-30'),
       creators: [{ name: 'John Rambo' }],

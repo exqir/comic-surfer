@@ -16,7 +16,7 @@ import { runRTEtoNullable, mapOtoRTEnullable, chainMaybeToNullable } from 'lib'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { TaskEither } from 'fp-ts/lib/TaskEither'
 import { MongoError } from 'mongodb'
-import { ComicBookListData } from 'services/ScrapeService'
+import { ComicBookListData, ComicBookData } from 'services/ScrapeService'
 import { TaskType } from 'datasources/QueueRepository'
 
 interface ComicBookQuery {
@@ -76,7 +76,6 @@ function insertComicBookIfNotExisting(
             ...book,
             comicSeries: comicSeriesId,
             creators: [],
-            // TODO: Get publisher by URL
             publisher: null,
             coverImgUrl: null,
             releaseDate: null,
@@ -119,6 +118,19 @@ function addNextPageToQueue(
         })
 }
 
+function addPublisherToComicBook(dataSources: DataSources) {
+  return (comicBook: ComicBookData) =>
+    !comicBook.publisher
+      ? RTE.right({ ...comicBook, publisher: null })
+      : pipe(
+          dataSources.publisher.getByUrl(comicBook.publisher.url),
+          RTE.map((publisher) => ({
+            ...comicBook,
+            publisher: publisher ? publisher._id : null,
+          })),
+        )
+}
+
 export const ComicBookMutation: ComicBookMutation = {
   scrapComicBook: (_, { comicBookUrl }, { dataSources, db, services }) =>
     pipe(
@@ -127,6 +139,7 @@ export const ComicBookMutation: ComicBookMutation = {
         runRTEtoNullable(
           pipe(
             RTE.fromTaskEither(services.scrape.getComicBook(comicBookUrl)),
+            RTE.chainW(addPublisherToComicBook(dataSources)),
             RTE.chainW((comicBook) =>
               dataSources.comicBook.enhanceWithScrapResult(
                 comicBookUrl,

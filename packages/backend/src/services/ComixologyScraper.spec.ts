@@ -1,12 +1,12 @@
 import { comixology } from './ComixologyScaper'
 import { isLeft, mapLeft, isRight, map } from 'fp-ts/lib/Either'
 import { createMockConfig } from 'tests/_utils'
-import {
-  comicSeries,
-  comicBookList,
-  comicBook,
-  comicSeriesSearch,
-} from '../config/scraper'
+// import {
+//   comicSeries,
+//   comicBookList,
+//   comicBook,
+//   comicSeriesSearch,
+// } from '../config/scraper'
 
 const mockScraper = jest.fn()
 const baseUrl = 'https://base.com'

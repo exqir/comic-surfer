@@ -1,10 +1,3 @@
-db.publisher.insertOne({
-  name: 'Image',
-  iconUrl: '/image/icon.jpg',
-  url: 'https://www.image.com',
-  cxUrl: '/image',
-  comicSeries: [],
-})
 const publisher = db.publisher.findOne({ name: 'Image' })
 
 db.comicSeries.insertOne({

@@ -43,7 +43,13 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
 
   public enhanceWithScrapResult = (
     url: string,
-    update: {
+    {
+      publisher,
+      coverImgUrl,
+      releaseDate,
+      creators,
+    }: {
+      publisher: ObjectID | null
       coverImgUrl: string
       releaseDate: Date | null
       creators: { name: string }[]
@@ -54,7 +60,10 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
       updateOne<ComicBookDbObject>(
         this.collection,
         { url },
-        { $set: { ...update }, $currentDate: { lastModified: true } },
+        {
+          $set: { publisher, coverImgUrl, releaseDate, creators },
+          $currentDate: { lastModified: true },
+        },
       ),
       this.logError,
     )
