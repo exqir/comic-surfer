@@ -1,9 +1,12 @@
 import React from 'react'
 import Link from 'next/link'
+
 import Head from '../components/head'
 import Nav from '../components/nav'
+import { useReleases } from '../hooks/useReleases'
 
 const Home = () => {
+  const releases = useReleases({ redirectTo: '/login' })
   return (
     <div>
       <Head title="Home" />
@@ -17,23 +20,16 @@ const Home = () => {
         </p>
 
         <div className="row">
-          <a className="card" href="https://github.com/zeit/next.js#setup">
-            <h3>Getting Started &rarr;</h3>
-            <p>Learn more about Next.js on GitHub and in their examples.</p>
-          </a>
-
-          <a
-            className="card"
-            href="https://github.com/zeit/next.js/tree/master/examples"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Find other example boilerplates on the Next.js GitHub.</p>
-          </a>
-
-          <a className="card" href="https://github.com/zeit/next.js">
-            <h3>Create Next App &rarr;</h3>
-            <p>Was this tool helpful? Let us know how we can improve it!</p>
-          </a>
+          {releases
+            ? releases.map(({ _id, title, issueNo, coverImageUrl, url }) => (
+                <a className="card" href={url} key={_id}>
+                  <h3>
+                    {title} - {issueNo}
+                  </h3>
+                  <img src={coverImageUrl} alt={title} />
+                </a>
+              ))
+            : null}
         </div>
       </div>
 
@@ -60,33 +56,23 @@ const Home = () => {
           flex-direction: row;
           justify-content: space-around;
         }
-        .date {
-          height: 24px;
-          max-width: calc(100% - 32px)
-          text-align: center;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0 16px;
-        }
-        .date p {
-          text-align: center;
-        }
-        .date span {
-          width: 176px;
-          text-align: center;
-        }
         @keyframes Loading {
-          0%{background-position:0% 50%}
-          50%{background-position:100% 50%}
-          100%{background-position:0% 50%}
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
         }
         .date .loading {
           max-width: 100%;
           height: 24px;
           border-radius: 4px;
           display: inline-block;
-          background: linear-gradient(270deg, #D1D1D1, #EAEAEA);
+          background: linear-gradient(270deg, #d1d1d1, #eaeaea);
           background-size: 200% 200%;
           animation: Loading 2s ease infinite;
         }

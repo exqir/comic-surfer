@@ -1,6 +1,37 @@
 import { useState, FormEvent, Fragment } from 'react'
 import Router from 'next/router'
 import { Magic } from 'magic-sdk'
+import { mutate } from 'swr'
+import { gql } from 'graphql-request'
+
+import { fetcherWithToken } from '../lib/fetcher'
+import { query } from '../hooks/useReleases'
+
+type LoginQueryData = {
+  login: {
+    _id: string
+    owner: string
+  }
+}
+
+const loginQuery = gql`
+  mutation loginStatus {
+    login {
+      _id
+      owner
+    }
+  }
+`
+
+const getToken = (email: string) => {
+  if (process.env.NODE_ENV !== 'production') {
+    return 'token'
+  }
+  const magic = new Magic(process.env.NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY ?? '')
+  return magic.auth.loginWithMagicLink({
+    email,
+  })
+}
 
 const Login = () => {
   const [errorMsg, setErrorMsg] = useState('')
@@ -13,41 +44,19 @@ const Login = () => {
     // @ts-ignore
     const email = e.currentTarget.email.value
 
-    const body = JSON.stringify({
-      operationName: 'login',
-      query: `mutation login {
-        login {
-          _id
-          owner
-        }
-      }
-    `,
-    })
-
     try {
-      const magic = new Magic(
-        process.env.NEXT_PUBLIC_MAGIC_PUBLISHABLE_KEY ?? '',
-      )
-      const didToken = await magic.auth.loginWithMagicLink({
-        email,
-      })
-      const res = await fetch('http://localhost:5000/', {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + didToken,
-        },
-        body,
-      })
-      if (res.status === 200) {
-        console.log((await res.json()).data.login.owner)
-        // Router.push('/')
+      const didToken = await getToken(email)
+      const data = await fetcherWithToken<LoginQueryData>(loginQuery, didToken!)
+      if (data) {
+        mutate(loginQuery, data, false)
+        // mutate(query, null)
+        Router.push('/')
       } else {
-        throw new Error(await res.text())
+        console.error('Missing data but no error from GraphQL')
+        throw new Error('An unexpected error occurred.')
       }
     } catch (error) {
-      console.error('An unexpected error happened occurred:', error)
+      console.error('An unexpected error occurred:', error)
       setErrorMsg(error.message)
     }
   }

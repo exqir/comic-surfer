@@ -8,10 +8,13 @@
     "test": "jest"
   },
   "dependencies": {
+    "graphql-request": "^3.0.0",
     "magic-sdk": "^2.3.1",
-    "next": "^9.4.1",
+    "msw": "^0.20.5",
+    "next": "^9.5.2",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "swr": "^0.3.0"
   },
   "devDependencies": {
     "@types/jest": "^24.0.20",
