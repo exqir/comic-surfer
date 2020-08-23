@@ -21,12 +21,12 @@ const Home = () => {
 
         <div className="row">
           {releases
-            ? releases.map(({ _id, title, issueNo, coverImageUrl, url }) => (
+            ? releases.map(({ _id, title, issueNo, coverImgUrl, url }) => (
                 <a className="card" href={url} key={_id}>
                   <h3>
                     {title} - {issueNo}
                   </h3>
-                  <img src={coverImageUrl} alt={title} />
+                  <img src={coverImgUrl ?? undefined} alt={title} />
                 </a>
               ))
             : null}

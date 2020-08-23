@@ -1,4 +1,5 @@
 import { graphql, context } from 'msw'
+import { GetCurrentComicBookReleasesQuery } from 'types/graphql-client-schema'
 
 export const handlers = [
   graphql.mutation('loginStatus', (req, res, ctx) => {
@@ -15,26 +16,26 @@ export const handlers = [
   graphql.query('getCurrentComicBookReleases', (req, res, ctx) => {
     const { auth } = req.cookies
     if (auth) {
-      return res(
-        ctx.data({
-          releases: [
-            {
-              _id: 1,
-              title: 'Descender',
-              issueNo: '11',
-              coverImageUrl: '/descender.jpg',
-              url: '/descender',
-            },
-            {
-              _id: 2,
-              title: 'Descender',
-              issueNo: '12',
-              coverImageUrl: '/descender.jpg',
-              url: '/descender',
-            },
-          ],
-        }),
-      )
+      const data: GetCurrentComicBookReleasesQuery = {
+        releases: [
+          {
+            _id: '1',
+            title: 'Descender',
+            issueNo: '11',
+            coverImgUrl: '/descender.jpg',
+            url: '/descender',
+          },
+          {
+            _id: '2',
+            title: 'Descender',
+            issueNo: '12',
+            coverImgUrl: '/descender.jpg',
+            url: '/descender',
+          },
+        ],
+      }
+
+      return res(ctx.data(data))
     }
 
     return res(

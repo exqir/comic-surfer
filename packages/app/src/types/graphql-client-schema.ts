@@ -6,27 +6,27 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Date: any;
+  Date: Date;
 };
 
 export type ComicBook = {
    __typename?: 'ComicBook';
   _id: Scalars['ID'];
   title: Scalars['String'];
-  issueNo?: Maybe<Scalars['String']>;
-  releaseDate?: Maybe<Scalars['Date']>;
+  issueNo: Maybe<Scalars['String']>;
+  releaseDate: Maybe<Scalars['Date']>;
   creators: Array<Creator>;
-  comicSeries?: Maybe<ComicSeries>;
-  publisher?: Maybe<Publisher>;
-  coverImgUrl?: Maybe<Scalars['String']>;
+  comicSeries: Maybe<ComicSeries>;
+  publisher: Maybe<Publisher>;
+  coverImgUrl: Maybe<Scalars['String']>;
   url: Scalars['String'];
   type: ComicBookType;
   lastModified: Scalars['Date'];
 };
 
 export enum ComicBookType {
-  Singleissue = 'SINGLEISSUE',
-  Collection = 'COLLECTION'
+  SINGLEISSUE = 'SINGLEISSUE',
+  COLLECTION = 'COLLECTION'
 }
 
 export type ComicSeries = {
@@ -34,9 +34,9 @@ export type ComicSeries = {
   _id: Scalars['ID'];
   title: Scalars['String'];
   url: Scalars['String'];
-  collectionsUrl?: Maybe<Scalars['String']>;
-  singleIssuesUrl?: Maybe<Scalars['String']>;
-  publisher?: Maybe<Publisher>;
+  collectionsUrl: Maybe<Scalars['String']>;
+  singleIssuesUrl: Maybe<Scalars['String']>;
+  publisher: Maybe<Publisher>;
   collections: Array<ComicBook>;
   singleIssues: Array<ComicBook>;
   lastModified: Scalars['Date'];
@@ -50,19 +50,19 @@ export type Creator = {
 
 export type Mutation = {
    __typename?: 'Mutation';
-  _empty?: Maybe<Scalars['String']>;
+  _empty: Maybe<Scalars['String']>;
   login: PullList;
   logout: Scalars['Boolean'];
-  scrapCollectionsList?: Maybe<Array<ComicBook>>;
-  scrapComicBook?: Maybe<ComicBook>;
-  scrapSingleIssuesList?: Maybe<Array<ComicBook>>;
+  scrapCollectionsList: Maybe<Array<ComicBook>>;
+  scrapComicBook: Maybe<ComicBook>;
+  scrapSingleIssuesList: Maybe<Array<ComicBook>>;
   subscribeComicSeries: PullList;
   subscribeExistingComicSeries: PullList;
   unsubscribeComicSeries: PullList;
-  updateComicBookRelease?: Maybe<ComicBook>;
-  updateComicBooks?: Maybe<Array<ComicBook>>;
-  updateComicSeries?: Maybe<Array<ComicSeries>>;
-  updateComicSeriesPublisher?: Maybe<ComicSeries>;
+  updateComicBookRelease: Maybe<ComicBook>;
+  updateComicBooks: Maybe<Array<ComicBook>>;
+  updateComicSeries: Maybe<Array<ComicSeries>>;
+  updateComicSeriesPublisher: Maybe<ComicSeries>;
 };
 
 
@@ -111,9 +111,9 @@ export type Publisher = {
    __typename?: 'Publisher';
   _id: Scalars['String'];
   name: Scalars['String'];
-  iconUrl?: Maybe<Scalars['String']>;
-  url?: Maybe<Scalars['String']>;
-  cxUrl?: Maybe<Scalars['String']>;
+  iconUrl: Maybe<Scalars['String']>;
+  url: Maybe<Scalars['String']>;
+  cxUrl: Maybe<Scalars['String']>;
   comicSeries: Array<ComicSeries>;
 };
 
@@ -126,14 +126,14 @@ export type PullList = {
 
 export type Query = {
    __typename?: 'Query';
-  _empty?: Maybe<Scalars['String']>;
-  comicBook?: Maybe<ComicBook>;
-  comicSeries?: Maybe<ComicSeries>;
-  publisher?: Maybe<Publisher>;
-  publishers?: Maybe<Array<Publisher>>;
-  pullList?: Maybe<PullList>;
-  releases?: Maybe<Array<ComicBook>>;
-  search?: Maybe<Array<Search>>;
+  _empty: Maybe<Scalars['String']>;
+  comicBook: Maybe<ComicBook>;
+  comicSeries: Maybe<ComicSeries>;
+  publisher: Maybe<Publisher>;
+  publishers: Maybe<Array<Publisher>>;
+  pullList: Maybe<PullList>;
+  releases: Maybe<Array<ComicBook>>;
+  search: Maybe<Array<Search>>;
 };
 
 
@@ -153,14 +153,14 @@ export type QueryPublisherArgs = {
 
 
 export type QueryPublishersArgs = {
-  names?: Maybe<Array<Scalars['String']>>;
+  names: Maybe<Array<Scalars['String']>>;
 };
 
 
 export type QueryReleasesArgs = {
-  month?: Maybe<Scalars['Int']>;
-  year?: Maybe<Scalars['Int']>;
-  type?: Maybe<ComicBookType>;
+  month: Maybe<Scalars['Int']>;
+  year: Maybe<Scalars['Int']>;
+  type: Maybe<ComicBookType>;
 };
 
 
@@ -174,3 +174,13 @@ export type Search = {
   url: Scalars['String'];
 };
 
+export type GetCurrentComicBookReleasesQueryVariables = {};
+
+
+export type GetCurrentComicBookReleasesQuery = (
+  { __typename?: 'Query' }
+  & { releases: Maybe<Array<(
+    { __typename?: 'ComicBook' }
+    & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'url'>
+  )>> }
+);

@@ -1,9 +1,16 @@
 overwrite: true
 require:
   - ts-node/register
+config:
+  scalars:
+    Date: Date
+  avoidOptionals: true
+  namingConvention:
+    enumValues: upper-case#upperCase
 generates:
-  packages/backend/src/types/graphql-client-schema.ts:
+  packages/app/src/types/graphql-client-schema.ts:
     schema: 'packages/backend/src/schema/**/*.@(root|client).graphql'
+    documents: 'packages/app/src/hooks/**/!(*.d).{ts,tsx}'
     plugins:
       - 'typescript'
       - 'typescript-operations'
@@ -16,7 +23,3 @@ generates:
     config:
       scalars:
         ID: ObjectID
-        Date: Date
-      avoidOptionals: true
-      namingConvention:
-        enumValues: upper-case#upperCase
