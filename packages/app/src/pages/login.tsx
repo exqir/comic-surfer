@@ -5,7 +5,6 @@ import { mutate } from 'swr'
 import { gql } from 'graphql-request'
 
 import { fetcherWithToken } from '../lib/fetcher'
-import { query } from '../hooks/useReleases'
 
 type LoginQueryData = {
   login: {
@@ -49,7 +48,6 @@ const Login = () => {
       const data = await fetcherWithToken<LoginQueryData>(loginQuery, didToken!)
       if (data) {
         mutate(loginQuery, data, false)
-        // mutate(query, null)
         Router.push('/')
       } else {
         console.error('Missing data but no error from GraphQL')

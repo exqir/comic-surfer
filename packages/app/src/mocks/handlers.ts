@@ -47,6 +47,9 @@ export const handlers = [
               column: 12,
             },
           ],
+          extensions: {
+            code: 'UNAUTHENTICATED',
+          },
         },
       ]),
     )

@@ -20,6 +20,7 @@
     "@types/jest": "^24.0.20",
     "@types/node": "^14.0.1",
     "@types/react": "^16.9.11",
+    "apollo-server": "^2.14.2",
     "jest": "^24.9.0",
     "jest-transform-graphql": "^2.1.0",
     "next-plugin-graphql": "0.0.2",

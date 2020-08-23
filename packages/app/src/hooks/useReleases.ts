@@ -36,15 +36,6 @@ export function useReleases({
   const { data, error } = useSWR<QueryData, ClientError['response']['errors']>(
     query,
     fetcher,
-    {
-      // Reset data on Authentication Error without revalidation.
-      // This allows the data to be refeteched once the component is rerendered again.
-      // Otherwise the error is still in the data and therefore will redirect to `/login`.
-      onError(err, key, config) {
-        // TODO: Only reset on Auth error because in this case all data should be removed.
-        mutate(key, null, false)
-      },
-    },
   )
   const releases = data?.releases
   const finished = Boolean(data) || Boolean(error)
