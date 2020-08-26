@@ -13,7 +13,10 @@ const options = {
 
 const client = new GraphQLClient(API_ENDPOINT, options)
 
-export const fetcher = <Result>(query: string, variables?: Variables) =>
+export const fetcher = <Result, Vars = Variables>(
+  query: string,
+  variables?: Vars,
+) =>
   client.request<Result>(query, variables).catch((error: ClientError) => {
     throw error.response.errors
   })

@@ -22,12 +22,23 @@ const Home = () => {
         <div className="row">
           {releases
             ? releases.map(({ _id, title, issueNo, coverImgUrl, url }) => (
-                <a className="card" href={url} key={_id}>
-                  <h3>
-                    {title} - {issueNo}
-                  </h3>
-                  <img src={coverImgUrl ?? undefined} alt={title} />
-                </a>
+                <Link
+                  key={_id}
+                  href="/comic-book/[id]"
+                  as={`/comic-book/${_id}`}
+                >
+                  <a className="card">
+                    <h3>
+                      {title} - {issueNo}
+                    </h3>
+                    <img
+                      src={coverImgUrl ?? undefined}
+                      alt={title}
+                      width="180"
+                      height="276"
+                    />
+                  </a>
+                </Link>
               ))
             : null}
         </div>

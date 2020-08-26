@@ -174,6 +174,19 @@ export type Search = {
   url: Scalars['String'];
 };
 
+export type GetComicBookQueryVariables = {
+  comicBookId: Scalars['ID'];
+};
+
+
+export type GetComicBookQuery = (
+  { __typename?: 'Query' }
+  & { comicBook: Maybe<(
+    { __typename?: 'ComicBook' }
+    & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'releaseDate' | 'url'>
+  )> }
+);
+
 export type GetCurrentComicBookReleasesQueryVariables = {};
 
 
