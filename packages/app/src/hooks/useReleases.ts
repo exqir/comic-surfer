@@ -1,22 +1,10 @@
 import { useEffect } from 'react'
 import Router from 'next/router'
 import useSWR from 'swr'
-import { gql, ClientError } from 'graphql-request'
 import { GetCurrentComicBookReleasesQuery } from 'types/graphql-client-schema'
 
-import { fetcher, _fetcher } from '../lib/fetcher'
-
-export const query = gql`
-  query getCurrentComicBookReleases {
-    releases(type: SINGLEISSUE) {
-      _id
-      title
-      issueNo
-      coverImgUrl
-      url
-    }
-  }
-`
+import { RequestError } from '../lib/request'
+import { query, fetcher } from '../data/getCurrentComicBookReleases'
 
 export function useReleases({
   redirectTo,
@@ -24,7 +12,7 @@ export function useReleases({
 }: { redirectTo?: string; redirectIfFound?: string } = {}) {
   const { data, error } = useSWR<
     GetCurrentComicBookReleasesQuery,
-    ClientError['response']['errors']
+    RequestError
   >(query, fetcher)
   const releases = data?.releases
   const finished = Boolean(data) || Boolean(error)
@@ -42,5 +30,9 @@ export function useReleases({
     }
   }, [redirectTo, redirectIfFound, finished, hasReleases, error])
 
-  return error ? null : releases
+  return {
+    releases,
+    isLoading: !finished,
+    isError: error,
+  }
 }

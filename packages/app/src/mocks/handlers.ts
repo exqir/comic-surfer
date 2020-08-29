@@ -5,15 +5,34 @@ import {
 } from 'types/graphql-client-schema'
 
 export const handlers = [
-  graphql.mutation('loginStatus', (req, res, ctx) => {
+  graphql.mutation('loginUser', (req, res, ctx) => {
+    if (req.headers.has('Authorization')) {
+      return res(
+        context.cookie('auth', '123'),
+        ctx.data({
+          login: {
+            _id: '1',
+            owner: '1',
+          },
+        }),
+      )
+    }
+
     return res(
-      context.cookie('auth', '123'),
-      ctx.data({
-        login: {
-          _id: '1',
-          owner: '1',
+      ctx.errors([
+        {
+          message: 'Failed to log in: username or password are invalid',
+          locations: [
+            {
+              line: 8,
+              column: 12,
+            },
+          ],
+          extensions: {
+            code: 'UNAUTHENTICATED',
+          },
         },
-      }),
+      ]),
     )
   }),
   graphql.query('getComicBook', (req, res, ctx) => {

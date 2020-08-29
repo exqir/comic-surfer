@@ -2,25 +2,8 @@ import { useState, FormEvent, Fragment } from 'react'
 import Router from 'next/router'
 import { Magic } from 'magic-sdk'
 import { mutate } from 'swr'
-import { gql } from 'graphql-request'
 
-import { fetcherWithToken } from '../lib/fetcher'
-
-type LoginQueryData = {
-  login: {
-    _id: string
-    owner: string
-  }
-}
-
-const loginQuery = gql`
-  mutation loginStatus {
-    login {
-      _id
-      owner
-    }
-  }
-`
+import { query, fetcher } from '../data/loginUser'
 
 const getToken = (email: string) => {
   if (process.env.NODE_ENV !== 'production') {
@@ -45,9 +28,9 @@ const Login = () => {
 
     try {
       const didToken = await getToken(email)
-      const data = await fetcherWithToken<LoginQueryData>(loginQuery, didToken!)
+      const data = await fetcher(didToken!, query)
       if (data) {
-        mutate(loginQuery, data, false)
+        mutate(query, data, false)
         Router.push('/')
       } else {
         console.error('Missing data but no error from GraphQL')

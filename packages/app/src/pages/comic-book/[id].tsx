@@ -7,8 +7,7 @@ import {
 } from 'next'
 
 import Head from '../../components/head'
-import Nav from '../../components/nav'
-import { query, fetcher } from '../../hooks/useComicBook'
+import { query, fetcher } from '../../data/getComicBook'
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const paths = ['1'].map((id) => ({
@@ -51,7 +50,6 @@ const ComicBook = ({
   return (
     <div>
       <Head title={`${comicBook.title} - ${comicBook.issueNo}`} />
-      <Nav />
 
       <div className="hero">
         <h1 className="title">Welcome to Next!</h1>

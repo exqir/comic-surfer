@@ -10,7 +10,7 @@ config:
 generates:
   packages/app/src/types/graphql-client-schema.ts:
     schema: 'packages/backend/src/schema/**/*.@(root|client).graphql'
-    documents: 'packages/app/src/hooks/**/!(*.d).{ts,tsx}'
+    documents: 'packages/app/src/data/**/!(*.d).{ts,tsx}'
     plugins:
       - 'typescript'
       - 'typescript-operations'

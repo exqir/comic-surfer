@@ -1,36 +1,22 @@
 import useSWR from 'swr'
-import { gql, ClientError } from 'graphql-request'
 import {
   GetComicBookQuery,
   GetComicBookQueryVariables,
 } from 'types/graphql-client-schema'
 
-import { fetcher as _fetcher } from '../lib/fetcher'
-
-export const query = gql`
-  query getComicBook($comicBookId: ID!) {
-    comicBook(id: $comicBookId) {
-      _id
-      title
-      issueNo
-      coverImgUrl
-      releaseDate
-      url
-    }
-  }
-`
-
-export const fetcher = (query: string, comicBookId: string) =>
-  _fetcher<GetComicBookQuery, GetComicBookQueryVariables>(query, {
-    comicBookId,
-  })
+import type { RequestError } from '../lib/request'
+import { query, fetcher } from '../data/getComicBook'
 
 export function useComicBook({ comicBookId }: GetComicBookQueryVariables) {
-  const { data, error } = useSWR<
-    GetComicBookQuery,
-    ClientError['response']['errors']
-  >([query, comicBookId], fetcher)
+  const { data, error } = useSWR<GetComicBookQuery, RequestError>(
+    [query, comicBookId],
+    fetcher,
+  )
   const comicBook = data?.comicBook
 
-  return error ? null : comicBook
+  return {
+    comicBook,
+    isLoading: !error && !data,
+    isError: error,
+  }
 }

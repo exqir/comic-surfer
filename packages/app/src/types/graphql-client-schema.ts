@@ -197,3 +197,14 @@ export type GetCurrentComicBookReleasesQuery = (
     & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'url'>
   )>> }
 );
+
+export type LoginUserMutationVariables = {};
+
+
+export type LoginUserMutation = (
+  { __typename?: 'Mutation' }
+  & { login: (
+    { __typename?: 'PullList' }
+    & Pick<PullList, '_id' | 'owner'>
+  ) }
+);
