@@ -1,8 +1,9 @@
 import type { AppProps } from 'next/app'
 import type { GraphQLError } from 'graphql-request/dist/types'
-import type { AuthenticationError } from 'apollo-server'
+import { AuthenticationError } from 'apollo-server'
 import { SWRConfig, ConfigInterface, mutate } from 'swr'
 
+import { printVars } from 'lib/tokens'
 import { Navigation } from 'components/Nav'
 
 if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
@@ -30,9 +31,18 @@ const swrConfig: ConfigInterface<
   },
 }
 
+const cssVars = printVars()
+
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <SWRConfig value={swrConfig}>
+      <style jsx global>
+        {`
+          :root {
+            ${cssVars}
+          }
+        `}
+      </style>
       <Navigation />
       <Component {...pageProps} />
     </SWRConfig>
