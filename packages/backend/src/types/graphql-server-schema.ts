@@ -6,7 +6,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Date: any;
+  Date: Date;
 };
 
 
@@ -193,14 +193,14 @@ export type ComicBookDbObject = {
   _id: ObjectID,
   title: string,
   issueNo: Maybe<string>,
-  releaseDate: Maybe<any>,
+  releaseDate: Maybe<Date>,
   creators: Array<CreatorDbObject>,
   comicSeries: Maybe<ComicSeriesDbObject['_id']>,
   publisher: Maybe<PublisherDbObject['_id']>,
   coverImgUrl: Maybe<string>,
   url: string,
   type: string,
-  lastModified: any,
+  lastModified: Date,
 };
 
 export type CreatorDbObject = {
@@ -216,7 +216,7 @@ export type ComicSeriesDbObject = {
   publisher: Maybe<PublisherDbObject['_id']>,
   collections: Array<ComicBookDbObject['_id']>,
   singleIssues: Array<ComicBookDbObject['_id']>,
-  lastModified: any,
+  lastModified: Date,
 };
 
 export type PublisherDbObject = {

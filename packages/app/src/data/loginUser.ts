@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request'
 import { LoginUserMutation } from 'types/graphql-client-schema'
 
-import { requestWithToken, request } from '../lib/request'
+import { requestWithToken } from '../lib/request'
 
 export const query = gql`
   mutation loginUser {

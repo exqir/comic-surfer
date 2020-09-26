@@ -3,7 +3,7 @@ import Router from 'next/router'
 import { Magic } from 'magic-sdk'
 import { mutate } from 'swr'
 
-import { query, fetcher } from '../data/loginUser'
+import { query, fetcher } from 'data/loginUser'
 
 const getToken = (email: string) => {
   if (process.env.NODE_ENV !== 'production') {

@@ -101,6 +101,24 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
     )
   }
 
+  public getByRelease = (month: number, year: number, type: ComicBookType) => {
+    const { findMany } = this.dataLayer!
+    return pipe(
+      findMany<ComicBookDbObject>(this.collection, {
+        $and: [
+          {
+            releaseDate: {
+              $gte: new Date(year, month - 1, 1),
+              $lt: new Date(year, month, 1),
+            },
+          },
+          { type },
+        ],
+      }),
+      this.logError,
+    )
+  }
+
   public getUpcoming = () => {
     const { findMany } = this.dataLayer!
     const date = new Date()

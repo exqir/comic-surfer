@@ -5,6 +5,7 @@ import { SWRConfig, ConfigInterface, mutate } from 'swr'
 
 import { printVars } from 'lib/tokens'
 import { Navigation } from 'components/Nav'
+import { Container } from 'components/Container'
 
 if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
   require('../mocks')
@@ -41,10 +42,28 @@ export default function App({ Component, pageProps }: AppProps) {
           :root {
             ${cssVars}
           }
+          body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, Avenir Next, Avenir,
+              Helvetica, sans-serif;
+          }
+          .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+          }
         `}
       </style>
       <Navigation />
-      <Component {...pageProps} />
+      <Container>
+        <Component {...pageProps} />
+      </Container>
     </SWRConfig>
   )
 }

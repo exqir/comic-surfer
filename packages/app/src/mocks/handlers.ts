@@ -54,12 +54,12 @@ export const handlers = [
     if (id === '2') {
       data.comicBook = {
         _id: '2',
-        title: 'Descender',
-        issueNo: '12',
+        title: 'Southern Bastards',
+        issueNo: '20',
         coverImgUrl:
-          'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/365617/365617._SX360_QL80_TTD_.jpg',
+          'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
         releaseDate: new Date(2019, 11, 1),
-        url: '/descender',
+        url: '/southern-bastards',
       }
     }
 
@@ -80,11 +80,27 @@ export const handlers = [
           },
           {
             _id: '2',
-            title: 'Descender',
-            issueNo: '12',
+            title: 'Southern Bastards',
+            issueNo: '20',
             coverImgUrl:
-              'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/365617/365617._SX360_QL80_TTD_.jpg',
-            url: '/descender',
+              'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/493985/493985._SX312_QL80_TTD_.jpg',
+            url: '/southern-bastards',
+          },
+          {
+            _id: '3',
+            title: 'Low',
+            issueNo: '24',
+            coverImgUrl:
+              'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/845911/845911._SX312_QL80_TTD_.jpg',
+            url: '/low',
+          },
+          {
+            _id: '4',
+            title: 'Seven to Eternity',
+            issueNo: '9',
+            coverImgUrl:
+              'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/528975/528975._SX312_QL80_TTD_.jpg',
+            url: '/seven-to-eternity',
           },
         ],
       }
