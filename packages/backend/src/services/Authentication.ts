@@ -40,7 +40,8 @@ function setTokenCookie(res: Response) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       path: '/',
-      sameSite: 'lax',
+      // TODO: With serving API and App from the same domain, this could be changed back to lax
+      sameSite: 'none',
     })
     res.setHeader('Set-Cookie', cookie)
   }
