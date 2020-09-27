@@ -10,7 +10,7 @@ import { getUserOrThrow } from '../pullList/pullListResolver'
 interface SearchQuery {
   // TODO: This actually returns a Search but this is not what the function returns
   // but what is returned once all field resolvers are done
-  search: Resolver<Search[], QuerySearchArgs>
+  search: Resolver<Omit<Search, 'inPullList'>[], QuerySearchArgs>
 }
 
 interface SearchResolver {
