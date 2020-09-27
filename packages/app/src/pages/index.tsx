@@ -22,7 +22,7 @@ const Home = () => {
           </span>
         </h1>
       </div>
-      <div className="row">
+      {/* <div className="row">
         {releases
           ? releases.map((comicBook) => (
               <Link
@@ -81,7 +81,7 @@ const Home = () => {
               </Link>
             ))
           : null}
-      </div>
+      </div> */}
       <div className="row">
         {releases
           ? releases.map((comicBook) => (

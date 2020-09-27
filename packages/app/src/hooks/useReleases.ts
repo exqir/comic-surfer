@@ -3,8 +3,8 @@ import Router from 'next/router'
 import useSWR from 'swr'
 import { GetCurrentComicBookReleasesQuery } from 'types/graphql-client-schema'
 
-import { RequestError } from '../lib/request'
-import { query, fetcher } from '../data/getCurrentComicBookReleases'
+import { RequestError } from 'lib/request'
+import { query, fetcher } from 'data/getCurrentComicBookReleases'
 
 export function useReleases({
   redirectTo,

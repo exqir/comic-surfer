@@ -57,7 +57,7 @@ const runRTEorThrow = (error: Error) => <T, L, R>(
   rte: RTE.ReaderTaskEither<T, L, R>,
 ) => (t: T) => pipe(rte, foldRTEorThrow(error), run(t))
 
-function getUserOrThrow(user: Option<string>) {
+export function getUserOrThrow(user: Option<string>) {
   return pipe(
     user,
     fold(() => {

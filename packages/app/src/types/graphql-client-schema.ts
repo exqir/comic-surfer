@@ -172,6 +172,7 @@ export type Search = {
    __typename?: 'Search';
   title: Scalars['String'];
   url: Scalars['String'];
+  inPullList: Scalars['Boolean'];
 };
 
 export type GetComicBookQueryVariables = {
@@ -198,6 +199,34 @@ export type GetCurrentComicBookReleasesQuery = (
   )>> }
 );
 
+export type GetPullListQueryVariables = {};
+
+
+export type GetPullListQuery = (
+  { __typename?: 'Query' }
+  & { pullList: Maybe<(
+    { __typename?: 'PullList' }
+    & Pick<PullList, '_id' | 'owner'>
+    & { list: Array<(
+      { __typename?: 'ComicSeries' }
+      & Pick<ComicSeries, '_id' | 'url'>
+    )> }
+  )> }
+);
+
+export type GetSearchQueryVariables = {
+  searchQuery: Scalars['String'];
+};
+
+
+export type GetSearchQuery = (
+  { __typename?: 'Query' }
+  & { search: Maybe<Array<(
+    { __typename?: 'Search' }
+    & Pick<Search, 'title' | 'url' | 'inPullList'>
+  )>> }
+);
+
 export type LoginUserMutationVariables = {};
 
 
@@ -206,5 +235,26 @@ export type LoginUserMutation = (
   & { login: (
     { __typename?: 'PullList' }
     & Pick<PullList, '_id' | 'owner'>
+    & { list: Array<(
+      { __typename?: 'ComicSeries' }
+      & Pick<ComicSeries, '_id' | 'url'>
+    )> }
+  ) }
+);
+
+export type SubscribeToComicSeriesMutationVariables = {
+  comicSeriesUrl: Scalars['String'];
+};
+
+
+export type SubscribeToComicSeriesMutation = (
+  { __typename?: 'Mutation' }
+  & { subscribeComicSeries: (
+    { __typename?: 'PullList' }
+    & Pick<PullList, '_id' | 'owner'>
+    & { list: Array<(
+      { __typename?: 'ComicSeries' }
+      & Pick<ComicSeries, '_id' | 'url'>
+    )> }
   ) }
 );

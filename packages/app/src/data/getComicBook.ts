@@ -4,7 +4,7 @@ import {
   GetComicBookQueryVariables,
 } from 'types/graphql-client-schema'
 
-import { request } from '../lib/request'
+import { request } from 'lib/request'
 
 export const query = gql`
   query getComicBook($comicBookId: ID!) {

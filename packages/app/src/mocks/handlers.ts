@@ -2,20 +2,26 @@ import { graphql, context } from 'msw'
 import {
   GetCurrentComicBookReleasesQuery,
   GetComicBookQuery,
+  GetSearchQuery,
+  SubscribeToComicSeriesMutation,
+  LoginUserMutation,
+  GetPullListQuery,
 } from 'types/graphql-client-schema'
 
 export const handlers = [
   graphql.mutation('loginUser', (req, res, ctx) => {
     if (req.headers.has('Authorization')) {
-      return res(
-        context.cookie('auth', '123'),
-        ctx.data({
-          login: {
-            _id: '1',
-            owner: '1',
-          },
-        }),
-      )
+      const data: LoginUserMutation = {
+        login: {
+          _id: '1',
+          owner: '1',
+          list: [
+            { _id: '1', url: '/descender' },
+            { _id: '2', url: '/ascender' },
+          ],
+        },
+      }
+      return res(context.cookie('auth', '123'), ctx.data(data))
     }
 
     return res(
@@ -34,6 +40,21 @@ export const handlers = [
         },
       ]),
     )
+  }),
+  graphql.mutation('subscribeToComicSeries', (req, res, ctx) => {
+    const url = req.variables.comicSeriesUrl
+    const data: SubscribeToComicSeriesMutation = {
+      subscribeComicSeries: {
+        _id: '1',
+        owner: '1',
+        list: [
+          { _id: '1', url: '/descender' },
+          { _id: '2', url: '/ascender' },
+          { _id: '3', url },
+        ],
+      },
+    }
+    return res(ctx.data(data))
   }),
   graphql.query('getComicBook', (req, res, ctx) => {
     const id = req.variables.comicBookId
@@ -124,5 +145,37 @@ export const handlers = [
         },
       ]),
     )
+  }),
+  graphql.query('getSearch', (req, res, ctx) => {
+    const id = req.variables.searchQuery
+
+    let data: GetSearchQuery = {
+      search: [
+        { title: 'Descender', url: '/descender', inPullList: true },
+        { title: 'Ascender', url: '/ascender', inPullList: true },
+        { title: 'Low', url: '/low', inPullList: false },
+        {
+          title: 'Seven to Eternity',
+          url: '/sevent-to-eternity',
+          inPullList: false,
+        },
+      ],
+    }
+
+    return res(ctx.data(data))
+  }),
+  graphql.query('getPullList', (req, res, ctx) => {
+    let data: GetPullListQuery = {
+      pullList: {
+        _id: '1',
+        owner: '1',
+        list: [
+          { _id: '1', url: '/descender' },
+          { _id: '2', url: '/ascender' },
+        ],
+      },
+    }
+
+    return res(ctx.data(data))
   }),
 ]

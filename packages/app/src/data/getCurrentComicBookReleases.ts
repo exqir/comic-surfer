@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request'
 import { GetCurrentComicBookReleasesQuery } from 'types/graphql-client-schema'
 
-import { request } from '../lib/request'
+import { request } from 'lib/request'
 
 export const query = gql`
   query getCurrentComicBookReleases {

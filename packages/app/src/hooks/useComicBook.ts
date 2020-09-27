@@ -4,8 +4,8 @@ import {
   GetComicBookQueryVariables,
 } from 'types/graphql-client-schema'
 
-import type { RequestError } from '../lib/request'
-import { query, fetcher } from '../data/getComicBook'
+import type { RequestError } from 'lib/request'
+import { query, fetcher } from 'data/getComicBook'
 
 export function useComicBook({ comicBookId }: GetComicBookQueryVariables) {
   const { data, error } = useSWR<GetComicBookQuery, RequestError>(

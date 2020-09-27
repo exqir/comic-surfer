@@ -1,40 +1,47 @@
-import React, { useState } from 'react'
+import React, { Fragment, useState } from 'react'
 import Link from 'next/link'
 
 import { useReleases } from 'hooks/useReleases'
 import { token } from 'lib/tokens'
+import { Search } from 'components/Search'
 
 export const Navigation: React.FC = () => {
   const [isOpen, setOpen] = useState(false)
   const { releases } = useReleases()
   return (
-    <div className="container">
-      <button
-        className="menu"
-        onClick={() => {
-          setOpen((open) => !open)
-        }}
-      >
-        Menu
-      </button>
-      {isOpen ? (
-        <nav>
-          <ul>
-            <li>
-              <Link href="/">
-                <a>Home</a>
-              </Link>
-            </li>
-            {releases ? null : (
-              <li>
-                <Link href="/login">
-                  <a>Login</a>
-                </Link>
-              </li>
-            )}
-          </ul>
-        </nav>
-      ) : null}
+    <div>
+      <div className="container">
+        <button
+          className="menu"
+          onClick={() => {
+            setOpen((open) => !open)
+          }}
+        >
+          Menu
+        </button>
+        {isOpen ? (
+          <Fragment>
+            <Search />
+            <nav>
+              <ul>
+                <li>
+                  <Link href="/">
+                    <a>Home</a>
+                  </Link>
+                </li>
+                {releases ? null : (
+                  <li>
+                    <Link href="/login">
+                      <a>Login</a>
+                    </Link>
+                  </li>
+                )}
+              </ul>
+            </nav>
+          </Fragment>
+        ) : null}
+      </div>
+      {isOpen ? <div className="backdrop" /> : null}
       <style jsx>{`
         .container {
           z-index: 10000;
@@ -44,6 +51,15 @@ export const Navigation: React.FC = () => {
           display: flex;
           flex-direction: column-reverse;
           align-items: flex-end;
+        }
+        .backdrop {
+          z-index: 9000;
+          position: fixed;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          left: 0;
+          background: rgba(0, 0, 0, 0.3);
         }
         .menu {
           width: 48px;

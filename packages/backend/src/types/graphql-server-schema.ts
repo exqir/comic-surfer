@@ -185,6 +185,7 @@ export type Search = {
    __typename?: 'Search';
   title: Scalars['String'];
   url: Scalars['String'];
+  inPullList: Scalars['Boolean'];
 };
 
 

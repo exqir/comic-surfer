@@ -28,12 +28,11 @@ const Login = () => {
 
     try {
       const didToken = await getToken(email)
-      const data = await fetcher(didToken!, query)
-      if (data) {
-        mutate(query, data, false)
+      if (didToken) {
+        mutate(query, fetcher(didToken, query))
         Router.push('/')
       } else {
-        console.error('Missing data but no error from GraphQL')
+        console.error('Missing login token')
         throw new Error('An unexpected error occurred.')
       }
     } catch (error) {
