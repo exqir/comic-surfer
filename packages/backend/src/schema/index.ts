@@ -24,7 +24,7 @@ import {
   PullListResolver,
 } from './pullList/pullListResolver'
 import Search from './search/search.server.graphql'
-import { SearchQuery } from './search/searchResolver'
+import { SearchQuery, SearchResolver } from './search/searchResolver'
 
 export default [Root, ComicBook, ComicSeries, Publisher, PullList, Search]
 
@@ -45,4 +45,5 @@ export const resolvers = {
   ...ComicSeriesResolver,
   ...PublisherResolver,
   ...PullListResolver,
+  ...SearchResolver,
 }
