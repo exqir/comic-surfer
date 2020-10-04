@@ -10,7 +10,7 @@
     "@graphql-codegen/typescript-mongodb": "^1.13.1",
     "@hapi/iron": "^6.0.0",
     "@magic-sdk/admin": "^1.2.2",
-    "apollo-server": "^2.14.2",
+    "apollo-server": "^2.18.1",
     "cookie": "^0.4.1",
     "dotenv": "^8.2.0",
     "fp-ts": "^2.5.3",

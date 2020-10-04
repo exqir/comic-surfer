@@ -1,4 +1,5 @@
 import { ApolloServer } from 'apollo-server'
+import { ApolloServerPluginUsageReporting } from 'apollo-server-core'
 import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
 import { Db } from 'mongodb'
 import * as mongad from 'mongad'
@@ -76,6 +77,11 @@ const apolloServer = new ApolloServer({
       /exqir.vercel.app/,
     ].filter((val): val is string | RegExp => Boolean(val)),
   },
+  plugins: [
+    ApolloServerPluginUsageReporting({
+      sendHeaders: { exceptNames: ['Authorization'] },
+    }),
+  ],
 })
 
 apolloServer
