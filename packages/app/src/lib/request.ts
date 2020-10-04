@@ -14,6 +14,11 @@ const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || ''
 const options = {
   credentials: 'include',
   mode: 'cors',
+  headers: {
+    'apollographql-client-name': 'nextjs',
+    'apollographql-client-version':
+      process.env.VERCEL_GITHUB_COMMIT_SHA || 'develop',
+  },
 } as const
 
 const client = new GraphQLClient(API_ENDPOINT, options)
@@ -38,6 +43,7 @@ export const requestWithToken = <Result>(
   const _client = new GraphQLClient(API_ENDPOINT, {
     ...options,
     headers: {
+      ...options.headers,
       Authorization: `Bearer ${token}`,
     },
   })
