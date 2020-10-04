@@ -8,6 +8,9 @@ import { Search } from 'components/Search'
 export const Navigation: React.FC = () => {
   const [isOpen, setOpen] = useState(false)
   const { releases } = useReleases()
+  const onNavigation = () => {
+    setOpen(false)
+  }
   return (
     <div>
       <div className="container">
@@ -26,13 +29,19 @@ export const Navigation: React.FC = () => {
               <ul>
                 <li>
                   <Link href="/">
-                    <a>Home</a>
+                    <a onClick={onNavigation}>Home</a>
                   </Link>
                 </li>
-                {releases ? null : (
+                {releases ? (
+                  <li>
+                    <Link href="/logout">
+                      <a onClick={onNavigation}>Logout</a>
+                    </Link>
+                  </li>
+                ) : (
                   <li>
                     <Link href="/login">
-                      <a>Login</a>
+                      <a onClick={onNavigation}>Login</a>
                     </Link>
                   </li>
                 )}

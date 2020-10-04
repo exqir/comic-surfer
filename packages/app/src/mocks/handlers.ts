@@ -5,6 +5,7 @@ import {
   GetSearchQuery,
   SubscribeToComicSeriesMutation,
   LoginUserMutation,
+  LogoutUserMutation,
   GetPullListQuery,
 } from 'types/graphql-client-schema'
 
@@ -40,6 +41,12 @@ export const handlers = [
         },
       ]),
     )
+  }),
+  graphql.mutation('logoutUser', (req, res, ctx) => {
+    const data: LogoutUserMutation = {
+      logout: true,
+    }
+    return res(context.cookie('auth', '', { maxAge: -1 }), ctx.data(data))
   }),
   graphql.mutation('subscribeToComicSeries', (req, res, ctx) => {
     const url = req.variables.comicSeriesUrl

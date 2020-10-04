@@ -242,6 +242,14 @@ export type LoginUserMutation = (
   ) }
 );
 
+export type LogoutUserMutationVariables = {};
+
+
+export type LogoutUserMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'logout'>
+);
+
 export type SubscribeToComicSeriesMutationVariables = {
   comicSeriesUrl: Scalars['String'];
 };

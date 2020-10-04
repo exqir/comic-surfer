@@ -29,7 +29,7 @@ const Login = () => {
     try {
       const didToken = await getToken(email)
       if (didToken) {
-        mutate(query, fetcher(didToken, query))
+        await mutate(query, fetcher(didToken, query))
         Router.push('/')
       } else {
         console.error('Missing login token')
