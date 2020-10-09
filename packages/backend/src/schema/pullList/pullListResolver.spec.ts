@@ -124,10 +124,7 @@ describe('[Mutation.subscribeComicSeries]', () => {
     )
     expect(
       context.dataSources.comicSeries.insertIfNotExisting,
-    ).toHaveBeenCalledWith({
-      ...defaultComicSeriesScrapResult,
-      publisher: null,
-    })
+    ).toHaveBeenCalledWith(defaultComicSeriesScrapResult)
     expect(addComicSeries).toHaveBeenLastCalledWith(
       mockPullList.owner,
       defaultComicSeries._id,
@@ -153,10 +150,7 @@ describe('[Mutation.subscribeComicSeries]', () => {
     )
     expect(
       context.dataSources.comicSeries.insertIfNotExisting,
-    ).toHaveBeenCalledWith({
-      ...defaultComicSeriesScrapResult,
-      publisher: null,
-    })
+    ).toHaveBeenCalledWith(defaultComicSeriesScrapResult)
     expect(addComicSeries).toHaveBeenLastCalledWith(
       mockPullList.owner,
       defaultComicSeries._id,

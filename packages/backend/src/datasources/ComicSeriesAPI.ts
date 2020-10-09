@@ -48,8 +48,8 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
         {
           $addToSet: {
             collections: { $each: comicBookIds.map(toObjectId) },
-            $currentDate: { lastModified: true },
           },
+          $currentDate: { lastModified: true },
         },
       ),
       this.logError,
@@ -59,7 +59,7 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
   public insertIfNotExisting = (
     series: Omit<
       ComicSeriesDbObject,
-      '_id' | 'singleIssues' | 'collections' | 'lastModified'
+      '_id' | 'singleIssues' | 'collections' | 'publisher' | 'lastModified'
     >,
   ) => {
     const { updateOne } = this.dataLayer!
@@ -70,6 +70,7 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
         {
           $setOnInsert: {
             ...series,
+            publisher: null,
             singleIssues: [],
             collections: [],
             lastModified: new Date(),

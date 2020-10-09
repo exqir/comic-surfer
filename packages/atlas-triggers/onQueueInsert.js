@@ -18,51 +18,75 @@ exports = function onQueueInsert(changeEvent) {
       }
     }
     `
+  const publisherMutation = `mutation updateComicSeriesPublisher($comicSeriesId: ID!) {
+      updateComicSeriesPublisher(comicSeriesId: $comicSeriesId) {
+        _id
+      }
+    }
+    `
+  const scrapComicBookMutation = `mutation scrapComicBook($comicBookUrl: String!) {
+      scrapComicBook(comicBookUrl: $comicBookUrl) {
+        _id
+      }
+    }
+  `
 
-  const url = 'https://exqir2.uber.space/comic-surfer/api'
+  let body
 
   switch (type) {
     case 'SCRAP_SINGLE_ISSUE_LIST': {
-      return context.http.post({
-        url,
-        body: {
-          // TODO: Can this be different then the name in the query?
-          operationName: 'scrapSingleIssuesList',
-          query: singleIssuesMutation,
-          variables: {
-            comicSeriesId: data.comicSeriesId,
-            comicBookListUrl: data.url,
-          },
+      body = {
+        operationName: 'scrapSingleIssuesList',
+        query: singleIssuesMutation,
+        variables: {
+          comicSeriesId: data.comicSeriesId,
+          comicBookListUrl: data.url,
         },
-        encodeBodyAsJSON: true,
-      })
+      }
+      break
     }
     case 'SCRAP_COLLECTION_LIST': {
-      return context.http.post({
-        url,
-        body: {
-          operationName: 'scrapCollectionsList',
-          query: collectionsMutation,
-          variables: {
-            comicSeriesId: data.comicSeriesId,
-            comicBookListUrl: data.url,
-          },
+      body = {
+        operationName: 'scrapCollectionsList',
+        query: collectionsMutation,
+        variables: {
+          comicSeriesId: data.comicSeriesId,
+          comicBookListUrl: data.url,
         },
-        encodeBodyAsJSON: true,
-      })
+      }
+      break
     }
     case 'UPDATE_COMIC_BOOK_RELEASE': {
-      return context.http.post({
-        url,
-        body: {
-          operationName: 'updateComicBookRelease',
-          query: comicBookMutation,
-          variables: {
-            comicBookId: data.comicBookId,
-          },
+      body = {
+        operationName: 'updateComicBookRelease',
+        query: comicBookMutation,
+        variables: {
+          comicBookId: data.comicBookId,
         },
-        encodeBodyAsJSON: true,
-      })
+      }
+      break
+    }
+    case 'UPDATE_COMIC_SERIES_PUBLISHER': {
+      body = {
+        operationName: 'updateComicSeriesPublisher',
+        query: publisherMutation,
+        variables: { comicSeriesId: data.comicSeriesId },
+      }
+      break
+    }
+    case 'SCRAP_COMIC_BOOK': {
+      body = {
+        operationName: 'scrapComicBook',
+        query: scrapComicBookMutation,
+        variables: { comicBookUrl: data.comicBookUrl },
+      }
+      break
     }
   }
+
+  context.http.post({
+    url: 'https://exqir2.uber.space/comic-surfer/api',
+    body,
+    encodeBodyAsJSON: true,
+  })
 }

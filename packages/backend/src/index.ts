@@ -77,11 +77,14 @@ const apolloServer = new ApolloServer({
       /exqir.vercel.app/,
     ].filter((val): val is string | RegExp => Boolean(val)),
   },
-  plugins: [
-    ApolloServerPluginUsageReporting({
-      sendHeaders: { exceptNames: ['Authorization'] },
-    }),
-  ],
+  plugins:
+    process.env.NODE_ENV === 'production'
+      ? [
+          ApolloServerPluginUsageReporting({
+            sendHeaders: { exceptNames: ['Authorization'] },
+          }),
+        ]
+      : undefined,
 })
 
 apolloServer

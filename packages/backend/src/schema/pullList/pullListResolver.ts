@@ -18,6 +18,7 @@ import * as IO from 'fp-ts/lib/IO'
 import { identity } from 'fp-ts/lib/function'
 import { AuthenticationError } from 'apollo-server'
 import { Authentication } from 'services/Authentication'
+import { TaskType } from 'datasources/QueueRepository'
 
 interface PullListQuery {
   // TODO: This actually returns a PullList but this is not what the function returns
@@ -113,11 +114,36 @@ export const PullListMutation: PullListMutation = {
           pipe(
             RTE.fromTaskEither(services.scrape.getComicSeries(comicSeriesUrl)),
             RTE.chainW((comicSeries) =>
-              dataSources.comicSeries.insertIfNotExisting({
-                ...comicSeries,
-                publisher: null,
-              }),
+              dataSources.comicSeries.insertIfNotExisting(comicSeries),
             ),
+            RTE.chainFirst((comicSeries) => {
+              if (comicSeries && comicSeries.publisher === null) {
+                services.logger.info('Should add to queue')
+                return dataSources.queue.insertMany([
+                  {
+                    type: TaskType.UPDATECOMICSERIESPUBLISHER,
+                    data: {
+                      comicSeriesId: comicSeries._id,
+                    },
+                  },
+                  {
+                    type: TaskType.SCRAPSINGLEISSUELIST,
+                    data: {
+                      comicSeriesId: comicSeries._id,
+                      url: comicSeries.singleIssuesUrl!,
+                    },
+                  },
+                  {
+                    type: TaskType.SCRAPCOLLECTIONLIST,
+                    data: {
+                      comicSeriesId: comicSeries._id,
+                      url: comicSeries.collectionsUrl!,
+                    },
+                  },
+                ])
+              }
+              return RTE.right({})
+            }),
             RTE.chainW((comicSeries) =>
               dataSources.pullList.addComicSeries(
                 getUserOrThrow(user),

@@ -182,6 +182,14 @@ export const ComicBookMutation: ComicBookMutation = {
               ),
             ),
             RTE.chainFirst(({ comicBooks }) =>
+              dataSources.queue.insertMany(
+                comicBooks.map(({ url }) => ({
+                  type: TaskType.SCRAPCOMICBOOK,
+                  data: { comicBookUrl: url },
+                })),
+              ),
+            ),
+            RTE.chainFirst(({ comicBooks }) =>
               dataSources.comicSeries.addComicBooks(
                 comicSeriesId,
                 comicBooks.map(({ _id }) => _id),
@@ -221,6 +229,14 @@ export const ComicBookMutation: ComicBookMutation = {
                 dataSources,
                 comicSeriesId,
                 ComicBookType.COLLECTION,
+              ),
+            ),
+            RTE.chainFirst(({ comicBooks }) =>
+              dataSources.queue.insertMany(
+                comicBooks.map(({ url }) => ({
+                  type: TaskType.SCRAPCOMICBOOK,
+                  data: { comicBookUrl: url },
+                })),
               ),
             ),
             RTE.chainFirst(({ comicBooks }) =>
