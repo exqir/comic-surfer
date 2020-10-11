@@ -105,7 +105,7 @@ export class ComicSeriesAPI extends MongoDataSource<ComicSeriesDbObject> {
     return pipe(
       updateOne<ComicSeriesDbObject>(
         this.collection,
-        { _id: id },
+        { _id: toObjectId(id) },
         {
           $set: {
             publisher,
