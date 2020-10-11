@@ -84,9 +84,24 @@ exports = function onQueueInsert(changeEvent) {
     }
   }
 
-  context.http.post({
-    url: 'https://exqir2.uber.space/comic-surfer/api',
-    body,
-    encodeBodyAsJSON: true,
-  })
+  return context.http
+    .post({
+      url: 'https://exqir2.uber.space/comic-surfer/api',
+      body,
+      encodeBodyAsJSON: true,
+    })
+    .then((response) => {
+      if (response.statusCode !== 200) {
+        throw new Error(
+          `GraphQL API responded with status code ${response.statusCode} : ${response.status}.`,
+        )
+      }
+      const { data, error } = EJSON.parse(response.body.text())
+      if (Array.isArray(error) && error.length > 0) {
+        throw new Error(
+          `${error[0].message}.\n` + `Body: ${JSON.stringify(body)}`,
+        )
+      }
+      return data
+    })
 }

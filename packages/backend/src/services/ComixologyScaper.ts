@@ -232,9 +232,18 @@ export function comixology(
           releaseDate:
             meta.find(({ type }) => type.includes('Release Date'))?.date ??
             null,
-          creators: creators
-            .filter(({ type }) => !type.includes('Publish'))
-            .map(({ name }) => ({ name })),
+          creators: [
+            ...new Set<string>(
+              creators
+                .filter(
+                  ({ type }) =>
+                    type.includes('Written by') ||
+                    type.includes('Art by') ||
+                    type.includes('Cover by'),
+                )
+                .map(({ name }) => name),
+            ),
+          ].map((name) => ({ name })),
           publisher:
             // TODO remove type
             creators.find(({ type }) => type.includes('Publish')) ?? null,

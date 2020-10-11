@@ -18,6 +18,7 @@ import { TaskEither } from 'fp-ts/lib/TaskEither'
 import { MongoError } from 'mongodb'
 import { ComicBookListData, ComicBookData } from 'services/ScrapeService'
 import { TaskType } from 'datasources/QueueRepository'
+import { toObjectId } from 'datasources/MongoDataSource'
 
 interface ComicBookQuery {
   // TODO: This actually returns a ComicBook but this is not what the function returns
@@ -74,7 +75,7 @@ function insertComicBookIfNotExisting(
         dataSources.comicBook.insertMany(
           remainingComicBooks.map((book) => ({
             ...book,
-            comicSeries: comicSeriesId,
+            comicSeries: toObjectId(comicSeriesId),
             creators: [],
             publisher: null,
             coverImgUrl: null,
