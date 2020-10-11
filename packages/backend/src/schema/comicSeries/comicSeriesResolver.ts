@@ -119,8 +119,8 @@ export const ComicSeriesMutation: ComicSeriesMutation = {
                 )
               }
               return dataSources.publisher.addComicSeries(
-                comicSeriesId,
                 publisher._id,
+                comicSeriesId,
               )
             }),
             RTE.chainW((publisher) => {
