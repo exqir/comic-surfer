@@ -239,7 +239,10 @@ export function comixology(
                   ({ type }) =>
                     type.includes('Written by') ||
                     type.includes('Art by') ||
-                    type.includes('Cover by'),
+                    type.includes('Cover by') ||
+                    type.includes('Pencils') ||
+                    type.includes('Inks') ||
+                    type.includes('Colored by'),
                 )
                 .map(({ name }) => name),
             ),
