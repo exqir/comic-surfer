@@ -118,6 +118,17 @@ export const ComicSeriesMutation: ComicSeriesMutation = {
                   `Failed to find Publisher for Comic Series with ID ${comicSeriesId}`,
                 )
               }
+              return dataSources.publisher.addComicSeries(
+                comicSeriesId,
+                publisher._id,
+              )
+            }),
+            RTE.chainW((publisher) => {
+              if (publisher === null) {
+                throw new Error(
+                  `Failed to find Publisher for Comic Series with ID ${comicSeriesId}`,
+                )
+              }
               return dataSources.comicSeries.updatePublisher(
                 comicSeriesId,
                 publisher._id,

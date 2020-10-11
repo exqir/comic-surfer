@@ -10,6 +10,7 @@ import {
 import ComicSeries from './comicSeries/comicSeries.server.graphql'
 import {
   ComicSeriesQuery,
+  ComicSeriesMutation,
   ComicSeriesResolver,
 } from './comicSeries/comicSeriesResolver'
 import Publisher from './publisher/publisher.server.graphql'
@@ -39,6 +40,7 @@ export const resolvers = {
   },
   Mutation: {
     ...ComicBookMutation,
+    ...ComicSeriesMutation,
     ...PullListMutation,
   },
   ...ComicBookResolver,

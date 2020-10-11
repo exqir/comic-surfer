@@ -118,7 +118,6 @@ export const PullListMutation: PullListMutation = {
             ),
             RTE.chainFirst((comicSeries) => {
               if (comicSeries && comicSeries.publisher === null) {
-                services.logger.info('Should add to queue')
                 return dataSources.queue.insertMany([
                   {
                     type: TaskType.UPDATECOMICSERIESPUBLISHER,
