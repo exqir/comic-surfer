@@ -44,7 +44,7 @@ export class PublisherAPI extends MongoDataSource<PublisherDbObject> {
       updateOne<PublisherDbObject>(
         this.collection,
         { _id: toObjectId(id) },
-        { $push: { series: toObjectId(comicSeriesId) } },
+        { $addToSet: { comicSeries: toObjectId(comicSeriesId) } },
       ),
       this.logError,
     )
