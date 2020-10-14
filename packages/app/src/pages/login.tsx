@@ -30,6 +30,7 @@ const Login = () => {
       const didToken = await getToken(email)
       if (didToken) {
         await mutate(query, fetcher(didToken, query))
+        // document.cookie = `authenticated=true;Max-Age=${60 * 60 * 8}`
         Router.push('/')
       } else {
         console.error('Missing login token')

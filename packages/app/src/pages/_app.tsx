@@ -2,6 +2,7 @@ import type { AppProps } from 'next/app'
 import type { GraphQLError } from 'graphql-request/dist/types'
 import { AuthenticationError } from 'apollo-server'
 import { SWRConfig, ConfigInterface, mutate } from 'swr'
+import Router from 'next/router'
 
 import { printVars } from 'lib/tokens'
 import { Navigation } from 'components/Nav'
@@ -28,6 +29,8 @@ const swrConfig: ConfigInterface<
       )
     ) {
       mutate(key, null, false)
+      // document.cookie = 'authenticated=;Max-Age=-1'
+      // Router.push('/')
     }
   },
 }

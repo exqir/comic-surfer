@@ -1,103 +1,24 @@
 import React from 'react'
-import Link from 'next/link'
+import NextHead from 'next/head'
 
 import { Head } from 'components/Head'
-import { Card, Card1, Card2, Card3, Card4 } from 'components/Card'
-import { useReleases } from 'hooks/useReleases'
 import { token } from 'lib/tokens'
 
+const redirectScript = `
+  document.cookie && document.cookie.indexOf('authenticated') > -1 && location.replace('/releases')
+`
+
 const Home = () => {
-  const { releases } = useReleases({ redirectTo: '/login' })
   return (
     <div className="stack">
+      <NextHead>
+        <script dangerouslySetInnerHTML={{ __html: redirectScript }} />
+      </NextHead>
       <Head title="Home" />
 
       <div className="hero">
-        <h1 className="title">
-          Releases{' '}
-          <span className="month">
-            {new Intl.DateTimeFormat('en-GB', { month: 'long' }).format(
-              new Date(),
-            )}
-          </span>
-        </h1>
+        <h1 className="title">Home</h1>
       </div>
-      {/* <div className="row">
-        {releases
-          ? releases.map((comicBook) => (
-              <Link
-                key={comicBook._id}
-                href="/comic-book/[id]"
-                as={`/comic-book/${comicBook._id}`}
-              >
-                <a>
-                  <Card {...comicBook} />
-                </a>
-              </Link>
-            ))
-          : null}
-      </div>
-      <div className="row">
-        {releases
-          ? releases.map((comicBook) => (
-              <Link
-                key={comicBook._id}
-                href="/comic-book/[id]"
-                as={`/comic-book/${comicBook._id}`}
-              >
-                <a>
-                  <Card1 {...comicBook} />
-                </a>
-              </Link>
-            ))
-          : null}
-      </div>
-      <div className="row">
-        {releases
-          ? releases.map((comicBook) => (
-              <Link
-                key={comicBook._id}
-                href="/comic-book/[id]"
-                as={`/comic-book/${comicBook._id}`}
-              >
-                <a className="w-full">
-                  <Card2 {...comicBook} />
-                </a>
-              </Link>
-            ))
-          : null}
-      </div>
-      <div className="row">
-        {releases
-          ? releases.map((comicBook) => (
-              <Link
-                key={comicBook._id}
-                href="/comic-book/[id]"
-                as={`/comic-book/${comicBook._id}`}
-              >
-                <a className="w-full">
-                  <Card3 {...comicBook} />
-                </a>
-              </Link>
-            ))
-          : null}
-      </div> */}
-      <div className="row">
-        {releases
-          ? releases.map((comicBook) => (
-              <Link
-                key={comicBook._id}
-                href="/comic-book/[id]"
-                as={`/comic-book/${comicBook._id}`}
-              >
-                <a>
-                  <Card4 {...comicBook} />
-                </a>
-              </Link>
-            ))
-          : null}
-      </div>
-
       <style jsx>{`
         .stack > * + * {
           margin-top: ${token('spaceL')};
@@ -110,25 +31,6 @@ const Home = () => {
           margin: 0;
           line-height: 1.15;
           font-size: 48px;
-        }
-        .month {
-          color: ${token('colorPrimary')};
-          font-size: 24px;
-        }
-        .row {
-          display: flex;
-          flex-direction: row;
-          justify-content: space-between;
-          flex-wrap: wrap;
-        }
-        .row > *:nth-child(1n + 3) {
-          margin-top: ${token('spaceL')};
-        }
-        .w-full {
-          width: 100%;
-        }
-        a {
-          text-decoration: none;
         }
       `}</style>
     </div>

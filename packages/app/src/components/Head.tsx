@@ -12,7 +12,7 @@ type HeadProps = {
   ogImage?: string
 }
 
-export const Head: React.SFC<HeadProps> = (props) => (
+export const Head: React.FunctionComponent<HeadProps> = (props) => (
   <NextHead>
     <meta charSet="UTF-8" />
     <title>
