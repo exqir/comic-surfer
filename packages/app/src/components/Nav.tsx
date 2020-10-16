@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { useReleases } from 'hooks/useReleases'
 import { token } from 'lib/tokens'
+import { Stack } from 'components/Stack'
 import { Search } from 'components/Search'
 
 export const Navigation: React.FC = () => {
@@ -26,26 +27,20 @@ export const Navigation: React.FC = () => {
           <Fragment>
             <Search />
             <nav>
-              <ul>
-                <li>
-                  <Link href="/">
-                    <a onClick={onNavigation}>Home</a>
-                  </Link>
-                </li>
+              <Stack component="ul">
+                <Link href="/releases">
+                  <a onClick={onNavigation}>Releases</a>
+                </Link>
                 {releases ? (
-                  <li>
-                    <Link href="/logout">
-                      <a onClick={onNavigation}>Logout</a>
-                    </Link>
-                  </li>
+                  <Link href="/logout">
+                    <a onClick={onNavigation}>Logout</a>
+                  </Link>
                 ) : (
-                  <li>
-                    <Link href="/login">
-                      <a onClick={onNavigation}>Login</a>
-                    </Link>
-                  </li>
+                  <Link href="/login">
+                    <a onClick={onNavigation}>Login</a>
+                  </Link>
                 )}
-              </ul>
+              </Stack>
             </nav>
           </Fragment>
         ) : null}
@@ -83,11 +78,6 @@ export const Navigation: React.FC = () => {
           border-radius: ${token('borderRadius')};
           box-shadow: ${token('shadowSmall')};
           margin-bottom: ${token('spaceL')};
-        }
-        ul {
-          margin: 0;
-          padding: 0;
-          list-style: none;
         }
         a {
           padding: ${token('spaceL')} ${token('spaceXL')};

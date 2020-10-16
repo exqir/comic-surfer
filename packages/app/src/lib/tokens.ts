@@ -25,7 +25,7 @@ export const tokens = {
   [cssVars.spaceL]: '16px',
   [cssVars.spaceXL]: '32px',
   [cssVars.fontMedium]: '1rem',
-  [cssVars.lineMedium]: '1.5rem',
+  [cssVars.lineMedium]: '1.5',
 } as const
 
 export const token = (key: keyof typeof cssVars) => `var(${cssVars[key]})`

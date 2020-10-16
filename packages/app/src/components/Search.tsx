@@ -3,6 +3,9 @@ import React, { useState } from 'react'
 import { useSearch } from 'hooks/useSearch'
 import { token } from 'lib/tokens'
 import { query, fetcher } from 'data/subscribeToComicSeries'
+import { Stack } from 'components/Stack'
+import { Button } from 'components/Button'
+import { Search as SearchIcon } from 'components/icons/Search'
 
 const subscribeToComicSeries = (url: string) => async () => {
   try {
@@ -35,29 +38,24 @@ export const Search: React.FC = () => {
             setInput(event.target.value)
           }}
         />
-        <button className="button" type="submit">
-          Search
-        </button>
+        <Button type="submit">
+          <SearchIcon />
+        </Button>
       </form>
       {isLoading ? <div>Loading...</div> : null}
       {search ? (
         <div className="search-results">
-          <ul>
+          <Stack component="ul" space="medium">
             {search.map(({ title, url, inPullList }) => (
-              <li>
+              <div key={url} className="search-item">
                 <span>{title}</span>
                 {inPullList ? null : (
-                  <button
-                    className="button"
-                    type="button"
-                    onClick={subscribeToComicSeries(url)}
-                  >
-                    Add
-                  </button>
+                  <Button onClick={subscribeToComicSeries(url)}>Add</Button>
                 )}
-              </li>
+              </div>
             ))}
-          </ul>
+          </Stack>
+          <ul></ul>
         </div>
       ) : null}
       <style jsx>{`
@@ -87,22 +85,11 @@ export const Search: React.FC = () => {
           border-width: 0;
           padding: 0 ${token('spaceL')};
         }
-        .button {
-          border: 0;
-          color: #fff;
-          background: linear-gradient(60deg, var(--color-primary), #f7ce68);
-          padding: 0 ${token('spaceM')};
-        }
         .search-results {
           margin-top: ${token('spaceM')};
           width: 90%;
         }
-        ul {
-          list-style: none;
-          margin: 0;
-          padding: 0;
-        }
-        li {
+        .search-item {
           display: flex;
           justify-content: space-between;
           background-color: ${token('background')};
@@ -111,9 +98,6 @@ export const Search: React.FC = () => {
         }
         span {
           padding: ${token('spaceM')} ${token('spaceM')};
-        }
-        li + li {
-          margin-top: ${token('spaceM')};
         }
       `}</style>
     </div>

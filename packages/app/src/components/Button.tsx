@@ -29,6 +29,19 @@ const { className, styles: staticStyles } = css.resolve`
     border: none;
     border-radius: ${token('borderRadius')};
   }
+  .button:hover,
+  .button:active,
+  .button:focus {
+    box-shadow: inset 0px 0px 0 1px var(--color-primary);
+  }
+  .button:hover .text,
+  .button:active .text,
+  .button:focus .text {
+    background-image: var(--button-text-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
   .button.full-width {
     width: 100%;
   }
@@ -144,7 +157,7 @@ export const Button = forwardRef<
         {...linkAttributes}
         className={clsx('button', className, isFullWidth && 'full-width')}
       >
-        {children}
+        <span className={clsx('text', className)}>{children}</span>
         <style jsx>
           {`
             .button {
@@ -154,6 +167,16 @@ export const Button = forwardRef<
                 ${token('colorPrimary')},
                 #f7ce68
               );
+              --button-text-gradient: linear-gradient(
+                90deg,
+                ${token('colorPrimary')},
+                #f7ce68
+              );
+            }
+            .button:hover,
+            .button:active,
+            .button:focus {
+              --button-bg: transparent;
             }
           `}
         </style>

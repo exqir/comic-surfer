@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { Head } from 'components/Head'
 import { Card, Card1, Card2, Card3, Card4 } from 'components/Card'
+import { Heading } from 'components/Heading'
 import { useReleases } from 'hooks/useReleases'
 import { token } from 'lib/tokens'
 
@@ -13,14 +14,14 @@ const Home = () => {
       <Head title="Home" />
 
       <div className="hero">
-        <h1 className="title">
+        <Heading component="h1">
           Releases{' '}
           <span className="month">
             {new Intl.DateTimeFormat('en-GB', { month: 'long' }).format(
               new Date(),
             )}
           </span>
-        </h1>
+        </Heading>
       </div>
       {/* <div className="row">
         {releases

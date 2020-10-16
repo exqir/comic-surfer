@@ -1,4 +1,4 @@
-import React, { forwardRef, Children } from 'react'
+import React, { Children } from 'react'
 import clsx from 'clsx'
 import css from 'styled-jsx/css'
 
@@ -10,6 +10,8 @@ const { className, styles: staticStyles } = css.resolve`
     display: block;
     margin-top: calc(var(--stack-gap) * -1);
   }
+
+  /* reset list styles */
   ul.stack,
   ol.stack {
     list-style: none;
@@ -21,7 +23,7 @@ const { className, styles: staticStyles } = css.resolve`
   }
 `
 
-type Component = 'div' | 'ul' | 'ol'
+type Component = 'div' | 'section' | 'ul' | 'ol'
 type Space = 'none' | 'small' | 'medium' | 'large'
 const spaces: { [space in Space]: string | number } = {
   none: 0,
@@ -48,26 +50,22 @@ export type StackProps = {
   children?: React.ReactNode
 }
 
-export const Stack: React.FunctionComponent<StackProps> = ({
+export const Stack: React.FC<StackProps> = ({
   component: Component = 'div',
   space = 'none',
   children,
 }) => {
-  const Item = Component === 'div' ? 'div' : 'li'
+  const Item = ['ul', 'li'].includes(Component) ? 'li' : 'div'
 
   return (
-    <Component className={clsx(className, 'stack')}>
+    <Component
+      className={clsx('stack', className)}
+      style={{ '--stack-gap': spaces[space] } as React.CSSProperties}
+    >
       {Children.map(children, (child) => (
-        <Item className={clsx(className, 'stack-item')}>{child}</Item>
+        <Item className={clsx('stack-item', className)}>{child}</Item>
       ))}
       {staticStyles}
-      <style jsx>
-        {`
-          .stack {
-            --stack-gap: ${spaces[space]};
-          }
-        `}
-      </style>
     </Component>
   )
 }
