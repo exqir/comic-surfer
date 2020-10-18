@@ -46,7 +46,7 @@ const swrConfig: ConfigInterface<
       )
       Router.push({
         pathname: '/login',
-        query: { from: Router.pathname + '?' + search },
+        query: { from: Router.pathname + search ? '?' + search : '' },
       })
     }
   },

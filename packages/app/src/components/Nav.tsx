@@ -2,7 +2,7 @@ import React, { Fragment, useState } from 'react'
 import Link from 'next/link'
 import { mutate } from 'swr'
 
-import { useReleases } from 'hooks/useReleases'
+import { useAuthentication } from 'hooks/useAuthentication'
 import { token } from 'lib/tokens'
 import { Stack } from 'components/Stack'
 import { Search } from 'components/Search'
@@ -17,7 +17,7 @@ const logoutUser = async () => {
 
 export const Navigation: React.FC = () => {
   const [isOpen, setOpen] = useState(false)
-  const { releases } = useReleases()
+  const isAuthenticated = useAuthentication()
   const onNavigation = () => {
     setOpen(false)
   }
@@ -43,11 +43,11 @@ export const Navigation: React.FC = () => {
                 <Link href="/login">
                   <a
                     onClick={async () => {
-                      if (releases) await logoutUser()
+                      if (isAuthenticated) await logoutUser()
                       onNavigation()
                     }}
                   >
-                    {releases ? 'Logout' : 'Login'}
+                    {isAuthenticated ? 'Logout' : 'Login'}
                   </a>
                 </Link>
               </Stack>

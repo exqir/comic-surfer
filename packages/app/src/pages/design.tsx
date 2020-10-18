@@ -3,12 +3,19 @@ import React from 'react'
 import { Head } from 'components/Head'
 import { Heading } from 'components/Heading'
 import { Stack } from 'components/Stack'
+import { Tiles } from 'components/Tiles'
 import { Button } from 'components/Button'
+
+const placeholder: React.CSSProperties = {
+  backgroundColor: '#ccc',
+  height: '48px',
+  textAlign: 'center',
+}
 
 const Design = () => {
   return (
     <div>
-      <Head title="Design" />
+      <Head title="Design" protected={false} />
       <Heading component="h1">Design</Heading>
       <Stack space="large">
         <Heading component="h2">Button:</Heading>
@@ -26,6 +33,21 @@ const Design = () => {
           <Heading component="h4">H4</Heading>
           <Heading component="h5">H5</Heading>
           <Heading component="h6">H6</Heading>
+        </Stack>
+        <Heading component="h2">Tiles:</Heading>
+        <Stack component="section" space="medium">
+          <Tiles columns={2} space="medium">
+            <div style={placeholder}>1</div>
+            <div style={placeholder}>2</div>
+            <div style={placeholder}>3</div>
+            <div style={placeholder}>4</div>
+          </Tiles>
+          <Tiles columns={4} space="medium">
+            <div style={placeholder}>1</div>
+            <div style={placeholder}>2</div>
+            <div style={placeholder}>3</div>
+            <div style={placeholder}>4</div>
+          </Tiles>
         </Stack>
       </Stack>
     </div>

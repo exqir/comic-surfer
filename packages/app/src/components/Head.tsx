@@ -12,14 +12,20 @@ type HeadProps = {
   description?: string
   url?: string
   ogImage?: string
+  protected?: boolean
 }
 
-export const Head: React.FunctionComponent<HeadProps> = (props) => (
+export const Head: React.FunctionComponent<HeadProps> = ({
+  protected: protectedPage = true,
+  ...props
+}) => (
   <NextHead>
-    <script
-      dangerouslySetInnerHTML={{ __html: redirectScript }}
-      key={redirectKey}
-    />
+    {protectedPage ? (
+      <script
+        dangerouslySetInnerHTML={{ __html: redirectScript }}
+        key={redirectKey}
+      />
+    ) : null}
     <meta charSet="UTF-8" />
     <title>
       {props.title ? `${props.title} - Comic-Surfer` : 'Comic-Surfer'}

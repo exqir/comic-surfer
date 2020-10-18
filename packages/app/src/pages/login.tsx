@@ -5,6 +5,7 @@ import { mutate } from 'swr'
 
 import { token } from 'lib/tokens'
 import { query, fetcher } from 'data/loginUser'
+import { Head } from 'components/Head'
 import { Stack } from 'components/Stack'
 import { Button } from 'components/Button'
 
@@ -56,6 +57,7 @@ const Login = () => {
 
   return (
     <div className="login">
+      <Head title="Login" protected={false} />
       <form onSubmit={handleSubmit}>
         <Stack space="large">
           <input
