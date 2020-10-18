@@ -29,8 +29,25 @@ const swrConfig: ConfigInterface<
       )
     ) {
       mutate(key, null, false)
-      // document.cookie = 'authenticated=;Max-Age=-1'
-      // Router.push('/')
+      document.cookie = 'authenticated=;Max-Age=-1'
+      // When not on the login page, redirect to it while
+      // preserving the page coming from to redirect back
+      // to it once the user is authenticated again.
+      if (Router.pathname === '/login') return
+      const search = Object.entries(Router.query).reduce(
+        (s, [key, value], i) =>
+          value === undefined
+            ? s + `${i > 0 ? '&' : ''}${key}`
+            : s +
+              `${i > 0 ? '&' : ''}${key}=${
+                Array.isArray(value) ? value.join(',') : value
+              }`,
+        '',
+      )
+      Router.push({
+        pathname: '/login',
+        query: { from: Router.pathname + '?' + search },
+      })
     }
   },
 }

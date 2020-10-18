@@ -29,14 +29,14 @@ const { className, styles: staticStyles } = css.resolve`
     border: none;
     border-radius: ${token('borderRadius')};
   }
-  .button:hover,
-  .button:active,
-  .button:focus {
+  .button:hover:not(.disabled),
+  .button:active:not(.disabled),
+  .button:focus:not(.disabled) {
     box-shadow: inset 0px 0px 0 1px var(--color-primary);
   }
-  .button:hover .text,
-  .button:active .text,
-  .button:focus .text {
+  .button:hover:not(.disabled) .text,
+  .button:active:not(.disabled) .text,
+  .button:focus:not(.disabled) .text {
     background-image: var(--button-text-gradient);
     background-clip: text;
     -webkit-background-clip: text;
@@ -44,6 +44,10 @@ const { className, styles: staticStyles } = css.resolve`
   }
   .button.full-width {
     width: 100%;
+  }
+  .button.disabled {
+    --button-bg: #ccc;
+    --button-color: rgb(117, 117, 117);
   }
 `
 
@@ -155,7 +159,12 @@ export const Button = forwardRef<
         href={href}
         disabled={isDisabled}
         {...linkAttributes}
-        className={clsx('button', className, isFullWidth && 'full-width')}
+        className={clsx(
+          'button',
+          className,
+          isFullWidth && 'full-width',
+          isDisabled && 'disabled',
+        )}
       >
         <span className={clsx('text', className)}>{children}</span>
         <style jsx>
@@ -164,13 +173,13 @@ export const Button = forwardRef<
               --button-color: #fff;
               --button-bg: linear-gradient(
                 60deg,
-                ${token('colorPrimary')},
-                #f7ce68
+                #f0952d,
+                ${token('colorPrimary')}
               );
               --button-text-gradient: linear-gradient(
                 90deg,
-                ${token('colorPrimary')},
-                #f7ce68
+                #f0952d,
+                ${token('colorPrimary')}
               );
             }
             .button:hover,

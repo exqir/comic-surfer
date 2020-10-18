@@ -1,10 +1,19 @@
 import React, { Fragment, useState } from 'react'
 import Link from 'next/link'
+import { mutate } from 'swr'
 
 import { useReleases } from 'hooks/useReleases'
 import { token } from 'lib/tokens'
 import { Stack } from 'components/Stack'
 import { Search } from 'components/Search'
+import { query, fetcher } from 'data/logoutUser'
+import { query as loginQuery } from 'data/loginUser'
+
+const logoutUser = async () => {
+  await fetcher(query)
+  await mutate(loginQuery, null, false)
+  document.cookie = 'authenticated=;Max-Age=-1'
+}
 
 export const Navigation: React.FC = () => {
   const [isOpen, setOpen] = useState(false)
@@ -31,15 +40,16 @@ export const Navigation: React.FC = () => {
                 <Link href="/releases">
                   <a onClick={onNavigation}>Releases</a>
                 </Link>
-                {releases ? (
-                  <Link href="/logout">
-                    <a onClick={onNavigation}>Logout</a>
-                  </Link>
-                ) : (
-                  <Link href="/login">
-                    <a onClick={onNavigation}>Login</a>
-                  </Link>
-                )}
+                <Link href="/login">
+                  <a
+                    onClick={async () => {
+                      if (releases) await logoutUser()
+                      onNavigation()
+                    }}
+                  >
+                    {releases ? 'Logout' : 'Login'}
+                  </a>
+                </Link>
               </Stack>
             </nav>
           </Fragment>

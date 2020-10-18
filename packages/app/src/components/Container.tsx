@@ -9,6 +9,7 @@ export const Container: React.FC<{}> = ({ children }) => {
       <style jsx>
         {`
           .container {
+            margin: 0 auto;
             max-width: ${token('maxWidth')};
             padding: ${token('spaceL')};
           }

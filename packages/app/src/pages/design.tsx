@@ -16,6 +16,7 @@ const Design = () => {
           <Button>Button</Button>
           <Button href="/">ButtonLink</Button>
           <Button isFullWidth>Full Width Button</Button>
+          <Button isDisabled>Disabled</Button>
         </Stack>
         <Heading component="h2">Heading:</Heading>
         <Stack component="section" space="medium">
