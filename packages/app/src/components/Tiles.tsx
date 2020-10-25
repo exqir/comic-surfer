@@ -1,11 +1,15 @@
+// based on: https://github.com/seek-oss/braid-design-system/blob/master/lib/components/Tiles/Tiles.tsx
 import React, { Children } from 'react'
+import { css } from '@emotion/core'
+import styled from '@emotion/styled'
 import clsx from 'clsx'
-import css from 'styled-jsx/css'
+// import css from 'styled-jsx/css'
 
+import { responsiveProps, ResponsiveProp } from 'lib/responsiveProps'
 import { token } from 'lib/tokens'
 
-const { className, styles: staticStyles } = css.resolve`
-  .tiles::before {
+const tiles = css`
+  &.tiles::before {
     content: '';
     display: block;
     margin-top: calc(var(--tile-gap) * -1);
@@ -38,12 +42,17 @@ export type TilesProps = {
    * Columns used to render the Tiles.
    * @default 1
    */
-  columns?: Columns
+  columns?: ResponsiveProp<Columns>
   /**
    * Spacing between the children of the Tiles.
    * @default 'none'
    */
   space?: Space
+  /**
+   * Additional classes
+   * @default undefined
+   */
+  className?: string
   /**
    * The Tiles Content.
    * @default undefined
@@ -51,29 +60,24 @@ export type TilesProps = {
   children?: React.ReactNode
 }
 
-export const Tiles: React.FC<TilesProps> = ({
-  columns = 1,
-  space = 'none',
-  children,
-}) => {
-  return (
-    <div
-      className={clsx('tiles', className)}
-      style={
-        {
-          '--tile-gap': spaces[space],
-          '--tile-width': `${100 / columns}%`,
-        } as React.CSSProperties
-      }
-    >
-      <div className={clsx('tiles-display', className)}>
-        {Children.map(children, (child) => (
-          <div className={clsx('tile', className)}>
-            <div className={clsx('tile-space', className)}>{child}</div>
-          </div>
-        ))}
+export const Tiles: React.FC<TilesProps> = styled<React.FC<TilesProps>>(
+  ({ className, children }) => {
+    return (
+      <div className={clsx('tiles', className)}>
+        <div className={clsx('tiles-display', className)}>
+          {Children.map(children, (child) => (
+            <div className={clsx('tile', className)}>
+              <div className={clsx('tile-space', className)}>{child}</div>
+            </div>
+          ))}
+        </div>
       </div>
-      {staticStyles}
-    </div>
-  )
-}
+    )
+  },
+)(
+  ({ columns, space }) => css`
+    ${responsiveProps<Columns>(columns, 1, (c) => `--tile-width: ${100 / c}%;`)}
+    ${responsiveProps<Space>(space, 'none', (s) => `--tile-gap: ${spaces[s]};`)}
+    ${tiles}
+  `,
+)

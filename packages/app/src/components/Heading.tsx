@@ -54,6 +54,9 @@ const staticStyles = css`
 
     /* typography */
     line-height: ${token('lineMedium')};
+
+    /* color */
+    color: ${token('colorText')};
   }
   .heading.h1 {
     font-size: 3rem;

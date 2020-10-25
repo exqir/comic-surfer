@@ -36,7 +36,7 @@ const Design = () => {
         </Stack>
         <Heading component="h2">Tiles:</Heading>
         <Stack component="section" space="medium">
-          <Tiles columns={2} space="medium">
+          <Tiles columns={{ default: 2, tablet: 4 }} space="medium">
             <div style={placeholder}>1</div>
             <div style={placeholder}>2</div>
             <div style={placeholder}>3</div>
