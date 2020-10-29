@@ -58,6 +58,18 @@ function removeTokenCookie(res: Response): IO.IO<void> {
   }
 }
 
+function logoutUser(req: Request): T.Task<void> {
+  return pipe(
+    getUserFromSession(req),
+    T.chain(
+      O.fold(
+        () => () => Promise.resolve(),
+        (user) => () => magic.users.logoutByIssuer(user),
+      ),
+    ),
+  )
+}
+
 function parseCookies(req: Request) {
   return parse(req.headers.cookie || '')
 }
@@ -133,4 +145,5 @@ export const Authentication = {
   getUserFromSession,
   getSessionIssuer,
   removeSessionCookie: removeTokenCookie,
+  logoutUser,
 }

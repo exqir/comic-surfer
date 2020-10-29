@@ -14,8 +14,8 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import { map, toNullable, fold, Option } from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as RT from 'fp-ts/lib/ReaderTask'
-import * as IO from 'fp-ts/lib/IO'
-import { identity } from 'fp-ts/lib/function'
+import * as T from 'fp-ts/lib/Task'
+import { constTrue, identity } from 'fp-ts/lib/function'
 import { AuthenticationError } from 'apollo-server'
 import { Authentication } from 'services/Authentication'
 import { TaskType } from 'datasources/QueueRepository'
@@ -216,10 +216,11 @@ export const PullListMutation: PullListMutation = {
       ),
       toNullable,
     ),
-  logout: (_, __, { res }) =>
+  logout: (_, __, { req, res }) =>
     pipe(
-      Authentication.removeSessionCookie(res),
-      IO.map(() => true),
+      T.fromIO(Authentication.removeSessionCookie(res)),
+      T.map(Authentication.logoutUser(req)),
+      T.map(constTrue),
     )(),
 }
 
