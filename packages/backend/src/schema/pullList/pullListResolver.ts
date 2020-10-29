@@ -82,10 +82,13 @@ export const PullListQuery: PullListQuery = {
       map(
         runRTEtoNullable(
           pipe(
-            dataSources.pullList.getByUser(getUserOrThrow(user)),
-            RTE.chain((pullList) => {
+            RTE.fromOption(() => new Error('Failed to get user from request'))(
+              user,
+            ),
+            RTE.chainW(dataSources.pullList.getByUser),
+            RTE.chainW((pullList) => {
               if (pullList === null)
-                throw new Error('No pullList for the user exists')
+                return RTE.left(new Error('No pullList for the user exists'))
               return dataSources.comicBook.getBySeriesAndRelease(
                 pullList.list,
                 // TODO: Validate month and year
@@ -94,6 +97,14 @@ export const PullListQuery: PullListQuery = {
                 type ?? ComicBookType.SINGLEISSUE,
               )
             }),
+            RTE.orElse(() =>
+              dataSources.comicBook.getByRelease(
+                // TODO: Validate month and year
+                month ?? new Date().getMonth() + 1,
+                year ?? new Date().getFullYear(),
+                type ?? ComicBookType.SINGLEISSUE,
+              ),
+            ),
           ),
         ),
       ),
