@@ -1,13 +1,8 @@
 import { ApolloServer } from 'apollo-server'
 import { ApolloServerPluginUsageReporting } from 'apollo-server-core'
 import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
-import { Db } from 'mongodb'
 import * as mongad from 'mongad'
 import scrapeIt from 'scrape-it'
-import { pipe } from 'fp-ts/lib/pipeable'
-import { map, fold } from 'fp-ts/lib/TaskEither'
-import { Option } from 'fp-ts/lib/Option'
-import { of } from 'fp-ts/lib/Task'
 import typeDefs, { resolvers } from './schema'
 import {
   ComicBookAPI,
@@ -18,31 +13,15 @@ import {
 } from './datasources'
 import { GraphQLContext, DataSources } from 'types/app'
 import { comixology } from 'services/ComixologyScaper'
-import { none, some } from 'fp-ts/lib/Option'
 import { createLogger } from 'services/LogService'
 import { Authentication } from 'services/Authentication'
+import { createConnectToDb } from 'lib/connectToDb'
 
-const dbConnectionString = process.env.MONGO_URL || 'mongodb://mongo:27017'
-const dbName = process.env.DB_NAME || 'riddler'
 const baseUrl = process.env.COMIXOLOGY_BASE_URL || 'https://m.comixology.eu'
 
-let db: Option<Db>
 const logger = createLogger('Comic-Surfer', 'de-DE')
 
-const connectToDb = pipe(
-  mongad.connect(dbConnectionString, { useUnifiedTopology: true }),
-  map(mongad.getDb(dbName)),
-  fold(
-    (_) => of(none),
-    (db) => of(some(db)),
-  ),
-)
-
-const setDb = async () => {
-  db = await connectToDb()
-}
-
-setDb()
+const connectToDb = createConnectToDb(logger)
 
 const apolloServer = new ApolloServer({
   typeDefs: [DIRECTIVES, ...typeDefs],
@@ -60,7 +39,7 @@ const apolloServer = new ApolloServer({
   }): Promise<Omit<GraphQLContext, 'dataSources'>> => ({
     req,
     res,
-    db,
+    db: await connectToDb(),
     dataLayer: mongad,
     services: {
       scrape: comixology(scrapeIt, logger, baseUrl),
@@ -89,4 +68,4 @@ const apolloServer = new ApolloServer({
 
 apolloServer
   .listen(5000)
-  .then(({ url }) => console.log(`GraphQL Server started at: ${url}`))
+  .then(({ url }) => logger.log(`GraphQL Server started at: ${url}`))
