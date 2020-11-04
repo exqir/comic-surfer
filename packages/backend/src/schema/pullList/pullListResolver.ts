@@ -9,16 +9,17 @@ import {
   QueryReleasesArgs,
   ComicBookType,
 } from 'types/server-schema'
-import { runRTEtoNullable, run } from 'lib'
+import { runRTEtoNullable, run, nonNullableField } from 'lib'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { map, toNullable, fold, Option } from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as RT from 'fp-ts/lib/ReaderTask'
 import * as T from 'fp-ts/lib/Task'
-import { constTrue, identity } from 'fp-ts/lib/function'
+import { constTrue, identity, flow } from 'fp-ts/lib/function'
 import { AuthenticationError } from 'apollo-server'
 import { Authentication } from 'services/Authentication'
 import { TaskType } from 'datasources/QueueRepository'
+import { MongoError } from 'mongodb'
 
 interface PullListQuery {
   // TODO: This actually returns a PullList but this is not what the function returns
@@ -67,14 +68,30 @@ export function getUserOrThrow(user: Option<string>) {
   )
 }
 
+export function getUser(user: Option<string>) {
+  return RTE.fromOption(
+    () => new AuthenticationError('Failed to identify user'),
+  )(user)
+}
+
+const rtRun = <T, A>(rte: RT.ReaderTask<T, A>) => (t: T) => RT.run(rte, t)
+
 export const PullListQuery: PullListQuery = {
   pullList: (_, __, { dataSources, db, user }) =>
-    pipe(
+    nonNullableField(
       db,
-      map(
-        runRTEtoNullable(dataSources.pullList.getByUser(getUserOrThrow(user))),
+      rtRun(
+        pipe(
+          getUser(user),
+          RTE.chainW(dataSources.pullList.getByUser),
+          RTE.getOrElse((err) => {
+            if (err instanceof MongoError) {
+              throw new Error('Failed to find PullList for user.')
+            }
+            throw err
+          }),
+        ),
       ),
-      toNullable,
     ),
   releases: (_, { month, year, type }, { dataSources, db, user }) =>
     pipe(
