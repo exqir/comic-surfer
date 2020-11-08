@@ -1,6 +1,6 @@
 import { pipe } from 'fp-ts/lib/pipeable'
 import { toNullable, map } from 'fp-ts/lib/Option'
-import { Resolver, DataSources } from 'types/app'
+import { Resolver, NonNullableResolver, DataSources } from 'types/app'
 import {
   QueryComicBookArgs,
   MutationScrapComicBookArgs,
@@ -12,13 +12,22 @@ import {
   MutationUpdateComicBookReleaseArgs,
   ComicBookType,
 } from 'types/server-schema'
-import { runRTEtoNullable, mapOtoRTEnullable, chainMaybeToNullable } from 'lib'
+import {
+  runRTEtoNullable,
+  mapOtoRTEnullable,
+  chainMaybeToNullable,
+  nonNullableField,
+  nullableField,
+  runRT,
+} from 'lib'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import * as O from 'fp-ts/lib/Option'
 import { TaskEither } from 'fp-ts/lib/TaskEither'
 import { MongoError } from 'mongodb'
 import { ComicBookListData, ComicBookData } from 'services/ScrapeService'
 import { TaskType } from 'datasources/QueueRepository'
 import { toObjectId } from 'datasources/MongoDataSource'
+import { ApolloError } from 'apollo-server'
 
 interface ComicBookQuery {
   // TODO: This actually returns a ComicBook but this is not what the function returns
@@ -27,17 +36,20 @@ interface ComicBookQuery {
 }
 
 interface ComicBookMutation {
-  scrapComicBook: Resolver<ComicBookDbObject, MutationScrapComicBookArgs>
-  scrapSingleIssuesList: Resolver<
+  scrapComicBook: NonNullableResolver<
+    ComicBookDbObject,
+    MutationScrapComicBookArgs
+  >
+  scrapSingleIssuesList: NonNullableResolver<
     ComicBookDbObject[],
     MutationScrapSingleIssuesListArgs
   >
-  scrapCollectionsList: Resolver<
+  scrapCollectionsList: NonNullableResolver<
     ComicBookDbObject[],
     MutationScrapCollectionsListArgs
   >
-  updateComicBooks: Resolver<ComicBookDbObject[], {}>
-  updateComicBookRelease: Resolver<
+  updateComicBooks: NonNullableResolver<ComicBookDbObject[], {}>
+  updateComicBookRelease: NonNullableResolver<
     ComicBookDbObject,
     MutationUpdateComicBookReleaseArgs
   >
@@ -134,168 +146,181 @@ function addPublisherToComicBook(dataSources: DataSources) {
 
 export const ComicBookMutation: ComicBookMutation = {
   scrapComicBook: (_, { comicBookUrl }, { dataSources, db, services }) =>
-    pipe(
+    nonNullableField(
       db,
-      map(
-        runRTEtoNullable(
-          pipe(
-            RTE.fromTaskEither(services.scrape.getComicBook(comicBookUrl)),
-            RTE.chainW(addPublisherToComicBook(dataSources)),
-            RTE.chainW((comicBook) =>
-              dataSources.comicBook.enhanceWithScrapResult(
-                comicBookUrl,
-                comicBook,
-              ),
+      runRT(
+        pipe(
+          RTE.fromTaskEither(services.scrape.getComicBook(comicBookUrl)),
+          RTE.chainW(addPublisherToComicBook(dataSources)),
+          RTE.chainW((comicBook) =>
+            dataSources.comicBook.enhanceWithScrapResult(
+              comicBookUrl,
+              comicBook,
             ),
           ),
+          RTE.chainW((comicBook) =>
+            RTE.fromOption(() => null)(O.fromNullable(comicBook)),
+          ),
+          RTE.getOrElse(() => {
+            throw new ApolloError(
+              `Failed to scrap ComicBook from ${comicBookUrl}.`,
+            )
+          }),
         ),
       ),
-      toNullable,
     ),
   scrapSingleIssuesList: (
     _,
     { comicSeriesId, comicBookListUrl },
     { dataSources, db, services },
   ) =>
-    pipe(
+    nonNullableField(
       db,
-      map(
-        runRTEtoNullable(
-          pipe(
-            RTE.fromTaskEither(
-              services.scrape.getComicBookList(comicBookListUrl) as TaskEither<
-                MongoError,
-                ComicBookListData
-              >,
-            ),
-            RTE.chain(
-              insertComicBookIfNotExisting(
-                dataSources,
-                comicSeriesId,
-                ComicBookType.SINGLEISSUE,
-              ),
-            ),
-            RTE.chainFirst(
-              addNextPageToQueue(
-                dataSources,
-                comicSeriesId,
-                ComicBookType.SINGLEISSUE,
-              ),
-            ),
-            RTE.chainFirst(({ comicBooks }) =>
-              dataSources.queue.insertMany(
-                comicBooks.map(({ url }) => ({
-                  type: TaskType.SCRAPCOMICBOOK,
-                  data: { comicBookUrl: url },
-                })),
-              ),
-            ),
-            RTE.chainFirst(({ comicBooks }) =>
-              dataSources.comicSeries.addComicBooks(
-                comicSeriesId,
-                comicBooks.map(({ _id }) => _id),
-              ),
-            ),
-            RTE.map(({ comicBooks }) => comicBooks),
+      runRT(
+        pipe(
+          RTE.fromTaskEither(
+            services.scrape.getComicBookList(comicBookListUrl),
           ),
+          RTE.chainW(
+            insertComicBookIfNotExisting(
+              dataSources,
+              comicSeriesId,
+              ComicBookType.SINGLEISSUE,
+            ),
+          ),
+          RTE.chainFirstW(
+            addNextPageToQueue(
+              dataSources,
+              comicSeriesId,
+              ComicBookType.SINGLEISSUE,
+            ),
+          ),
+          RTE.chainFirstW(({ comicBooks }) =>
+            dataSources.queue.insertMany(
+              comicBooks.map(({ url }) => ({
+                type: TaskType.SCRAPCOMICBOOK,
+                data: { comicBookUrl: url },
+              })),
+            ),
+          ),
+          RTE.chainFirstW(({ comicBooks }) =>
+            dataSources.comicSeries.addComicBooks(
+              comicSeriesId,
+              comicBooks.map(({ _id }) => _id),
+            ),
+          ),
+          RTE.map(({ comicBooks }) => comicBooks),
+          RTE.getOrElse(() => {
+            throw new ApolloError(
+              `Failed to scrap single issues for ComicSeries ${comicSeriesId} from ${comicBookListUrl}.`,
+            )
+          }),
         ),
       ),
-      toNullable,
     ),
   scrapCollectionsList: (
     _,
     { comicSeriesId, comicBookListUrl },
     { dataSources, db, services },
   ) =>
-    pipe(
+    nonNullableField(
       db,
-      map(
-        runRTEtoNullable(
-          pipe(
-            RTE.fromTaskEither(
-              services.scrape.getComicBookList(comicBookListUrl) as TaskEither<
-                MongoError,
-                ComicBookListData
-              >,
-            ),
-            RTE.chain(
-              insertComicBookIfNotExisting(
-                dataSources,
-                comicSeriesId,
-                ComicBookType.COLLECTION,
-              ),
-            ),
-            RTE.chainFirst(
-              addNextPageToQueue(
-                dataSources,
-                comicSeriesId,
-                ComicBookType.COLLECTION,
-              ),
-            ),
-            RTE.chainFirst(({ comicBooks }) =>
-              dataSources.queue.insertMany(
-                comicBooks.map(({ url }) => ({
-                  type: TaskType.SCRAPCOMICBOOK,
-                  data: { comicBookUrl: url },
-                })),
-              ),
-            ),
-            RTE.chainFirst(({ comicBooks }) =>
-              dataSources.comicSeries.addComicBookCollections(
-                comicSeriesId,
-                comicBooks.map(({ _id }) => _id),
-              ),
-            ),
-            RTE.map(({ comicBooks }) => comicBooks),
+      runRT(
+        pipe(
+          RTE.fromTaskEither(
+            services.scrape.getComicBookList(comicBookListUrl) as TaskEither<
+              MongoError,
+              ComicBookListData
+            >,
           ),
+          RTE.chain(
+            insertComicBookIfNotExisting(
+              dataSources,
+              comicSeriesId,
+              ComicBookType.COLLECTION,
+            ),
+          ),
+          RTE.chainFirst(
+            addNextPageToQueue(
+              dataSources,
+              comicSeriesId,
+              ComicBookType.COLLECTION,
+            ),
+          ),
+          RTE.chainFirst(({ comicBooks }) =>
+            dataSources.queue.insertMany(
+              comicBooks.map(({ url }) => ({
+                type: TaskType.SCRAPCOMICBOOK,
+                data: { comicBookUrl: url },
+              })),
+            ),
+          ),
+          RTE.chainFirst(({ comicBooks }) =>
+            dataSources.comicSeries.addComicBookCollections(
+              comicSeriesId,
+              comicBooks.map(({ _id }) => _id),
+            ),
+          ),
+          RTE.map(({ comicBooks }) => comicBooks),
+          RTE.getOrElse(() => {
+            throw new ApolloError(
+              `Failed to scrap collections for ComicSeries ${comicSeriesId} from ${comicBookListUrl}.`,
+            )
+          }),
         ),
       ),
-      toNullable,
     ),
   updateComicBooks: (_, __, { dataSources, db }) =>
-    pipe(
+    nonNullableField(
       db,
-      map(
-        runRTEtoNullable(
-          pipe(
-            dataSources.comicBook.getUpcoming(),
-            RTE.chainFirst((comicBooks) =>
-              dataSources.queue.insertMany(
-                comicBooks.map(({ _id, url }) => ({
-                  type: TaskType.UPDATECOMICBOOKRELEASE,
-                  data: { comicBookId: _id, url },
-                })),
-              ),
+      runRT(
+        pipe(
+          dataSources.comicBook.getUpcoming(),
+          RTE.chainFirst((comicBooks) =>
+            dataSources.queue.insertMany(
+              comicBooks.map(({ _id, url }) => ({
+                type: TaskType.UPDATECOMICBOOKRELEASE,
+                data: { comicBookId: _id, url },
+              })),
             ),
           ),
+          RTE.getOrElse(() => {
+            throw new ApolloError(
+              `Failed to trigger updating ComicBook release dates.`,
+            )
+          }),
         ),
       ),
-      toNullable,
     ),
   updateComicBookRelease: (_, { comicBookId }, { dataSources, db, services }) =>
-    pipe(
+    nonNullableField(
       db,
-      map(
-        runRTEtoNullable(
-          pipe(
-            dataSources.comicBook.getById(comicBookId),
-            RTE.chainTaskEitherK((comicBook) => {
-              if (comicBook === null) {
-                throw new Error('No ComicBook to update')
-              }
-              return services.scrape.getComicBook(comicBook.url)
-            }),
-            RTE.chainW((comicBook) =>
-              dataSources.comicBook.updateReleaseDate(
-                comicBookId,
-                // TODO: only update when release date available
-                comicBook.releaseDate!,
-              ),
+      runRT(
+        pipe(
+          dataSources.comicBook.getById(comicBookId),
+          RTE.chainTaskEitherK((comicBook) => {
+            if (comicBook === null) {
+              throw new Error('No ComicBook to update')
+            }
+            return services.scrape.getComicBook(comicBook.url)
+          }),
+          RTE.chainW((comicBook) =>
+            dataSources.comicBook.updateReleaseDate(
+              comicBookId,
+              // TODO: only update when release date available
+              comicBook.releaseDate!,
             ),
           ),
+          RTE.chainW((comicBook) =>
+            RTE.fromOption(() => null)(O.fromNullable(comicBook)),
+          ),
+          RTE.getOrElse(() => {
+            throw new ApolloError(
+              `Failed to update release date of ComicBook ${comicBookId}.`,
+            )
+          }),
         ),
       ),
-      toNullable,
     ),
 }
 

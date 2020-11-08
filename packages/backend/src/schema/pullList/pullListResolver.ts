@@ -10,7 +10,13 @@ import {
   QueryReleasesArgs,
   ComicBookType,
 } from 'types/server-schema'
-import { runRTEtoNullable, run, nonNullableField, nullableField } from 'lib'
+import {
+  runRTEtoNullable,
+  run,
+  nonNullableField,
+  nullableField,
+  runRT,
+} from 'lib'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { map, toNullable, fold, Option } from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
@@ -18,7 +24,7 @@ import * as RT from 'fp-ts/lib/ReaderTask'
 import * as T from 'fp-ts/lib/Task'
 import * as O from 'fp-ts/lib/Option'
 import { constTrue, identity, flow } from 'fp-ts/lib/function'
-import { AuthenticationError } from 'apollo-server'
+import { ApolloError, AuthenticationError } from 'apollo-server'
 import { Authentication } from 'services/Authentication'
 import { TaskType } from 'datasources/QueueRepository'
 
@@ -75,13 +81,11 @@ export function getUser(user: Option<string>) {
   )(user)
 }
 
-const rtRun = <T, A>(rte: RT.ReaderTask<T, A>) => (t: T) => RT.run(rte, t)
-
 export const PullListQuery: PullListQuery = {
   pullList: (_, __, { dataSources, db, user }) =>
     nonNullableField(
       db,
-      rtRun(
+      runRT(
         pipe(
           getUser(user),
           RTE.chainW(dataSources.pullList.getByUser),
@@ -92,7 +96,7 @@ export const PullListQuery: PullListQuery = {
           ),
           RTE.getOrElse((err) => {
             if (err instanceof MongoError) {
-              throw new Error('Failed to find PullList for user.')
+              throw new ApolloError('Failed to find PullList for user.')
             }
             throw err
           }),
@@ -140,7 +144,7 @@ export const PullListMutation: PullListMutation = {
   ) =>
     nonNullableField(
       db,
-      rtRun(
+      runRT(
         pipe(
           RTE.fromTaskEither(services.scrape.getComicSeries(comicSeriesUrl)),
           RTE.chainW((comicSeries) =>
@@ -193,7 +197,7 @@ export const PullListMutation: PullListMutation = {
           ),
           RTE.getOrElse((err) => {
             if (err instanceof MongoError) {
-              throw new Error('Failed to subscribe to Comic Series.')
+              throw new ApolloError('Failed to subscribe to Comic Series.')
             }
             throw err
           }),
@@ -207,7 +211,7 @@ export const PullListMutation: PullListMutation = {
   ) =>
     nonNullableField(
       db,
-      rtRun(
+      runRT(
         pipe(
           getUser(user),
           RTE.chainW((u) =>
@@ -220,7 +224,7 @@ export const PullListMutation: PullListMutation = {
           ),
           RTE.getOrElse((err) => {
             if (err instanceof MongoError) {
-              throw new Error('Failed to subscribe to Comic Series.')
+              throw new ApolloError('Failed to subscribe to Comic Series.')
             }
             throw err
           }),
@@ -230,7 +234,7 @@ export const PullListMutation: PullListMutation = {
   unsubscribeComicSeries: (_, { comicSeriesId }, { dataSources, db, user }) =>
     nonNullableField(
       db,
-      rtRun(
+      runRT(
         pipe(
           getUser(user),
           RTE.chainW((u) =>
@@ -243,7 +247,7 @@ export const PullListMutation: PullListMutation = {
           ),
           RTE.getOrElse((err) => {
             if (err instanceof MongoError) {
-              throw new Error('Failed to unsubscribe from Comic Series.')
+              throw new ApolloError('Failed to unsubscribe from Comic Series.')
             }
             throw err
           }),
@@ -253,7 +257,7 @@ export const PullListMutation: PullListMutation = {
   login: (_, __, { dataSources, db, req, res }) =>
     nonNullableField(
       db,
-      rtRun(
+      runRT(
         pipe(
           Authentication.getSessionFromHeaders(req),
           RTE.fromTaskEither,
@@ -276,7 +280,7 @@ export const PullListMutation: PullListMutation = {
             if (err instanceof MongoError) {
               throw new Error('Failed find or create PullList for user.')
             }
-            throw new Error('Failed to login user.')
+            throw new ApolloError('Failed to login user.')
           }),
         ),
       ),
@@ -294,11 +298,11 @@ export const PullListResolver: PullListResolver = {
     list: ({ list }, _, { dataSources, db }) =>
       nonNullableField(
         db,
-        rtRun(
+        runRT(
           pipe(
             dataSources.comicSeries.getByIds(list),
             RTE.getOrElse(() => {
-              throw new Error(
+              throw new ApolloError(
                 'Failed to find ComicSeries for `list` of PullList.',
               )
             }),

@@ -1,13 +1,21 @@
-import { Resolver } from 'types/app'
+import { Resolver, NonNullableResolver } from 'types/app'
 import {
   ComicSeriesDbObject,
   PublisherDbObject,
   QueryPublishersArgs,
   QueryPublisherArgs,
 } from 'types/server-schema'
-import { runRTEtoNullable, maybeToOption } from 'lib'
+import {
+  runRTEtoNullable,
+  maybeToOption,
+  nullableField,
+  nonNullableField,
+  runRT,
+} from 'lib'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { map, toNullable, fold } from 'fp-ts/lib/Option'
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import { ApolloError } from 'apollo-server'
 
 interface PublisherQuery {
   // TODO: This actually returns a Publisher but this is not what the function returns
@@ -18,42 +26,45 @@ interface PublisherQuery {
 
 export const PublisherQuery: PublisherQuery = {
   publishers: (_, { names }, { dataSources, db }) =>
-    pipe(
+    nullableField(
       db,
-      map(
-        runRTEtoNullable(
-          pipe(
-            maybeToOption(names),
-            fold(
-              () => dataSources.publisher.getAll(),
-              dataSources.publisher.getByNames,
-            ),
+      runRTEtoNullable(
+        pipe(
+          maybeToOption(names),
+          fold(
+            () => dataSources.publisher.getAll(),
+            dataSources.publisher.getByNames,
           ),
         ),
       ),
-      toNullable,
     ),
   publisher: (_, { name }, { dataSources, db }) =>
-    pipe(
-      db,
-      map(runRTEtoNullable(dataSources.publisher.getByName(name))),
-      toNullable,
-    ),
+    nullableField(db, runRTEtoNullable(dataSources.publisher.getByName(name))),
 }
 
 interface PublisherResolver {
   Publisher: {
-    comicSeries: Resolver<ComicSeriesDbObject[], {}, PublisherDbObject>
+    comicSeries: NonNullableResolver<
+      ComicSeriesDbObject[],
+      {},
+      PublisherDbObject
+    >
   }
 }
 
 export const PublisherResolver: PublisherResolver = {
   Publisher: {
     comicSeries: ({ comicSeries }, _, { dataSources, db }) =>
-      pipe(
+      nonNullableField(
         db,
-        map(runRTEtoNullable(dataSources.comicSeries.getByIds(comicSeries))),
-        toNullable,
+        runRT(
+          pipe(
+            dataSources.comicSeries.getByIds(comicSeries),
+            RTE.getOrElse(() => {
+              throw new ApolloError('Failed to find ComicSeries for Publisher.')
+            }),
+          ),
+        ),
       ),
   },
 }

@@ -14,6 +14,9 @@ export const logError = (logger: Logger) => (err: MongoError) => {
   return err
 }
 
+export const runRT = <T, A>(rte: RT.ReaderTask<T, A>) => (t: T) =>
+  RT.run(rte, t)
+
 export const foldTEtoNullable = <A, B>() =>
   TE.fold<A, B, B | null>(() => T.of(null), T.of)
 

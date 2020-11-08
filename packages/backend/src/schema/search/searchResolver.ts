@@ -1,16 +1,12 @@
 import { MongoError } from 'mongodb'
 import { Resolver, NonNullableResolver, DataSources } from 'types/app'
 import { QuerySearchArgs, Search } from 'types/server-schema'
-import { foldTEtoNullable, runRTEtoNullable, nullableField } from 'lib'
+import { runRTEtoNullable, nullableField } from 'lib'
 import { pipe } from 'fp-ts/lib/pipeable'
-import { identity } from 'fp-ts/lib/function'
-import { fold, map } from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
-import * as RT from 'fp-ts/lib/ReaderTask'
-import * as T from 'fp-ts/lib/Task'
 import * as O from 'fp-ts/lib/Option'
 
-import { getUserOrThrow, getUser } from '../pullList/pullListResolver'
+import { getUser } from '../pullList/pullListResolver'
 import { ComicSeriesSearchData } from 'services/ScrapeService'
 
 type EnhancedSearch = Omit<Search, 'inPullList'> & {
@@ -27,8 +23,6 @@ interface SearchResolver {
     inPullList: NonNullableResolver<Boolean, {}, EnhancedSearch>
   }
 }
-
-const rtRun = <T, A>(rte: RT.ReaderTask<T, A>) => (t: T) => RT.run(rte, t)
 
 function enhanceSearchWithComicSeriesUrlFromPullList({
   dataSources,
