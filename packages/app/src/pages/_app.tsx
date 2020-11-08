@@ -14,7 +14,8 @@ if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
 
 const swrConfig: ConfigInterface<
   any,
-  (GraphQLError | AuthenticationError | Error)[] | undefined
+  (GraphQLError | AuthenticationError | Error)[] | undefined,
+  (...args: any) => any
 > = {
   // Reset data on Authentication Error without revalidation.
   // This allows the data to be refeteched once the component

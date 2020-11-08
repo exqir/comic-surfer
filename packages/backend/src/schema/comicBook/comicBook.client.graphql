@@ -3,17 +3,17 @@ extend type Query {
 }
 
 extend type Mutation {
-  scrapComicBook(comicBookUrl: String!): ComicBook
+  scrapComicBook(comicBookUrl: String!): ComicBook!
   scrapSingleIssuesList(
     comicSeriesId: ID!
     comicBookListUrl: String!
-  ): [ComicBook!]
+  ): [ComicBook!]!
   scrapCollectionsList(
     comicSeriesId: ID!
     comicBookListUrl: String!
-  ): [ComicBook!]
-  updateComicBooks: [ComicBook!]
-  updateComicBookRelease(comicBookId: ID!): ComicBook
+  ): [ComicBook!]!
+  updateComicBooks: [ComicBook!]!
+  updateComicBookRelease(comicBookId: ID!): ComicBook!
 }
 
 enum ComicBookType {

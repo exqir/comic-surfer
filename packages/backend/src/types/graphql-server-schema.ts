@@ -64,18 +64,23 @@ export type Creator = {
 export type Mutation = {
    __typename?: 'Mutation';
   _empty: Maybe<Scalars['String']>;
+  /** Login a user based on the token given in the Authorization header. */
   login: PullList;
+  /** Logout the current user. */
   logout: Scalars['Boolean'];
-  scrapCollectionsList: Maybe<Array<ComicBook>>;
-  scrapComicBook: Maybe<ComicBook>;
-  scrapSingleIssuesList: Maybe<Array<ComicBook>>;
+  scrapCollectionsList: Array<ComicBook>;
+  scrapComicBook: ComicBook;
+  scrapSingleIssuesList: Array<ComicBook>;
+  /** Add a ComicSeries to the users PullList based on its url. */
   subscribeComicSeries: PullList;
+  /** Add a ComicSeries to the users PullList based on its id. */
   subscribeExistingComicSeries: PullList;
+  /** Remove a ComicSeries from the users PullList based on its id. */
   unsubscribeComicSeries: PullList;
-  updateComicBookRelease: Maybe<ComicBook>;
-  updateComicBooks: Maybe<Array<ComicBook>>;
-  updateComicSeries: Maybe<Array<ComicSeries>>;
-  updateComicSeriesPublisher: Maybe<ComicSeries>;
+  updateComicBookRelease: ComicBook;
+  updateComicBooks: Array<ComicBook>;
+  updateComicSeries: Array<ComicSeries>;
+  updateComicSeriesPublisher: ComicSeries;
 };
 
 
@@ -132,8 +137,11 @@ export type Publisher = {
 
 export type PullList = {
    __typename?: 'PullList';
+  /** ID of the PullList. */
   _id: Scalars['ID'];
+  /** The user the PullList belongs to. */
   owner: Scalars['String'];
+  /** The list of ComicSeries on the PullList. */
   list: Array<ComicSeries>;
 };
 
@@ -144,7 +152,12 @@ export type Query = {
   comicSeries: Maybe<ComicSeries>;
   publisher: Maybe<Publisher>;
   publishers: Maybe<Array<Publisher>>;
-  pullList: Maybe<PullList>;
+  /** The PullList of the current user. */
+  pullList: PullList;
+  /**
+   * The ComicBooks released within the month matching the arguments.
+   * In case of a logged-in user only ComicBooks from ComicSeries of the users PullList are included.
+   */
   releases: Maybe<Array<ComicBook>>;
   search: Maybe<Array<Search>>;
 };

@@ -3,8 +3,8 @@ extend type Query {
 }
 
 extend type Mutation {
-  updateComicSeries: [ComicSeries!]
-  updateComicSeriesPublisher(comicSeriesId: ID!): ComicSeries
+  updateComicSeries: [ComicSeries!]!
+  updateComicSeriesPublisher(comicSeriesId: ID!): ComicSeries!
 }
 
 type ComicSeries {
