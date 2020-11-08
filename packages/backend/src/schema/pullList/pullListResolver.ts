@@ -1,4 +1,5 @@
-import { Resolver } from 'types/app'
+import { MongoError } from 'mongodb'
+import { Resolver, NonNullableResolver } from 'types/app'
 import {
   ComicSeriesDbObject,
   PullListDbObject,
@@ -9,44 +10,44 @@ import {
   QueryReleasesArgs,
   ComicBookType,
 } from 'types/server-schema'
-import { runRTEtoNullable, run, nonNullableField } from 'lib'
+import { runRTEtoNullable, run, nonNullableField, nullableField } from 'lib'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { map, toNullable, fold, Option } from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as RT from 'fp-ts/lib/ReaderTask'
 import * as T from 'fp-ts/lib/Task'
+import * as O from 'fp-ts/lib/Option'
 import { constTrue, identity, flow } from 'fp-ts/lib/function'
 import { AuthenticationError } from 'apollo-server'
 import { Authentication } from 'services/Authentication'
 import { TaskType } from 'datasources/QueueRepository'
-import { MongoError } from 'mongodb'
 
 interface PullListQuery {
   // TODO: This actually returns a PullList but this is not what the function returns
   // but what is returned once all field resolvers are done
-  pullList: Resolver<PullListDbObject, {}>
+  pullList: NonNullableResolver<PullListDbObject, {}>
   releases: Resolver<ComicBookDbObject[], QueryReleasesArgs>
 }
 interface PullListMutation {
-  subscribeComicSeries: Resolver<
+  subscribeComicSeries: NonNullableResolver<
     PullListDbObject,
     MutationSubscribeComicSeriesArgs
   >
-  subscribeExistingComicSeries: Resolver<
+  subscribeExistingComicSeries: NonNullableResolver<
     PullListDbObject,
     MutationSubscribeExistingComicSeriesArgs
   >
-  unsubscribeComicSeries: Resolver<
+  unsubscribeComicSeries: NonNullableResolver<
     PullListDbObject,
     MutationUnsubscribeComicSeriesArgs
   >
-  login: Resolver<PullListDbObject, {}>
-  logout: Resolver<boolean, {}>
+  login: NonNullableResolver<PullListDbObject, {}>
+  logout: NonNullableResolver<boolean, {}>
 }
 
 interface PullListResolver {
   PullList: {
-    list: Resolver<ComicSeriesDbObject[], {}, PullListDbObject>
+    list: NonNullableResolver<ComicSeriesDbObject[], {}, PullListDbObject>
   }
 }
 
@@ -70,7 +71,7 @@ export function getUserOrThrow(user: Option<string>) {
 
 export function getUser(user: Option<string>) {
   return RTE.fromOption(
-    () => new AuthenticationError('Failed to identify user'),
+    () => new AuthenticationError('Failed to identify user.'),
   )(user)
 }
 
@@ -84,6 +85,11 @@ export const PullListQuery: PullListQuery = {
         pipe(
           getUser(user),
           RTE.chainW(dataSources.pullList.getByUser),
+          RTE.chainW((pullList) =>
+            RTE.fromOption(
+              () => new MongoError('PullList for user was `null`.'),
+            )(O.fromNullable(pullList)),
+          ),
           RTE.getOrElse((err) => {
             if (err instanceof MongoError) {
               throw new Error('Failed to find PullList for user.')
@@ -94,38 +100,35 @@ export const PullListQuery: PullListQuery = {
       ),
     ),
   releases: (_, { month, year, type }, { dataSources, db, user }) =>
-    pipe(
+    nullableField(
       db,
-      map(
-        runRTEtoNullable(
-          pipe(
-            RTE.fromOption(() => new Error('Failed to get user from request'))(
-              user,
-            ),
-            RTE.chainW(dataSources.pullList.getByUser),
-            RTE.chainW((pullList) => {
-              if (pullList === null)
-                return RTE.left(new Error('No pullList for the user exists'))
-              return dataSources.comicBook.getBySeriesAndRelease(
-                pullList.list,
-                // TODO: Validate month and year
-                month ?? new Date().getMonth() + 1,
-                year ?? new Date().getFullYear(),
-                type ?? ComicBookType.SINGLEISSUE,
-              )
-            }),
-            RTE.orElse(() =>
-              dataSources.comicBook.getByRelease(
-                // TODO: Validate month and year
-                month ?? new Date().getMonth() + 1,
-                year ?? new Date().getFullYear(),
-                type ?? ComicBookType.SINGLEISSUE,
-              ),
+      runRTEtoNullable(
+        pipe(
+          RTE.fromOption(() => new Error('Failed to get user from request'))(
+            user,
+          ),
+          RTE.chainW(dataSources.pullList.getByUser),
+          RTE.chainW((pullList) => {
+            if (pullList === null)
+              return RTE.left(new Error('No pullList for the user exists'))
+            return dataSources.comicBook.getBySeriesAndRelease(
+              pullList.list,
+              // TODO: Validate month and year
+              month ?? new Date().getMonth() + 1,
+              year ?? new Date().getFullYear(),
+              type ?? ComicBookType.SINGLEISSUE,
+            )
+          }),
+          RTE.orElse(() =>
+            dataSources.comicBook.getByRelease(
+              // TODO: Validate month and year
+              month ?? new Date().getMonth() + 1,
+              year ?? new Date().getFullYear(),
+              type ?? ComicBookType.SINGLEISSUE,
             ),
           ),
         ),
       ),
-      toNullable,
     ),
 }
 
@@ -135,114 +138,148 @@ export const PullListMutation: PullListMutation = {
     { comicSeriesUrl },
     { dataSources, db, user, services },
   ) =>
-    pipe(
+    nonNullableField(
       db,
-      map(
-        runRTEorThrow(new Error('Failed to subscribe to Comic Series'))(
-          pipe(
-            RTE.fromTaskEither(services.scrape.getComicSeries(comicSeriesUrl)),
-            RTE.chainW((comicSeries) =>
-              dataSources.comicSeries.insertIfNotExisting(comicSeries),
-            ),
-            RTE.chainFirst((comicSeries) => {
-              if (comicSeries && comicSeries.publisher === null) {
-                return dataSources.queue.insertMany([
-                  {
-                    type: TaskType.UPDATECOMICSERIESPUBLISHER,
-                    data: {
-                      comicSeriesId: comicSeries._id,
-                    },
+      rtRun(
+        pipe(
+          RTE.fromTaskEither(services.scrape.getComicSeries(comicSeriesUrl)),
+          RTE.chainW((comicSeries) =>
+            dataSources.comicSeries.insertIfNotExisting(comicSeries),
+          ),
+          RTE.chainFirst((comicSeries) => {
+            if (comicSeries && comicSeries.publisher === null) {
+              return dataSources.queue.insertMany([
+                {
+                  type: TaskType.UPDATECOMICSERIESPUBLISHER,
+                  data: {
+                    comicSeriesId: comicSeries._id,
                   },
-                  {
-                    type: TaskType.SCRAPSINGLEISSUELIST,
-                    data: {
-                      comicSeriesId: comicSeries._id,
-                      url: comicSeries.singleIssuesUrl!,
-                    },
+                },
+                {
+                  type: TaskType.SCRAPSINGLEISSUELIST,
+                  data: {
+                    comicSeriesId: comicSeries._id,
+                    url: comicSeries.singleIssuesUrl!,
                   },
-                  {
-                    type: TaskType.SCRAPCOLLECTIONLIST,
-                    data: {
-                      comicSeriesId: comicSeries._id,
-                      url: comicSeries.collectionsUrl!,
-                    },
+                },
+                {
+                  type: TaskType.SCRAPCOLLECTIONLIST,
+                  data: {
+                    comicSeriesId: comicSeries._id,
+                    url: comicSeries.collectionsUrl!,
                   },
-                ])
-              }
-              return RTE.right({})
-            }),
-            RTE.chainW((comicSeries) =>
-              dataSources.pullList.addComicSeries(
-                getUserOrThrow(user),
-                // comicSeries can not be null as insertIfNotExisting will upsert the series
-                // therefore the return type for updateOne should not contain null anymore
-                (comicSeries as ComicSeriesDbObject)._id,
+                },
+              ])
+            }
+            return RTE.right({})
+          }),
+          RTE.chainW((comicSeries) =>
+            pipe(
+              getUser(user),
+              // comicSeries can not be null as insertIfNotExisting will upsert the series
+              // therefore the return type for updateOne should not contain null anymore
+              RTE.chainW((u) =>
+                dataSources.pullList.addComicSeries(
+                  u,
+                  (comicSeries as ComicSeriesDbObject)._id,
+                ),
               ),
             ),
           ),
+          RTE.chainW((pullList) =>
+            RTE.fromOption(
+              () => new MongoError('PullList for user was `null`.'),
+            )(O.fromNullable(pullList)),
+          ),
+          RTE.getOrElse((err) => {
+            if (err instanceof MongoError) {
+              throw new Error('Failed to subscribe to Comic Series.')
+            }
+            throw err
+          }),
         ),
       ),
-      toNullable,
     ),
   subscribeExistingComicSeries: (
     _,
     { comicSeriesId },
     { dataSources, db, user },
   ) =>
-    pipe(
+    nonNullableField(
       db,
-      map(
-        runRTEorThrow(new Error('Failed to subscribe to Comic Series'))(
-          dataSources.pullList.addComicSeries(
-            getUserOrThrow(user),
-            comicSeriesId,
+      rtRun(
+        pipe(
+          getUser(user),
+          RTE.chainW((u) =>
+            dataSources.pullList.addComicSeries(u, comicSeriesId),
           ),
+          RTE.chainW((pullList) =>
+            RTE.fromOption(
+              () => new MongoError('PullList for user was `null`.'),
+            )(O.fromNullable(pullList)),
+          ),
+          RTE.getOrElse((err) => {
+            if (err instanceof MongoError) {
+              throw new Error('Failed to subscribe to Comic Series.')
+            }
+            throw err
+          }),
         ),
       ),
-      toNullable,
     ),
   unsubscribeComicSeries: (_, { comicSeriesId }, { dataSources, db, user }) =>
-    pipe(
+    nonNullableField(
       db,
-      map(
-        runRTEorThrow(new Error('Failed to unsubscribe from Comic Series'))(
-          dataSources.pullList.removeComicSeries(
-            getUserOrThrow(user),
-            comicSeriesId,
+      rtRun(
+        pipe(
+          getUser(user),
+          RTE.chainW((u) =>
+            dataSources.pullList.removeComicSeries(u, comicSeriesId),
           ),
+          RTE.chainW((pullList) =>
+            RTE.fromOption(
+              () => new MongoError('PullList for user was `null`.'),
+            )(O.fromNullable(pullList)),
+          ),
+          RTE.getOrElse((err) => {
+            if (err instanceof MongoError) {
+              throw new Error('Failed to unsubscribe from Comic Series.')
+            }
+            throw err
+          }),
         ),
       ),
-      toNullable,
     ),
   login: (_, __, { dataSources, db, req, res }) =>
-    pipe(
+    nonNullableField(
       db,
-      map(
-        runRTEorThrow(new Error('Failed to login user'))(
-          pipe(
-            Authentication.getSessionFromHeaders(req),
-            RTE.fromTaskEither,
-            RTE.chain((session) =>
-              RTE.apFirst(
-                RTE.fromTaskEither(
-                  Authentication.setSessionCookie(session, res),
-                ),
-              )(RTE.right(Authentication.getSessionIssuer(session))),
-            ),
-            RTE.chainW((issuer) =>
-              pipe(
-                dataSources.pullList.getByUser(issuer),
-                RTE.chain((pullList) =>
-                  pullList
-                    ? RTE.right(pullList)
-                    : dataSources.pullList.insert({ owner: issuer, list: [] }),
-                ),
+      rtRun(
+        pipe(
+          Authentication.getSessionFromHeaders(req),
+          RTE.fromTaskEither,
+          RTE.chain((session) =>
+            RTE.apFirst(
+              RTE.fromTaskEither(Authentication.setSessionCookie(session, res)),
+            )(RTE.right(Authentication.getSessionIssuer(session))),
+          ),
+          RTE.chainW((issuer) =>
+            pipe(
+              dataSources.pullList.getByUser(issuer),
+              RTE.chain((pullList) =>
+                pullList
+                  ? RTE.right(pullList)
+                  : dataSources.pullList.insert({ owner: issuer, list: [] }),
               ),
             ),
           ),
+          RTE.getOrElse((err) => {
+            if (err instanceof MongoError) {
+              throw new Error('Failed find or create PullList for user.')
+            }
+            throw new Error('Failed to login user.')
+          }),
         ),
       ),
-      toNullable,
     ),
   logout: (_, __, { req, res }) =>
     pipe(
@@ -255,10 +292,18 @@ export const PullListMutation: PullListMutation = {
 export const PullListResolver: PullListResolver = {
   PullList: {
     list: ({ list }, _, { dataSources, db }) =>
-      pipe(
+      nonNullableField(
         db,
-        map(runRTEtoNullable(dataSources.comicSeries.getByIds(list))),
-        toNullable,
+        rtRun(
+          pipe(
+            dataSources.comicSeries.getByIds(list),
+            RTE.getOrElse(() => {
+              throw new Error(
+                'Failed to find ComicSeries for `list` of PullList.',
+              )
+            }),
+          ),
+        ),
       ),
   },
 }

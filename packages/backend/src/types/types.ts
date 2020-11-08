@@ -68,4 +68,17 @@ export type Resolver<
   info: Info,
 ) => Result | Promise<Result | null> | null
 
+export type NonNullableResolver<
+  Result,
+  Arguments,
+  Parent = {},
+  Context = GraphQLContext,
+  Info = GraphQLResolveInfo
+> = (
+  parent: Parent,
+  args: Arguments,
+  context: Context,
+  info: Info,
+) => Result | Promise<Result>
+
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>

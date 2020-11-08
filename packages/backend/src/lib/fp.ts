@@ -47,7 +47,7 @@ export const filterMaybe = <T>(m: Maybe<T>[]): T[] =>
 //
 export const nullableField = <A, B>(
   db: O.Option<Db>,
-  dbReader: RTE.ReaderTaskEither<Db, A, B>,
+  dbReader: (db: Db) => A | null,
 ) => {
   return pipe(db, O.map(dbReader), O.toNullable)
 }
