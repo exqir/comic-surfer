@@ -7,6 +7,7 @@ import {
   LoginUserMutation,
   LogoutUserMutation,
   GetPullListQuery,
+  GetComicSeriesQuery,
 } from 'types/graphql-client-schema'
 
 export const handlers = [
@@ -94,64 +95,44 @@ export const handlers = [
     return res(ctx.data(data))
   }),
   graphql.query('getCurrentComicBookReleases', (req, res, ctx) => {
-    const { auth } = req.cookies
-    if (auth) {
-      const data: GetCurrentComicBookReleasesQuery = {
-        releases: [
-          {
-            _id: '1',
-            title: 'Descender',
-            issueNo: '11',
-            coverImgUrl:
-              'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
-            url: '/descender',
-          },
-          {
-            _id: '2',
-            title: 'Southern Bastards',
-            issueNo: '20',
-            coverImgUrl:
-              'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/493985/493985._SX312_QL80_TTD_.jpg',
-            url: '/southern-bastards',
-          },
-          {
-            _id: '3',
-            title: 'Low',
-            issueNo: '24',
-            coverImgUrl:
-              'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/845911/845911._SX312_QL80_TTD_.jpg',
-            url: '/low',
-          },
-          {
-            _id: '4',
-            title: 'Seven to Eternity',
-            issueNo: '9',
-            coverImgUrl:
-              'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/528975/528975._SX312_QL80_TTD_.jpg',
-            url: '/seven-to-eternity',
-          },
-        ],
-      }
-
-      return res(ctx.data(data))
+    const data: GetCurrentComicBookReleasesQuery = {
+      releases: [
+        {
+          _id: '1',
+          title: 'Descender',
+          issueNo: '11',
+          coverImgUrl:
+            'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+          url: '/descender',
+        },
+        {
+          _id: '2',
+          title: 'Southern Bastards',
+          issueNo: '20',
+          coverImgUrl:
+            'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/493985/493985._SX312_QL80_TTD_.jpg',
+          url: '/southern-bastards',
+        },
+        {
+          _id: '3',
+          title: 'Low',
+          issueNo: '24',
+          coverImgUrl:
+            'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/845911/845911._SX312_QL80_TTD_.jpg',
+          url: '/low',
+        },
+        {
+          _id: '4',
+          title: 'Seven to Eternity',
+          issueNo: '9',
+          coverImgUrl:
+            'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/528975/528975._SX312_QL80_TTD_.jpg',
+          url: '/seven-to-eternity',
+        },
+      ],
     }
 
-    return res(
-      ctx.errors([
-        {
-          message: 'Failed to log in: username or password are invalid',
-          locations: [
-            {
-              line: 8,
-              column: 12,
-            },
-          ],
-          extensions: {
-            code: 'UNAUTHENTICATED',
-          },
-        },
-      ]),
-    )
+    return res(ctx.data(data))
   }),
   graphql.query('getSearch', (req, res, ctx) => {
     const id = req.variables.searchQuery
@@ -177,10 +158,76 @@ export const handlers = [
         _id: '1',
         owner: '1',
         list: [
-          { _id: '1', url: '/descender' },
-          { _id: '2', url: '/ascender' },
+          { _id: '1', title: 'Descender' },
+          { _id: '2', title: 'Ascender' },
         ],
       },
+    }
+
+    return res(ctx.data(data))
+  }),
+  graphql.query('getComicSeries', (req, res, ctx) => {
+    const id = req.variables.comicSeriesId
+
+    let data: GetComicSeriesQuery = { comicSeries: null }
+
+    if (id === '1') {
+      data = {
+        comicSeries: {
+          _id: '1',
+          title: 'Descender',
+          singleIssues: [
+            {
+              _id: '1',
+              title: 'Descender',
+              issueNo: '1',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+            },
+            {
+              _id: '2',
+              title: 'Descender',
+              issueNo: '2',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+            },
+          ],
+          collections: [],
+          publisher: {
+            _id: '1',
+            name: 'Image',
+          },
+        },
+      }
+    }
+    if (id === '2') {
+      data = {
+        comicSeries: {
+          _id: '2',
+          title: 'Ascender',
+          singleIssues: [
+            {
+              _id: '1',
+              title: 'Ascender',
+              issueNo: '11',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+            },
+            {
+              _id: '2',
+              title: 'Ascender',
+              issueNo: '12',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+            },
+          ],
+          collections: [],
+          publisher: {
+            _id: '1',
+            name: 'Image',
+          },
+        },
+      }
     }
 
     return res(ctx.data(data))

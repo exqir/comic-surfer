@@ -185,6 +185,7 @@ export const Button = forwardRef<
             .button:hover,
             .button:active,
             .button:focus {
+              --button-color: var(--color-primary);
               --button-bg: transparent;
             }
           `}

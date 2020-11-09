@@ -25,6 +25,11 @@ type HeadingProps = {
    */
   align?: TextAlignment
   /**
+   * Additional classes
+   * @default undefined
+   */
+  className?: string
+  /**
    * Content
    * @default undefined
    */
@@ -36,11 +41,15 @@ export const Heading: React.FC<HeadingProps> = ({
   component: Component,
   variant = Component,
   align,
+  className,
   children,
   ...htmlAttributes
 }) => {
   return (
-    <Component {...htmlAttributes} className={clsx('heading', variant, align)}>
+    <Component
+      {...htmlAttributes}
+      className={clsx('heading', className, variant, align)}
+    >
       {children}
       <style jsx>{staticStyles}</style>
     </Component>

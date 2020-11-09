@@ -5,6 +5,7 @@ import { Heading } from 'components/Heading'
 import { Stack } from 'components/Stack'
 import { Tiles } from 'components/Tiles'
 import { Button } from 'components/Button'
+import { Card } from 'components/Card'
 
 const placeholder: React.CSSProperties = {
   backgroundColor: '#ccc',
@@ -49,6 +50,13 @@ const Design = () => {
             <div style={placeholder}>4</div>
           </Tiles>
         </Stack>
+        <Heading component="h2">Cards:</Heading>
+        <Tiles columns={{ default: 2, tablet: 4 }} space="medium">
+          <Card>1</Card>
+          <Card>2</Card>
+          <Card>3</Card>
+          <Card>4</Card>
+        </Tiles>
       </Stack>
     </div>
   )

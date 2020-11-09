@@ -81,8 +81,8 @@ export default function App({ Component, pageProps }: AppProps) {
           }
         `}
       </style>
-      <Navigation />
       <Container>
+        <Navigation />
         <Component {...pageProps} />
       </Container>
     </SWRConfig>

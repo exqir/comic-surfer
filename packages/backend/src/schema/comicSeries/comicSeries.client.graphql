@@ -17,4 +17,6 @@ type ComicSeries {
   collections: [ComicBook!]!
   singleIssues: [ComicBook!]!
   lastModified: Date!
+  # TODO: coverUrl -> cover of latest issue
+  # TODO: amount of issues and collections
 }

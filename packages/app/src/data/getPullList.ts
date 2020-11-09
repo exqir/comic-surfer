@@ -10,7 +10,7 @@ export const query = gql`
       owner
       list {
         _id
-        url
+        title
       }
     }
   }

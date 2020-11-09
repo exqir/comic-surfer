@@ -17,4 +17,6 @@ type ComicSeries @entity {
   collections: [ComicBook!]! @link
   singleIssues: [ComicBook!]! @link
   lastModified: Date! @column
+  # TODO: coverUrl -> cover of latest issue
+  # TODO: amount of issues and collections
 }

@@ -6,22 +6,36 @@ import {
   InferGetStaticPropsType,
 } from 'next'
 
-import { Head } from 'components/Head'
+import {
+  query as releasesQuery,
+  fetcher as releasesFetcher,
+} from 'data/getCurrentComicBookReleases'
 import { query, fetcher } from 'data/getComicBook'
 import { token } from 'lib/tokens'
+import { Head } from 'components/Head'
+import { Stack } from 'components/Stack'
+import { Heading } from 'components/Heading'
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = [].map((id) => ({
-    params: { id },
-  }))
+  try {
+    const { releases } = await releasesFetcher(releasesQuery)
 
-  return { paths, fallback: true }
+    const paths =
+      releases?.map(({ _id }) => ({
+        params: { id: _id },
+      })) ?? []
+
+    return { paths, fallback: true }
+  } catch (error) {
+    return { paths: [], fallback: true }
+  }
 }
 
-export const getStaticProps = async ({ params }: GetStaticPropsContext) => {
+export const getStaticProps = async ({
+  params,
+}: GetStaticPropsContext<{ id: string }>) => {
   try {
-    const data = await fetcher(query, params!.id as string)
-    const comicBook = data.comicBook
+    const { comicBook } = await fetcher(query, params!.id)
 
     return {
       props: {
@@ -51,11 +65,10 @@ const ComicBook = ({
   return (
     <div>
       <Head title={`${comicBook.title} - ${comicBook.issueNo}`} />
-
-      <div className="hero">
-        <h1 className="title">
+      <Stack space="large">
+        <Heading component="h1">
           {comicBook.title} #{comicBook.issueNo}
-        </h1>
+        </Heading>
         <div className="card">
           <img
             className="cover"
@@ -64,28 +77,18 @@ const ComicBook = ({
             width="180"
             height="276"
           />
-          <span>
-            {comicBook.releaseDate
-              ? new Intl.DateTimeFormat('en-GB', {
-                  day: '2-digit',
-                  month: '2-digit',
-                  year: 'numeric',
-                }).format(new Date(comicBook.releaseDate))
-              : null}
-          </span>
         </div>
-      </div>
-
+        <span>
+          {comicBook.releaseDate
+            ? new Intl.DateTimeFormat('en-GB', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+              }).format(new Date(comicBook.releaseDate))
+            : null}
+        </span>
+      </Stack>
       <style jsx>{`
-        .hero {
-          width: 100%;
-          color: #333;
-        }
-        .title {
-          margin: 0;
-          line-height: 1.15;
-          font-size: 48px;
-        }
         .cover {
           border-radius: ${token('borderRadius')};
           overflow: hidden;

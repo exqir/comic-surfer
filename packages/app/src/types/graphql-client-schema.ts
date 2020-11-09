@@ -201,6 +201,29 @@ export type GetComicBookQuery = (
   )> }
 );
 
+export type GetComicSeriesQueryVariables = {
+  comicSeriesId: Scalars['ID'];
+};
+
+
+export type GetComicSeriesQuery = (
+  { __typename?: 'Query' }
+  & { comicSeries: Maybe<(
+    { __typename?: 'ComicSeries' }
+    & Pick<ComicSeries, '_id' | 'title'>
+    & { singleIssues: Array<(
+      { __typename?: 'ComicBook' }
+      & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl'>
+    )>, collections: Array<(
+      { __typename?: 'ComicBook' }
+      & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl'>
+    )>, publisher: Maybe<(
+      { __typename?: 'Publisher' }
+      & Pick<Publisher, '_id' | 'name'>
+    )> }
+  )> }
+);
+
 export type GetCurrentComicBookReleasesQueryVariables = {};
 
 
@@ -222,7 +245,7 @@ export type GetPullListQuery = (
     & Pick<PullList, '_id' | 'owner'>
     & { list: Array<(
       { __typename?: 'ComicSeries' }
-      & Pick<ComicSeries, '_id' | 'url'>
+      & Pick<ComicSeries, '_id' | 'title'>
     )> }
   ) }
 );

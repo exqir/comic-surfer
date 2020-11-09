@@ -40,6 +40,9 @@ export const Navigation: React.FC = () => {
                 <Link href="/releases">
                   <a onClick={onNavigation}>Releases</a>
                 </Link>
+                <Link href="/pull-list">
+                  <a onClick={onNavigation}>PullList</a>
+                </Link>
                 <Link href="/login">
                   <a
                     onClick={async () => {
