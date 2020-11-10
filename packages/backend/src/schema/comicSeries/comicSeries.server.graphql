@@ -7,11 +7,11 @@ extend type Query {
 
 extend type Mutation {
   """
-  Enqueue updating the colletions and single issues of ComicSeries that have not been updated for more than a month.
+  Internal: Enqueue updating the colletions and single issues of ComicSeries that have not been updated for more than a month.
   """
   updateComicSeries: [ComicSeries!]!
   """
-  Update the Publisher of the ComicSeries.
+  Internal: Update the Publisher of the ComicSeries.
   """
   updateComicSeriesPublisher(comicSeriesId: ID!): ComicSeries!
 }
@@ -57,5 +57,12 @@ type ComicSeries @entity {
   The url for the cover of the latest single issue or collection of the ComicSeries.
   """
   coverImgUrl: String
-  # TODO: amount of issues and collections
+  """
+  The number of single issues belonging to the ComicSeries.
+  """
+  singleIssuesNumber: Int!
+  """
+  The number of collections belonging to the ComicSeries.
+  """
+  collectionsNumber: Int!
 }

@@ -51,6 +51,10 @@ export type ComicSeries = {
   lastModified: Scalars['Date'];
   /** The url for the cover of the latest single issue or collection of the ComicSeries. */
   coverImgUrl: Maybe<Scalars['String']>;
+  /** The number of single issues belonging to the ComicSeries. */
+  singleIssuesNumber: Scalars['Int'];
+  /** The number of collections belonging to the ComicSeries. */
+  collectionsNumber: Scalars['Int'];
 };
 
 export type Creator = {
@@ -77,9 +81,12 @@ export type Mutation = {
   unsubscribeComicSeries: PullList;
   updateComicBookRelease: ComicBook;
   updateComicBooks: Array<ComicBook>;
-  /** Enqueue updating the colletions and single issues of ComicSeries that have not been updated for more than a month. */
+  /**
+   * Internal: Enqueue updating the colletions and single issues of ComicSeries
+   * that have not been updated for more than a month.
+   */
   updateComicSeries: Array<ComicSeries>;
-  /** Update the Publisher of the ComicSeries. */
+  /** Internal: Update the Publisher of the ComicSeries. */
   updateComicSeriesPublisher: ComicSeries;
 };
 

@@ -51,6 +51,8 @@ interface ComicSeriesResolver {
       ComicSeriesDbObject
     >
     coverImgUrl: Resolver<string, {}, ComicSeriesDbObject>
+    singleIssuesNumber: NonNullableResolver<number, {}, ComicSeriesDbObject>
+    collectionsNumber: NonNullableResolver<number, {}, ComicSeriesDbObject>
   }
 }
 
@@ -226,5 +228,7 @@ export const ComicSeriesResolver: ComicSeriesResolver = {
           ),
         ),
       ),
+    singleIssuesNumber: ({ singleIssues }) => singleIssues.length,
+    collectionsNumber: ({ collections }) => collections.length,
   },
 }
