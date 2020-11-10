@@ -58,6 +58,7 @@ export type StackProps = {
   children?: React.ReactNode
 }
 
+// TODO: respect hidden items, space should not be applied in this case
 export const Stack: React.FC<StackProps> = styled<React.FC<StackProps>>(
   ({ component: Component = 'div', className, children }) => {
     const Item = ['ul', 'li'].includes(Component) ? 'li' : 'div'

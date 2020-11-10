@@ -6,7 +6,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Date: Date;
+  Date: string;
 };
 
 export type ComicBook = {
@@ -213,10 +213,10 @@ export type GetComicSeriesQuery = (
     & Pick<ComicSeries, '_id' | 'title'>
     & { singleIssues: Array<(
       { __typename?: 'ComicBook' }
-      & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl'>
+      & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'releaseDate'>
     )>, collections: Array<(
       { __typename?: 'ComicBook' }
-      & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl'>
+      & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'releaseDate'>
     )>, publisher: Maybe<(
       { __typename?: 'Publisher' }
       & Pick<Publisher, '_id' | 'name'>
@@ -231,7 +231,7 @@ export type GetCurrentComicBookReleasesQuery = (
   { __typename?: 'Query' }
   & { releases: Maybe<Array<(
     { __typename?: 'ComicBook' }
-    & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'url'>
+    & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'releaseDate' | 'url'>
   )>> }
 );
 

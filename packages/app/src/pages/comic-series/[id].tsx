@@ -62,10 +62,9 @@ const ComicSeries = ({
               key={comicBook._id}
               href="/comic-book/[id]"
               as={`/comic-book/${comicBook._id}`}
+              passHref
             >
-              <a style={{ display: 'inline-block ' }}>
-                <ComicBook {...comicBook} />
-              </a>
+              <ComicBook {...comicBook} />
             </Link>
           ))}
         </Tiles>
@@ -76,10 +75,9 @@ const ComicSeries = ({
               key={comicBook._id}
               href="/comic-book/[id]"
               as={`/comic-book/${comicBook._id}`}
+              passHref
             >
-              <a style={{ display: 'inline-block ' }}>
-                <ComicBook {...comicBook} />
-              </a>
+              <ComicBook {...comicBook} />
             </Link>
           ))}
         </Tiles>

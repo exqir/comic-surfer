@@ -17,17 +17,22 @@ const Home = () => {
       <Stack space="large">
         <Heading component="h1">PullList </Heading>
         <Tiles columns={2} space="large">
-          {pullList
-            ? pullList.list.map((comicSeries) => (
-                <Link
-                  key={comicSeries._id}
-                  href="/comic-series/[id]"
-                  as={`/comic-series/${comicSeries._id}`}
-                >
-                  <a>{comicSeries.title}</a>
-                </Link>
-              ))
-            : null}
+          {pullList ? (
+            pullList.list.map((comicSeries) => (
+              <Link
+                key={comicSeries._id}
+                href="/comic-series/[id]"
+                as={`/comic-series/${comicSeries._id}`}
+              >
+                <a>{comicSeries.title}</a>
+              </Link>
+            ))
+          ) : (
+            <p>
+              You have nothing on your PullList yet. Start by seaching for a
+              comic series and add it to your PullList.
+            </p>
+          )}
         </Tiles>
       </Stack>
       <style jsx>{`

@@ -3,7 +3,7 @@ require:
   - ts-node/register
 config:
   scalars:
-    Date: Date
+    Date: string
   avoidOptionals: true
   namingConvention:
     enumValues: upper-case#upperCase

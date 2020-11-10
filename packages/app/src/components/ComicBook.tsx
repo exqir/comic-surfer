@@ -6,14 +6,7 @@ import clsx from 'clsx'
 import { Card } from 'components/Card'
 import { Heading } from 'components/Heading'
 import { token } from 'lib/tokens'
-
-type ComicBookProps = {
-  _id: string
-  title: string
-  issueNo: string | null
-  coverImgUrl: string | null
-  className?: string
-}
+import { mq } from 'lib/responsiveProps'
 
 const comicBook = css`
   &.comic-book {
@@ -27,6 +20,22 @@ const comicBook = css`
   &.comic-book:hover {
     transform: scale(1.03);
   }
+  ${mq('desktop')} {
+    &.comic-book {
+      display: flex;
+      width: auto;
+    }
+  }
+  &.link {
+    display: inline-block;
+    text-decoration: none;
+    color: ${token('colorText')};
+  }
+  ${mq('desktop')} {
+    &.link {
+      display: initial;
+    }
+  }
   .content {
     position: absolute;
     padding: ${token('spaceM')};
@@ -34,6 +43,12 @@ const comicBook = css`
     left: 0;
     right: 0;
     background: ${token('background')};
+  }
+  ${mq('desktop')} {
+    .content {
+      position: relative;
+      padding: ${token('spaceL')};
+    }
   }
   .title {
     border-bottom: 1px solid ${token('colorPrimary')};
@@ -52,12 +67,37 @@ const comicBook = css`
     top: 0;
     z-index: -1;
   }
+  ${mq('desktop')} {
+    .cover {
+      position: relative;
+      z-index: 0;
+    }
+  }
+  .release-date {
+    display: none;
+  }
+  ${mq('desktop')} {
+    .release-date {
+      display: block;
+    }
+  }
 `
+type ComicBookProps = {
+  _id: string
+  title: string
+  issueNo: string | null
+  coverImgUrl: string | null
+  releaseDate: string | null
+  href?: string
+  className?: string
+}
 
 export const ComicBook: React.FC<ComicBookProps> = styled<
   React.FC<ComicBookProps>
->(({ _id, title, issueNo, coverImgUrl, className }) => {
-  return (
+>(({ _id, title, issueNo, coverImgUrl, releaseDate, href, className }) => {
+  const isLink = href !== undefined
+
+  const content = (
     <Card className={clsx('comic-book', className)}>
       {coverImgUrl ? (
         <img className="cover" src={coverImgUrl} width={160} height={245} />
@@ -67,8 +107,25 @@ export const ComicBook: React.FC<ComicBookProps> = styled<
           {title}
           {issueNo ? <span className="issue">#{issueNo}</span> : null}
         </Heading>
+        {releaseDate ? (
+          <p className="release-date">
+            {new Intl.DateTimeFormat('en-GB', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+            }).format(new Date(releaseDate))}
+          </p>
+        ) : null}
       </div>
     </Card>
+  )
+
+  return isLink ? (
+    <a className={clsx('link', className)} href={href}>
+      {content}
+    </a>
+  ) : (
+    content
   )
 })(
   () => css`

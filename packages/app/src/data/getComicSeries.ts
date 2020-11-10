@@ -16,12 +16,14 @@ export const query = gql`
         title
         issueNo
         coverImgUrl
+        releaseDate
       }
       collections {
         _id
         title
         issueNo
         coverImgUrl
+        releaseDate
       }
       publisher {
         _id

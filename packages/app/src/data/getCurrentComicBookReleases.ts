@@ -10,6 +10,7 @@ export const query = gql`
       title
       issueNo
       coverImgUrl
+      releaseDate
       url
     }
   }

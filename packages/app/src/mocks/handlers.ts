@@ -104,6 +104,7 @@ export const handlers = [
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
           url: '/descender',
+          releaseDate: new Date(2019, 10, 1),
         },
         {
           _id: '2',
@@ -112,6 +113,7 @@ export const handlers = [
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/493985/493985._SX312_QL80_TTD_.jpg',
           url: '/southern-bastards',
+          releaseDate: new Date(2019, 10, 1),
         },
         {
           _id: '3',
@@ -120,6 +122,7 @@ export const handlers = [
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/845911/845911._SX312_QL80_TTD_.jpg',
           url: '/low',
+          releaseDate: new Date(2019, 10, 1),
         },
         {
           _id: '4',
@@ -128,6 +131,7 @@ export const handlers = [
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/528975/528975._SX312_QL80_TTD_.jpg',
           url: '/seven-to-eternity',
+          releaseDate: new Date(2019, 10, 1),
         },
       ],
     }
@@ -183,6 +187,7 @@ export const handlers = [
               issueNo: '1',
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+              releaseDate: new Date(2019, 10, 1),
             },
             {
               _id: '2',
@@ -190,6 +195,7 @@ export const handlers = [
               issueNo: '2',
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+              releaseDate: new Date(2019, 11, 1),
             },
           ],
           collections: [],
@@ -212,6 +218,7 @@ export const handlers = [
               issueNo: '11',
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+              releaseDate: new Date(2019, 10, 1),
             },
             {
               _id: '2',
@@ -219,6 +226,7 @@ export const handlers = [
               issueNo: '12',
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+              releaseDate: new Date(2019, 11, 1),
             },
           ],
           collections: [],
