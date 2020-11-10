@@ -216,8 +216,8 @@ export const ComicSeriesResolver: ComicSeriesResolver = {
         db,
         runRTEtoNullable(
           pipe(
-            RTE.fromOption(constNull)(A.last(singleIssues)),
-            RTE.orElse(() => RTE.fromOption(constNull)(A.last(collections))),
+            RTE.fromOption(constNull)(A.head(singleIssues)),
+            RTE.orElse(() => RTE.fromOption(constNull)(A.head(collections))),
             RTE.chainW(dataSources.comicBook.getById),
             RTE.chainW((comicBook) =>
               RTE.fromOption(constNull)(O.fromNullable(comicBook)),
