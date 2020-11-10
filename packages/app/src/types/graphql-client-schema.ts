@@ -40,6 +40,8 @@ export type ComicSeries = {
   collections: Array<ComicBook>;
   singleIssues: Array<ComicBook>;
   lastModified: Scalars['Date'];
+  /** Url for the cover of the latest single issue or collection of the ComicSeries. */
+  coverImgUrl: Maybe<Scalars['String']>;
 };
 
 export type Creator = {

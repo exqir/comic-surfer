@@ -17,6 +17,10 @@ type ComicSeries {
   collections: [ComicBook!]!
   singleIssues: [ComicBook!]!
   lastModified: Date!
+  """
+   Url for the cover of the latest single issue or collection of the ComicSeries.
+  """
+  coverImgUrl: String
   # TODO: coverUrl -> cover of latest issue
   # TODO: amount of issues and collections
 }

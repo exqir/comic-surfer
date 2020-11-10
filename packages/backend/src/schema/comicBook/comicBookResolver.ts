@@ -64,11 +64,7 @@ interface ComicBookResolver {
 
 export const ComicBookQuery: ComicBookQuery = {
   comicBook: (_, { id }, { dataSources, db }) =>
-    pipe(
-      db,
-      map(runRTEtoNullable(dataSources.comicBook.getById(id))),
-      toNullable,
-    ),
+    nullableField(db, runRTEtoNullable(dataSources.comicBook.getById(id))),
 }
 
 function insertComicBookIfNotExisting(

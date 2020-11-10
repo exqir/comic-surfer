@@ -21,6 +21,7 @@ import * as A from 'fp-ts/lib/Array'
 import * as O from 'fp-ts/lib/Option'
 import { TaskType } from 'datasources/QueueRepository'
 import { ApolloError } from 'apollo-server'
+import { constNull } from 'fp-ts/lib/function'
 
 interface ComicSeriesQuery {
   // TODO: This actually returns a ComicSeries but this is not what the function returns
@@ -49,6 +50,7 @@ interface ComicSeriesResolver {
       {},
       ComicSeriesDbObject
     >
+    coverImgUrl: Resolver<string, {}, ComicSeriesDbObject>
   }
 }
 
@@ -206,6 +208,21 @@ export const ComicSeriesResolver: ComicSeriesResolver = {
             RTE.getOrElse(() => {
               throw new ApolloError('Failed to find single issue ComicBooks')
             }),
+          ),
+        ),
+      ),
+    coverImgUrl: ({ singleIssues, collections }, _, { dataSources, db }) =>
+      nullableField(
+        db,
+        runRTEtoNullable(
+          pipe(
+            RTE.fromOption(constNull)(A.last(singleIssues)),
+            RTE.orElse(() => RTE.fromOption(constNull)(A.last(collections))),
+            RTE.chainW(dataSources.comicBook.getById),
+            RTE.chainW((comicBook) =>
+              RTE.fromOption(constNull)(O.fromNullable(comicBook)),
+            ),
+            RTE.map(({ coverImgUrl }) => coverImgUrl),
           ),
         ),
       ),
