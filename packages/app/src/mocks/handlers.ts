@@ -67,8 +67,8 @@ export const handlers = [
   }),
   graphql.mutation('unsubscribeFromComicSeries', (req, res, ctx) => {
     const id = req.variables.comicSeriesId
-    const data: SubscribeToComicSeriesMutation = {
-      subscribeComicSeries: {
+    const data: UnsubscribeFromComicSeriesMutation = {
+      unsubscribeComicSeries: {
         _id: '1',
         owner: '1',
         list: [
