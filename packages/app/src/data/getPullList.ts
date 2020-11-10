@@ -11,6 +11,7 @@ export const query = gql`
       list {
         _id
         title
+        coverImgUrl
       }
     }
   }

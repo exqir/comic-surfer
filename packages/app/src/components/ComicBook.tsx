@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import { css } from '@emotion/core'
 import styled from '@emotion/styled'
 import clsx from 'clsx'
 
+import type { Maybe } from 'types/graphql-client-schema'
 import { Card } from 'components/Card'
 import { Heading } from 'components/Heading'
 import { token } from 'lib/tokens'
@@ -85,49 +86,56 @@ const comicBook = css`
 type ComicBookProps = {
   _id: string
   title: string
-  issueNo: string | null
-  coverImgUrl: string | null
-  releaseDate: string | null
+  issueNo: Maybe<string>
+  coverImgUrl: Maybe<string>
+  releaseDate: Maybe<string>
   href?: string
   className?: string
 }
 
 export const ComicBook: React.FC<ComicBookProps> = styled<
   React.FC<ComicBookProps>
->(({ _id, title, issueNo, coverImgUrl, releaseDate, href, className }) => {
-  const isLink = href !== undefined
+>(
+  forwardRef<HTMLAnchorElement, ComicBookProps>(
+    (
+      { _id, title, issueNo, coverImgUrl, releaseDate, href, className },
+      ref,
+    ) => {
+      const isLink = href !== undefined
 
-  const content = (
-    <Card className={clsx('comic-book', className)}>
-      {coverImgUrl ? (
-        <img className="cover" src={coverImgUrl} width={160} height={245} />
-      ) : null}
-      <div className="content">
-        <Heading component="h3" className="title">
-          {title}
-          {issueNo ? <span className="issue">#{issueNo}</span> : null}
-        </Heading>
-        {releaseDate ? (
-          <p className="release-date">
-            {new Intl.DateTimeFormat('en-GB', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric',
-            }).format(new Date(releaseDate))}
-          </p>
-        ) : null}
-      </div>
-    </Card>
-  )
+      const content = (
+        <Card className={clsx('comic-book', className)}>
+          {coverImgUrl ? (
+            <img className="cover" src={coverImgUrl} width={160} height={245} />
+          ) : null}
+          <div className="content">
+            <Heading component="h3" className="title">
+              {title}
+              {issueNo ? <span className="issue">#{issueNo}</span> : null}
+            </Heading>
+            {releaseDate ? (
+              <p className="release-date">
+                {new Intl.DateTimeFormat('en-GB', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                }).format(new Date(releaseDate))}
+              </p>
+            ) : null}
+          </div>
+        </Card>
+      )
 
-  return isLink ? (
-    <a className={clsx('link', className)} href={href}>
-      {content}
-    </a>
-  ) : (
-    content
-  )
-})(
+      return isLink ? (
+        <a className={clsx('link', className)} href={href} ref={ref}>
+          {content}
+        </a>
+      ) : (
+        content
+      )
+    },
+  ),
+)(
   () => css`
     ${comicBook}
   `,

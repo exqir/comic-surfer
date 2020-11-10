@@ -76,7 +76,7 @@ export const handlers = [
         issueNo: '11',
         coverImgUrl:
           'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
-        releaseDate: new Date(2019, 10, 1),
+        releaseDate: new Date(2019, 10, 1).toString(),
         url: '/descender',
       }
     }
@@ -87,7 +87,7 @@ export const handlers = [
         issueNo: '20',
         coverImgUrl:
           'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
-        releaseDate: new Date(2019, 11, 1),
+        releaseDate: new Date(2019, 11, 1).toString(),
         url: '/southern-bastards',
       }
     }
@@ -104,7 +104,7 @@ export const handlers = [
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
           url: '/descender',
-          releaseDate: new Date(2019, 10, 1),
+          releaseDate: new Date(2019, 10, 1).toString(),
         },
         {
           _id: '2',
@@ -113,7 +113,7 @@ export const handlers = [
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/493985/493985._SX312_QL80_TTD_.jpg',
           url: '/southern-bastards',
-          releaseDate: new Date(2019, 10, 1),
+          releaseDate: new Date(2019, 10, 1).toString(),
         },
         {
           _id: '3',
@@ -122,7 +122,7 @@ export const handlers = [
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/845911/845911._SX312_QL80_TTD_.jpg',
           url: '/low',
-          releaseDate: new Date(2019, 10, 1),
+          releaseDate: new Date(2019, 10, 1).toString(),
         },
         {
           _id: '4',
@@ -131,7 +131,7 @@ export const handlers = [
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/528975/528975._SX312_QL80_TTD_.jpg',
           url: '/seven-to-eternity',
-          releaseDate: new Date(2019, 10, 1),
+          releaseDate: new Date(2019, 10, 1).toString(),
         },
       ],
     }
@@ -162,8 +162,18 @@ export const handlers = [
         _id: '1',
         owner: '1',
         list: [
-          { _id: '1', title: 'Descender' },
-          { _id: '2', title: 'Ascender' },
+          {
+            _id: '1',
+            title: 'Descender',
+            coverImgUrl:
+              'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/528975/528975._SX312_QL80_TTD_.jpg',
+          },
+          {
+            _id: '2',
+            title: 'Ascender',
+            coverImgUrl:
+              'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/528975/528975._SX312_QL80_TTD_.jpg',
+          },
         ],
       },
     }
@@ -180,6 +190,8 @@ export const handlers = [
         comicSeries: {
           _id: '1',
           title: 'Descender',
+          coverImgUrl:
+            'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
           singleIssues: [
             {
               _id: '1',
@@ -187,7 +199,7 @@ export const handlers = [
               issueNo: '1',
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
-              releaseDate: new Date(2019, 10, 1),
+              releaseDate: new Date(2019, 10, 1).toString(),
             },
             {
               _id: '2',
@@ -195,7 +207,7 @@ export const handlers = [
               issueNo: '2',
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
-              releaseDate: new Date(2019, 11, 1),
+              releaseDate: new Date(2019, 11, 1).toString(),
             },
           ],
           collections: [],
@@ -211,6 +223,8 @@ export const handlers = [
         comicSeries: {
           _id: '2',
           title: 'Ascender',
+          coverImgUrl:
+            'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
           singleIssues: [
             {
               _id: '1',
@@ -218,7 +232,7 @@ export const handlers = [
               issueNo: '11',
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
-              releaseDate: new Date(2019, 10, 1),
+              releaseDate: new Date(2019, 10, 1).toString(),
             },
             {
               _id: '2',
@@ -226,7 +240,7 @@ export const handlers = [
               issueNo: '12',
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
-              releaseDate: new Date(2019, 11, 1),
+              releaseDate: new Date(2019, 11, 1).toString(),
             },
           ],
           collections: [],

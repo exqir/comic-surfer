@@ -55,6 +55,9 @@ const ComicSeries = ({
       <Head title={`${comicSeries.title}`} />
       <Stack space="large">
         <Heading component="h1">{comicSeries.title}</Heading>
+        {comicSeries.coverImgUrl ? (
+          <img src={comicSeries.coverImgUrl} width={160} height={245} />
+        ) : null}
         <Heading component="h2">Single Issues</Heading>
         <Tiles columns={2}>
           {comicSeries.singleIssues.map((comicBook) => (

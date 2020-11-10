@@ -5,6 +5,7 @@ import { Head } from 'components/Head'
 import { Tiles } from 'components/Tiles'
 import { Stack } from 'components/Stack'
 import { Heading } from 'components/Heading'
+import { ComicBook } from 'components/ComicBook'
 import { usePullList } from 'hooks/usePullList'
 import { token } from 'lib/tokens'
 
@@ -23,8 +24,9 @@ const Home = () => {
                 key={comicSeries._id}
                 href="/comic-series/[id]"
                 as={`/comic-series/${comicSeries._id}`}
+                passHref
               >
-                <a>{comicSeries.title}</a>
+                <ComicBook {...comicSeries} issueNo={null} releaseDate={null} />
               </Link>
             ))
           ) : (

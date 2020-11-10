@@ -1,26 +1,61 @@
 extend type Query {
+  """
+  Get the ComicSeries matching the provided ID.
+  """
   comicSeries(id: ID!): ComicSeries
 }
 
 extend type Mutation {
+  """
+  Enqueue updating the colletions and single issues of ComicSeries that have not been updated for more than a month.
+  """
   updateComicSeries: [ComicSeries!]!
+  """
+  Update the Publisher of the ComicSeries.
+  """
   updateComicSeriesPublisher(comicSeriesId: ID!): ComicSeries!
 }
 
 type ComicSeries {
+  """
+  ID of the ComicSeries.
+  """
   _id: ID!
+  """
+  The title of the ComicSeries.
+  """
   title: String!
+  """
+  The url from which the data for the ComicSeries is retrieved from.
+  """
   url: String!
+  """
+  The url from which the collections for the ComicSeries are retrieved from.
+  """
   collectionsUrl: String
+  """
+  The url from which the single issues for the ComicSeries are retrieved from.
+  """
   singleIssuesUrl: String
+  """
+  The Publisher of the ComicSeries.
+  """
   publisher: Publisher
+  """
+  The list of collection ComicBooks belonging to the ComicSeries.
+  """
   collections: [ComicBook!]!
+  """
+  The list of single issue ComicBooks belonging to the ComicSeries.
+  """
   singleIssues: [ComicBook!]!
+  """
+  The last time the ComicSeries of modified.
+  """
   lastModified: Date!
   """
-   Url for the cover of the latest single issue or collection of the ComicSeries.
+  The url for the cover of the latest single issue or collection of the ComicSeries.
   """
   coverImgUrl: String
-  # TODO: coverUrl -> cover of latest issue
   # TODO: amount of issues and collections
 }

@@ -31,16 +31,25 @@ export enum ComicBookType {
 
 export type ComicSeries = {
    __typename?: 'ComicSeries';
+  /** ID of the ComicSeries. */
   _id: Scalars['ID'];
+  /** The title of the ComicSeries. */
   title: Scalars['String'];
+  /** The url from which the data for the ComicSeries is retrieved from. */
   url: Scalars['String'];
+  /** The url from which the collections for the ComicSeries are retrieved from. */
   collectionsUrl: Maybe<Scalars['String']>;
+  /** The url from which the single issues for the ComicSeries are retrieved from. */
   singleIssuesUrl: Maybe<Scalars['String']>;
+  /** The Publisher of the ComicSeries. */
   publisher: Maybe<Publisher>;
+  /** The list of collection ComicBooks belonging to the ComicSeries. */
   collections: Array<ComicBook>;
+  /** The list of single issue ComicBooks belonging to the ComicSeries. */
   singleIssues: Array<ComicBook>;
+  /** The last time the ComicSeries of modified. */
   lastModified: Scalars['Date'];
-  /** Url for the cover of the latest single issue or collection of the ComicSeries. */
+  /** The url for the cover of the latest single issue or collection of the ComicSeries. */
   coverImgUrl: Maybe<Scalars['String']>;
 };
 
@@ -68,7 +77,9 @@ export type Mutation = {
   unsubscribeComicSeries: PullList;
   updateComicBookRelease: ComicBook;
   updateComicBooks: Array<ComicBook>;
+  /** Enqueue updating the colletions and single issues of ComicSeries that have not been updated for more than a month. */
   updateComicSeries: Array<ComicSeries>;
+  /** Update the Publisher of the ComicSeries. */
   updateComicSeriesPublisher: ComicSeries;
 };
 
@@ -138,6 +149,7 @@ export type Query = {
    __typename?: 'Query';
   _empty: Maybe<Scalars['String']>;
   comicBook: Maybe<ComicBook>;
+  /** Get the ComicSeries matching the provided ID. */
   comicSeries: Maybe<ComicSeries>;
   publisher: Maybe<Publisher>;
   publishers: Maybe<Array<Publisher>>;
@@ -212,7 +224,7 @@ export type GetComicSeriesQuery = (
   { __typename?: 'Query' }
   & { comicSeries: Maybe<(
     { __typename?: 'ComicSeries' }
-    & Pick<ComicSeries, '_id' | 'title'>
+    & Pick<ComicSeries, '_id' | 'title' | 'coverImgUrl'>
     & { singleIssues: Array<(
       { __typename?: 'ComicBook' }
       & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'releaseDate'>
@@ -247,7 +259,7 @@ export type GetPullListQuery = (
     & Pick<PullList, '_id' | 'owner'>
     & { list: Array<(
       { __typename?: 'ComicSeries' }
-      & Pick<ComicSeries, '_id' | 'title'>
+      & Pick<ComicSeries, '_id' | 'title' | 'coverImgUrl'>
     )> }
   ) }
 );
