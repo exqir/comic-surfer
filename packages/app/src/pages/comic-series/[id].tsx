@@ -59,7 +59,7 @@ const ComicSeries = ({
           <img src={comicSeries.coverImgUrl} width={160} height={245} />
         ) : null}
         <Heading component="h2">Single Issues</Heading>
-        <Tiles columns={2}>
+        <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
           {comicSeries.singleIssues.map((comicBook) => (
             <Link
               key={comicBook._id}
@@ -72,7 +72,7 @@ const ComicSeries = ({
           ))}
         </Tiles>
         <Heading component="h2">Collections</Heading>
-        <Tiles columns={2}>
+        <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
           {comicSeries.collections.map((comicBook) => (
             <Link
               key={comicBook._id}

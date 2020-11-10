@@ -209,6 +209,22 @@ export const handlers = [
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 11, 1).toString(),
             },
+            {
+              _id: '3',
+              title: 'Descender',
+              issueNo: '3',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+              releaseDate: new Date(2020, 1, 1).toString(),
+            },
+            {
+              _id: '4',
+              title: 'Descender',
+              issueNo: '4',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+              releaseDate: new Date(2020, 2, 1).toString(),
+            },
           ],
           collections: [],
           publisher: {

@@ -25,7 +25,7 @@ const Home = () => {
           Releases <span className="month">{currentMonth}</span>
         </Heading>
         <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
-          {releases ? (
+          {releases && releases.length > 0 ? (
             releases.map((comicBook) => (
               <Link
                 key={comicBook._id}

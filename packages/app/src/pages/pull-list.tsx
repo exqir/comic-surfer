@@ -10,14 +10,14 @@ import { usePullList } from 'hooks/usePullList'
 import { token } from 'lib/tokens'
 
 const Home = () => {
-  const { pullList } = usePullList()
+  const { pullList, isLoading } = usePullList()
   return (
     <div className="stack">
       <Head title="PullList" />
 
       <Stack space="large">
         <Heading component="h1">PullList </Heading>
-        <Tiles columns={2} space="large">
+        <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
           {pullList ? (
             pullList.list.map((comicSeries) => (
               <Link
@@ -29,6 +29,8 @@ const Home = () => {
                 <ComicBook {...comicSeries} issueNo={null} releaseDate={null} />
               </Link>
             ))
+          ) : isLoading ? (
+            <p>Loading</p>
           ) : (
             <p>
               You have nothing on your PullList yet. Start by seaching for a
