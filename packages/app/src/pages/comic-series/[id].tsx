@@ -6,14 +6,50 @@ import {
   GetStaticPaths,
   InferGetStaticPropsType,
 } from 'next'
+import { responseInterface } from 'swr'
+import styled from '@emotion/styled'
 
+import { GetPullListQuery } from 'types/graphql-client-schema'
 import { query, fetcher } from 'data/getComicSeries'
-import { token } from 'lib/tokens'
+import { usePullList } from 'hooks/usePullList'
 import { Head } from 'components/Head'
 import { Stack } from 'components/Stack'
 import { Heading } from 'components/Heading'
 import { Tiles } from 'components/Tiles'
+import { Card } from 'components/Card'
 import { ComicBook } from 'components/ComicBook'
+import { Button } from 'components/Button'
+import {
+  query as subscribeQuery,
+  fetcher as subscribeFetcher,
+} from 'data/subscribeToComicSeries'
+import {
+  query as unsubscribeQuery,
+  fetcher as unsubscribeFetcher,
+} from 'data/unsubscribeFromComicSeries'
+
+const subscribeToComicSeries = (
+  url: string,
+  mutate: responseInterface<GetPullListQuery, Error>['mutate'],
+) => async () => {
+  try {
+    await subscribeFetcher(subscribeQuery, url)
+    // TODO: instead of revalidating the pullList, use the return value from the mutation.
+    // To make this work, the pullList and the mutation need to have the same data as the
+    // data will not be merged, as it would in Apollo's cache.
+    mutate()
+  } catch (error) {}
+}
+
+const unsubscribeFromComicSeries = (
+  id: string,
+  mutate: responseInterface<GetPullListQuery, Error>['mutate'],
+) => async () => {
+  try {
+    await unsubscribeFetcher(unsubscribeQuery, id)
+    mutate()
+  } catch (error) {}
+}
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return { paths: [], fallback: true }
@@ -37,10 +73,20 @@ export const getStaticProps = async ({
   }
 }
 
-const ComicSeries = ({
+const InlineCard = styled(Card)`
+  display: inline-block;
+`
+
+type ComicSeriesProps = InferGetStaticPropsType<typeof getStaticProps> & {
+  className?: string
+}
+
+const ComicSeries: React.FC<ComicSeriesProps> = ({
   comicSeries,
-}: InferGetStaticPropsType<typeof getStaticProps>) => {
+  className,
+}) => {
   const router = useRouter()
+  const { pullList, isLoading, mutate } = usePullList()
 
   if (router.isFallback) {
     return <div>Loading...</div>
@@ -51,13 +97,27 @@ const ComicSeries = ({
   }
 
   return (
-    <div>
+    <div className={className}>
       <Head title={`${comicSeries.title}`} />
       <Stack space="large">
         <Heading component="h1">{comicSeries.title}</Heading>
         {comicSeries.coverImgUrl ? (
-          <img src={comicSeries.coverImgUrl} width={160} height={245} />
+          <InlineCard>
+            <img src={comicSeries.coverImgUrl} width={160} height={245} />
+          </InlineCard>
         ) : null}
+        {isLoading ? (
+          <Button isDisabled>Loading</Button>
+        ) : pullList &&
+          pullList.list.some(({ _id }) => _id === comicSeries._id) ? (
+          <Button onClick={unsubscribeFromComicSeries(comicSeries._id, mutate)}>
+            Unsubscribe
+          </Button>
+        ) : (
+          <Button onClick={subscribeToComicSeries(comicSeries.url, mutate)}>
+            Subscribe
+          </Button>
+        )}
         <Heading component="h2">Single Issues</Heading>
         <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
           {comicSeries.singleIssues.map((comicBook) => (
@@ -85,13 +145,6 @@ const ComicSeries = ({
           ))}
         </Tiles>
       </Stack>
-      <style jsx>{`
-        .cover {
-          border-radius: ${token('borderRadius')};
-          overflow: hidden;
-          border: 1px solid #cbd5e0;
-        }
-      `}</style>
     </div>
   )
 }

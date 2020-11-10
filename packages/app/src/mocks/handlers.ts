@@ -4,6 +4,7 @@ import {
   GetComicBookQuery,
   GetSearchQuery,
   SubscribeToComicSeriesMutation,
+  UnsubscribeFromComicSeriesMutation,
   LoginUserMutation,
   LogoutUserMutation,
   GetPullListQuery,
@@ -60,6 +61,20 @@ export const handlers = [
           { _id: '2', url: '/ascender' },
           { _id: '3', url },
         ],
+      },
+    }
+    return res(ctx.data(data))
+  }),
+  graphql.mutation('unsubscribeFromComicSeries', (req, res, ctx) => {
+    const id = req.variables.comicSeriesId
+    const data: SubscribeToComicSeriesMutation = {
+      subscribeComicSeries: {
+        _id: '1',
+        owner: '1',
+        list: [
+          { _id: '1', url: '/descender' },
+          { _id: '2', url: '/ascender' },
+        ].filter(({ _id }) => _id !== id),
       },
     }
     return res(ctx.data(data))
@@ -190,6 +205,7 @@ export const handlers = [
         comicSeries: {
           _id: '1',
           title: 'Descender',
+          url: '/descender',
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
           singleIssues: [
@@ -239,6 +255,7 @@ export const handlers = [
         comicSeries: {
           _id: '2',
           title: 'Ascender',
+          url: '/ascender',
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
           singleIssues: [

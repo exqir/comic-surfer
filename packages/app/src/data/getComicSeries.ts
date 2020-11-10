@@ -10,6 +10,7 @@ export const query = gql`
   query getComicSeries($comicSeriesId: ID!) {
     comicSeries(id: $comicSeriesId) {
       _id
+      url
       title
       coverImgUrl
       singleIssues {

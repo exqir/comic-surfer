@@ -231,7 +231,7 @@ export type GetComicSeriesQuery = (
   { __typename?: 'Query' }
   & { comicSeries: Maybe<(
     { __typename?: 'ComicSeries' }
-    & Pick<ComicSeries, '_id' | 'title' | 'coverImgUrl'>
+    & Pick<ComicSeries, '_id' | 'url' | 'title' | 'coverImgUrl'>
     & { singleIssues: Array<(
       { __typename?: 'ComicBook' }
       & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'releaseDate'>
@@ -315,6 +315,23 @@ export type SubscribeToComicSeriesMutationVariables = {
 export type SubscribeToComicSeriesMutation = (
   { __typename?: 'Mutation' }
   & { subscribeComicSeries: (
+    { __typename?: 'PullList' }
+    & Pick<PullList, '_id' | 'owner'>
+    & { list: Array<(
+      { __typename?: 'ComicSeries' }
+      & Pick<ComicSeries, '_id' | 'url'>
+    )> }
+  ) }
+);
+
+export type UnsubscribeFromComicSeriesMutationVariables = {
+  comicSeriesId: Scalars['ID'];
+};
+
+
+export type UnsubscribeFromComicSeriesMutation = (
+  { __typename?: 'Mutation' }
+  & { unsubscribeComicSeries: (
     { __typename?: 'PullList' }
     & Pick<PullList, '_id' | 'owner'>
     & { list: Array<(
