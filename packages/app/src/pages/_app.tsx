@@ -7,6 +7,7 @@ import Router from 'next/router'
 import { printVars } from 'lib/tokens'
 import { Navigation } from 'components/Nav'
 import { Container } from 'components/Container'
+import { Waves } from 'components/Waves'
 
 if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
   require('../mocks')
@@ -84,6 +85,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <Container>
         <Navigation />
         <Component {...pageProps} />
+        <Waves />
       </Container>
     </SWRConfig>
   )

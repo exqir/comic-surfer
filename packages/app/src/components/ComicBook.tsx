@@ -66,12 +66,10 @@ const comicBook = css`
     left: 0;
     right: 0;
     top: 0;
-    z-index: -1;
   }
   ${mq('desktop')} {
     .cover {
       position: relative;
-      z-index: 0;
     }
   }
   .release-date {

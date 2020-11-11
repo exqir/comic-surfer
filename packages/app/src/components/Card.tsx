@@ -329,6 +329,7 @@ const card = css`
     border: none;
     border-bottom: 1px solid #eaeaea;
     border-top: 1px solid #eaeaea;
+    background: white;
   }
 `
 

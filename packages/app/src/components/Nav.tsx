@@ -58,7 +58,7 @@ export const Navigation: React.FC = () => {
           </Fragment>
         ) : null}
       </div>
-      {isOpen ? <div className="backdrop" /> : null}
+      {isOpen ? <div className="backdrop" onClick={onNavigation} /> : null}
       <style jsx>{`
         .container {
           z-index: 10000;
