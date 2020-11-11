@@ -1,22 +1,22 @@
 name: Re-deploy API
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: fetch updates and restart
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.UBERSPACE_HOST }}
-        username: ${{ secrets.UBERSPACE_USER }}
-        password: ${{ secrets.UBERSPACE_PASSWORD }}
-        script_stop: true
-        script: |
-          cd services/comic-surfer
-          git pull
-          yarn
-          supervisorctl restart comic-surfer
-          supervisorcrl tail comic-surfer
+      - name: fetch updates and restart
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.UBERSPACE_HOST }}
+          username: ${{ secrets.UBERSPACE_USER }}
+          password: ${{ secrets.UBERSPACE_PASSWORD }}
+          script_stop: true
+          script: |
+            cd services/comic-surfer
+            git pull
+            yarn
+            supervisorctl restart comic-surfer
+            supervisorctl tail comic-surfer
