@@ -54,10 +54,35 @@ export const Waves: React.FC<WavesProp> = styled<React.FC<WavesProp>>(
   },
 )(
   () => css`
-    position: fixed;
+    position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: -1;
+  `,
+)
+
+export const TopWave: React.FC<WavesProp> = styled<React.FC<WavesProp>>(
+  ({ className }) => {
+    return (
+      <div className={className}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 600">
+          <rect height="50px"></rect>
+          <path
+            fillOpacity="1"
+            d="M0 180L60 240C120 300 240 420 360 429.938C480 440.625 600 339.375 720 290.062C840 240 960 240 1080 300C1200 360 1320 480 1380 540L1440 600V0H1380C1320 0 1200 0 1080 0C960 0 840 0 720 0C600 0 480 0 360 0C240 0 120 0 60 0H0V180Z"
+          />
+        </svg>
+      </div>
+    )
+  },
+)(
+  () => css`
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+    fill: url(#wave-gradient) ${token('colorPrimary')};
   `,
 )

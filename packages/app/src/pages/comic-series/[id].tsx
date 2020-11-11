@@ -19,6 +19,8 @@ import { Tiles } from 'components/Tiles'
 import { Card } from 'components/Card'
 import { ComicBook } from 'components/ComicBook'
 import { Button } from 'components/Button'
+import { TopWave } from 'components/Waves'
+
 import {
   query as subscribeQuery,
   fetcher as subscribeFetcher,
@@ -73,8 +75,9 @@ export const getStaticProps = async ({
   }
 }
 
-const InlineCard = styled(Card)`
-  display: inline-block;
+const Center = styled.div`
+  display: flex;
+  justify-content: center;
 `
 
 type ComicSeriesProps = InferGetStaticPropsType<typeof getStaticProps> & {
@@ -99,25 +102,32 @@ const ComicSeries: React.FC<ComicSeriesProps> = ({
   return (
     <div className={className}>
       <Head title={`${comicSeries.title}`} />
+      <TopWave />
       <Stack space="large">
         <Heading component="h1">{comicSeries.title}</Heading>
         {comicSeries.coverImgUrl ? (
-          <InlineCard>
-            <img src={comicSeries.coverImgUrl} width={160} height={245} />
-          </InlineCard>
+          <Center>
+            <Card>
+              <img src={comicSeries.coverImgUrl} width={160} height={245} />
+            </Card>
+          </Center>
         ) : null}
-        {isLoading ? (
-          <Button isDisabled>Loading</Button>
-        ) : pullList &&
-          pullList.list.some(({ _id }) => _id === comicSeries._id) ? (
-          <Button onClick={unsubscribeFromComicSeries(comicSeries._id, mutate)}>
-            Unsubscribe
-          </Button>
-        ) : (
-          <Button onClick={subscribeToComicSeries(comicSeries.url, mutate)}>
-            Subscribe
-          </Button>
-        )}
+        <Center>
+          {isLoading ? (
+            <Button isDisabled>Loading</Button>
+          ) : pullList &&
+            pullList.list.some(({ _id }) => _id === comicSeries._id) ? (
+            <Button
+              onClick={unsubscribeFromComicSeries(comicSeries._id, mutate)}
+            >
+              Unsubscribe
+            </Button>
+          ) : (
+            <Button onClick={subscribeToComicSeries(comicSeries.url, mutate)}>
+              Subscribe
+            </Button>
+          )}
+        </Center>
         <Heading component="h2">Single Issues</Heading>
         <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
           {comicSeries.singleIssues.map((comicBook) => (
