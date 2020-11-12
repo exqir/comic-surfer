@@ -48,11 +48,13 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
       coverImgUrl,
       releaseDate,
       creators,
+      description,
     }: {
       publisher: ObjectID | null
       coverImgUrl: string
       releaseDate: Date | null
       creators: { name: string }[]
+      description: string | null
     },
   ) => {
     const { updateOne } = this.dataLayer!
@@ -61,7 +63,7 @@ export class ComicBookAPI extends MongoDataSource<ComicBookDbObject> {
         this.collection,
         { url },
         {
-          $set: { publisher, coverImgUrl, releaseDate, creators },
+          $set: { publisher, coverImgUrl, releaseDate, creators, description },
           $currentDate: { lastModified: true },
         },
       ),

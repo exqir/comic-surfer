@@ -25,7 +25,7 @@ export type ComicBookData = {
   creators: { name: string }[]
   publisher: { name: string; url: string } | null
   releaseDate: Date | null
-  description: string
+  description: string | null
 }
 
 export type ComicSeriesSearchData = {
