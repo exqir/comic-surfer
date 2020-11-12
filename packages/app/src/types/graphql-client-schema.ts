@@ -219,6 +219,10 @@ export type GetComicBookQuery = (
   & { comicBook: Maybe<(
     { __typename?: 'ComicBook' }
     & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'releaseDate' | 'url'>
+    & { comicSeries: Maybe<(
+      { __typename?: 'ComicSeries' }
+      & Pick<ComicSeries, '_id'>
+    )> }
   )> }
 );
 

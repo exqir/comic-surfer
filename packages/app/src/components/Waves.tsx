@@ -21,7 +21,7 @@ const Wave1 = styled(({ className }) => (
 const Wave2 = styled(({ className }) => (
   <path
     className={className}
-    fill-opacity="1"
+    fillOpacity="1"
     d="M0,160L48,181.3C96,203,192,245,288,240C384,235,480,181,576,160C672,139,768,149,864,165.3C960,181,1056,203,1152,224C1248,245,1344,267,1392,277.3L1440,288L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
   ></path>
 ))`
@@ -59,6 +59,8 @@ export const Waves: React.FC<WavesProp> = styled<React.FC<WavesProp>>(
     left: 0;
     right: 0;
     z-index: -1;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
   `,
 )
 
@@ -83,6 +85,8 @@ export const TopWave: React.FC<WavesProp> = styled<React.FC<WavesProp>>(
     left: 0;
     right: 0;
     z-index: -1;
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
     fill: url(#wave-gradient) ${token('colorPrimary')};
   `,
 )

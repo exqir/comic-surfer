@@ -105,14 +105,12 @@ const ComicSeries: React.FC<ComicSeriesProps> = ({
       <TopWave />
       <Stack space="large">
         <Heading component="h1">{comicSeries.title}</Heading>
-        {comicSeries.coverImgUrl ? (
-          <Center>
+        <Stack align="center" space="large">
+          {comicSeries.coverImgUrl ? (
             <Card>
               <img src={comicSeries.coverImgUrl} width={160} height={245} />
             </Card>
-          </Center>
-        ) : null}
-        <Center>
+          ) : null}
           {isLoading ? (
             <Button isDisabled>Loading</Button>
           ) : pullList &&
@@ -127,7 +125,7 @@ const ComicSeries: React.FC<ComicSeriesProps> = ({
               Subscribe
             </Button>
           )}
-        </Center>
+        </Stack>
         <Heading component="h2">Single Issues</Heading>
         <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
           {comicSeries.singleIssues.map((comicBook) => (

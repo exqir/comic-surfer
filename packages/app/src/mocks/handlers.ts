@@ -93,6 +93,9 @@ export const handlers = [
           'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
         releaseDate: new Date(2019, 10, 1).toString(),
         url: '/descender',
+        comicSeries: {
+          _id: '1',
+        },
       }
     }
     if (id === '2') {
@@ -104,6 +107,9 @@ export const handlers = [
           'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
         releaseDate: new Date(2019, 11, 1).toString(),
         url: '/southern-bastards',
+        comicSeries: {
+          _id: '2',
+        },
       }
     }
 

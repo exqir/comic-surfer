@@ -1,5 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import {
   GetStaticPropsContext,
   GetStaticPaths,
@@ -69,24 +70,32 @@ const ComicBook = ({
         <Heading component="h1">
           {comicBook.title} #{comicBook.issueNo}
         </Heading>
-        <div className="card">
-          <img
-            className="cover"
-            src={comicBook.coverImgUrl ?? undefined}
-            alt={comicBook.title}
-            width="180"
-            height="276"
-          />
-        </div>
-        <span>
-          {comicBook.releaseDate
-            ? new Intl.DateTimeFormat('en-GB', {
+        <Stack align="center" space="large">
+          <div className="card">
+            <img
+              className="cover"
+              src={comicBook.coverImgUrl ?? undefined}
+              alt={comicBook.title}
+              width={160}
+              height={245}
+            />
+          </div>
+          {comicBook.releaseDate ? (
+            <span>
+              Release date:{' '}
+              {new Intl.DateTimeFormat('en-GB', {
                 day: '2-digit',
                 month: '2-digit',
                 year: 'numeric',
-              }).format(new Date(comicBook.releaseDate))
-            : null}
-        </span>
+              }).format(new Date(comicBook.releaseDate))}
+            </span>
+          ) : null}
+          {comicBook.comicSeries ? (
+            <Link href={`/comic-series/${comicBook.comicSeries._id}`}>
+              <a>Series</a>
+            </Link>
+          ) : null}
+        </Stack>
       </Stack>
       <style jsx>{`
         .cover {

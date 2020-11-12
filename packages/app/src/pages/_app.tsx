@@ -68,6 +68,9 @@ export default function App({ Component, pageProps }: AppProps) {
             margin: 0;
             font-family: -apple-system, BlinkMacSystemFont, Avenir Next, Avenir,
               Helvetica, sans-serif;
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
           }
           .sr-only {
             position: absolute;
@@ -85,8 +88,8 @@ export default function App({ Component, pageProps }: AppProps) {
       <Container>
         <Navigation />
         <Component {...pageProps} />
-        <Waves />
       </Container>
+      <Waves />
     </SWRConfig>
   )
 }

@@ -23,6 +23,8 @@ const stack = css`
   }
   .stack-item {
     padding-top: var(--stack-gap);
+    display: var(--stack-display);
+    align-items: var(--stack-align);
   }
 `
 
@@ -33,6 +35,17 @@ const spaces: { [space in Space]: string | number } = {
   small: token('spaceS'),
   medium: token('spaceM'),
   large: token('spaceL'),
+}
+type Align = 'left' | 'center' | 'right'
+const alignments: { [align in Align]: string } = {
+  left: 'flex-start',
+  center: 'center',
+  right: 'flex-end',
+}
+const display: { [align in Align]: string } = {
+  left: 'block',
+  center: 'flex',
+  right: 'flex',
 }
 
 export type StackProps = {
@@ -46,6 +59,11 @@ export type StackProps = {
    * @default 'none'
    */
   space?: ResponsiveProp<Space>
+  /**
+   * Alignment of the children of the Stack.
+   * @default 'none'
+   */
+  align?: ResponsiveProp<Align>
   /**
    * Additional classes
    * @default undefined
@@ -72,12 +90,20 @@ export const Stack: React.FC<StackProps> = styled<React.FC<StackProps>>(
     )
   },
 )(
-  ({ space }) =>
+  ({ space, align }) =>
     css`
       ${responsiveProps<Space>(
         space,
         'none',
         (s) => `--stack-gap: ${spaces[s]};`,
+      )}
+      ${responsiveProps<Align>(
+        align,
+        'left',
+        (a) =>
+          `--stack-align: ${alignments[a]}; --stack-display: ${display[a]};${
+            a !== 'left' ? 'flex-direction: column;' : ''
+          }`,
       )}
       ${stack}
     `,
