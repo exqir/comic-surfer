@@ -88,6 +88,7 @@ function insertComicBookIfNotExisting(
             publisher: null,
             coverImgUrl: null,
             releaseDate: null,
+            description: null,
             type,
           })),
         ),
