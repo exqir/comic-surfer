@@ -20,6 +20,7 @@ export type ComicBook = {
   publisher: Maybe<Publisher>;
   coverImgUrl: Maybe<Scalars['String']>;
   url: Scalars['String'];
+  description: Maybe<Scalars['String']>;
   type: ComicBookType;
   lastModified: Scalars['Date'];
 };

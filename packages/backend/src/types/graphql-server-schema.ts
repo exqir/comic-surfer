@@ -33,6 +33,7 @@ export type ComicBook = {
   publisher: Maybe<Publisher>;
   coverImgUrl: Maybe<Scalars['String']>;
   url: Scalars['String'];
+  description: Maybe<Scalars['String']>;
   type: ComicBookType;
   lastModified: Scalars['Date'];
 };
@@ -234,6 +235,7 @@ export type ComicBookDbObject = {
   publisher: Maybe<PublisherDbObject['_id']>,
   coverImgUrl: Maybe<string>,
   url: string,
+  description: Maybe<string>,
   type: string,
   lastModified: Date,
 };

@@ -102,6 +102,7 @@ interface ComicBookScrapData {
     url: string
   }[]
   coverImgUrl: string
+  description: string
 }
 
 const comicBookConfig = (convertFn: convertFn) => ({
@@ -141,6 +142,9 @@ const comicBookConfig = (convertFn: convertFn) => ({
   coverImgUrl: {
     selector: '.cover',
     attr: 'src',
+  },
+  description: {
+    selector: '.item-description',
   },
 })
 

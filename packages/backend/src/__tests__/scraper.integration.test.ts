@@ -94,6 +94,7 @@ describe('[Scraper.getComicBook]', () => {
           releaseDate: new Date('November 2, 2016'),
           creators: [{ name: 'Joshua Williamson' }, { name: 'Mike Henderson' }],
           coverImgUrl: '/cover.png',
+          description: 'Lorem Ipsum',
         })
       }),
     )()

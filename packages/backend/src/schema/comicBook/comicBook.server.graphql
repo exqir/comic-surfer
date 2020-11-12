@@ -31,6 +31,7 @@ type ComicBook @entity {
   publisher: Publisher @link
   coverImgUrl: String @column
   url: String! @column
+  description: String @column
   type: ComicBookType! @column
   lastModified: Date! @column
 }
