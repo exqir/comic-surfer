@@ -31,6 +31,9 @@ type ComicBook {
   publisher: Publisher
   coverImgUrl: String
   url: String!
+  """
+   Description for the ComicBook. HTML containing Tags for basic text styling.
+  """
   description: String
   type: ComicBookType!
   lastModified: Date!

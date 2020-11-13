@@ -1,5 +1,6 @@
 import { URL } from 'url'
 import { ScrapeOptions, ScrapeResult } from 'scrape-it'
+import sanitizeHtml from 'sanitize-html'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { left, right } from 'fp-ts/lib/Either'
 import { map } from 'fp-ts/lib/TaskEither'
@@ -145,6 +146,13 @@ const comicBookConfig = (convertFn: convertFn) => ({
   },
   description: {
     selector: '.item-description',
+    how: 'html',
+    convert: (html: string) =>
+      sanitizeHtml(html, {
+        // Only allow basic text tags and br for general text styling
+        allowedTags: ['br', 'b', 'i', 'em', 'strong'],
+        selfClosing: ['br'],
+      }),
   },
 })
 

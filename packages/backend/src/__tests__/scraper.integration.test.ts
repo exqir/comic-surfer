@@ -94,7 +94,20 @@ describe('[Scraper.getComicBook]', () => {
           releaseDate: new Date('November 2, 2016'),
           creators: [{ name: 'Joshua Williamson' }, { name: 'Mike Henderson' }],
           coverImgUrl: '/cover.png',
-          description: 'Lorem Ipsum',
+          description: `"THE DIGITAL MAGE" <br />
+      The hit fantasy series from powerhouse creative team
+      <strong>JEFF LEMIRE</strong> and
+      DUSTIN NGUYEN continues! <br />
+      <br />
+      
+      Captain Telsa is doing her best to shake off young Mila and Bandit, but
+      things get harder once an old friend wants to tag along—DRILLER, the
+      KILLER ROBOT! With his faithful companion Mizard the Wizard at his side,
+      Mother and her evil army of vamps may have finally met their match.
+      Meanwhile, Andy struggles to resurrect his lost love Effie from the
+      relentless grasp of the vampire undead. <br />
+      <br />
+      Collects ASCENDER #11-14`,
         })
       }),
     )()

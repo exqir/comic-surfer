@@ -19,6 +19,7 @@
     "graphql-iso-date": "^3.6.1",
     "mongad": "^0.2.2",
     "mongodb": "^3.5.5",
+    "sanitize-html": "^2.1.2",
     "scrape-it": "^5.2.0"
   },
   "devDependencies": {
@@ -26,6 +27,7 @@
     "@types/graphql-iso-date": "^3.3.3",
     "@types/jest": "^24.0.20",
     "@types/mongodb": "^3.3.7",
+    "@types/sanitize-html": "^1.27.0",
     "@types/serve-handler": "^6.1.0",
     "apollo-server-testing": "^2.9.7",
     "jest": "^24.9.0",
