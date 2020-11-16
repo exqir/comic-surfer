@@ -90,11 +90,59 @@ export const handlers = [
         title: 'Descender',
         issueNo: '11',
         coverImgUrl:
-          'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+          'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
         releaseDate: new Date(2019, 10, 1).toString(),
         url: '/descender',
+        description: `"THE DIGITAL MAGE" <br />
+        The hit fantasy series from powerhouse creative team
+        <strong>JEFF LEMIRE</strong> and
+        DUSTIN NGUYEN continues! <br />
+        <br />
+        
+        Captain Telsa is doing her best to shake off young Mila and Bandit, but
+        things get harder once an old friend wants to tag along—DRILLER, the
+        KILLER ROBOT! With his faithful companion Mizard the Wizard at his side,
+        Mother and her evil army of vamps may have finally met their match.
+        Meanwhile, Andy struggles to resurrect his lost love Effie from the
+        relentless grasp of the vampire undead. <br />
+        <br />
+        Collects ASCENDER #11-14`,
         comicSeries: {
           _id: '1',
+          singleIssues: [
+            {
+              _id: '1',
+              title: 'Descender',
+              issueNo: '1',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
+              releaseDate: new Date(2019, 10, 1).toString(),
+            },
+            {
+              _id: '2',
+              title: 'Descender',
+              issueNo: '2',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
+              releaseDate: new Date(2019, 11, 1).toString(),
+            },
+            {
+              _id: '3',
+              title: 'Descender',
+              issueNo: '3',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
+              releaseDate: new Date(2020, 1, 1).toString(),
+            },
+            {
+              _id: '4',
+              title: 'Descender',
+              issueNo: '4',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
+              releaseDate: new Date(2020, 2, 1).toString(),
+            },
+          ],
         },
       }
     }
@@ -104,11 +152,59 @@ export const handlers = [
         title: 'Southern Bastards',
         issueNo: '20',
         coverImgUrl:
-          'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+          'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
         releaseDate: new Date(2019, 11, 1).toString(),
         url: '/southern-bastards',
+        description: `"THE DIGITAL MAGE" <br />
+        The hit fantasy series from powerhouse creative team
+        <strong>JEFF LEMIRE</strong> and
+        DUSTIN NGUYEN continues! <br />
+        <br />
+        
+        Captain Telsa is doing her best to shake off young Mila and Bandit, but
+        things get harder once an old friend wants to tag along—DRILLER, the
+        KILLER ROBOT! With his faithful companion Mizard the Wizard at his side,
+        Mother and her evil army of vamps may have finally met their match.
+        Meanwhile, Andy struggles to resurrect his lost love Effie from the
+        relentless grasp of the vampire undead. <br />
+        <br />
+        Collects ASCENDER #11-14`,
         comicSeries: {
           _id: '2',
+          singleIssues: [
+            {
+              _id: '1',
+              title: 'Descender',
+              issueNo: '1',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
+              releaseDate: new Date(2019, 10, 1).toString(),
+            },
+            {
+              _id: '2',
+              title: 'Descender',
+              issueNo: '2',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
+              releaseDate: new Date(2019, 11, 1).toString(),
+            },
+            {
+              _id: '3',
+              title: 'Descender',
+              issueNo: '3',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
+              releaseDate: new Date(2020, 1, 1).toString(),
+            },
+            {
+              _id: '4',
+              title: 'Descender',
+              issueNo: '4',
+              coverImgUrl:
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
+              releaseDate: new Date(2020, 2, 1).toString(),
+            },
+          ],
         },
       }
     }
@@ -123,7 +219,7 @@ export const handlers = [
           title: 'Descender',
           issueNo: '11',
           coverImgUrl:
-            'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+            'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
           url: '/descender',
           releaseDate: new Date(2019, 10, 1).toString(),
         },
@@ -213,14 +309,14 @@ export const handlers = [
           title: 'Descender',
           url: '/descender',
           coverImgUrl:
-            'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+            'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
           singleIssues: [
             {
               _id: '1',
               title: 'Descender',
               issueNo: '1',
               coverImgUrl:
-                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 10, 1).toString(),
             },
             {
@@ -228,7 +324,7 @@ export const handlers = [
               title: 'Descender',
               issueNo: '2',
               coverImgUrl:
-                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 11, 1).toString(),
             },
             {
@@ -236,7 +332,7 @@ export const handlers = [
               title: 'Descender',
               issueNo: '3',
               coverImgUrl:
-                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2020, 1, 1).toString(),
             },
             {
@@ -244,7 +340,7 @@ export const handlers = [
               title: 'Descender',
               issueNo: '4',
               coverImgUrl:
-                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2020, 2, 1).toString(),
             },
           ],
@@ -263,14 +359,14 @@ export const handlers = [
           title: 'Ascender',
           url: '/ascender',
           coverImgUrl:
-            'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+            'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
           singleIssues: [
             {
               _id: '1',
               title: 'Ascender',
               issueNo: '11',
               coverImgUrl:
-                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 10, 1).toString(),
             },
             {
@@ -278,7 +374,7 @@ export const handlers = [
               title: 'Ascender',
               issueNo: '12',
               coverImgUrl:
-                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX1280_QL80_TTD_.jpg',
+                'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 11, 1).toString(),
             },
           ],

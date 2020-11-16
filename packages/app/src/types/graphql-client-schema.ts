@@ -220,10 +220,14 @@ export type GetComicBookQuery = (
   { __typename?: 'Query' }
   & { comicBook: Maybe<(
     { __typename?: 'ComicBook' }
-    & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'releaseDate' | 'url'>
+    & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'releaseDate' | 'description' | 'url'>
     & { comicSeries: Maybe<(
       { __typename?: 'ComicSeries' }
       & Pick<ComicSeries, '_id'>
+      & { singleIssues: Array<(
+        { __typename?: 'ComicBook' }
+        & Pick<ComicBook, '_id' | 'title' | 'issueNo' | 'coverImgUrl' | 'releaseDate'>
+      )> }
     )> }
   )> }
 );

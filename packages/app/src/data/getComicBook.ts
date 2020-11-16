@@ -14,9 +14,17 @@ export const query = gql`
       issueNo
       coverImgUrl
       releaseDate
+      description
       url
       comicSeries {
         _id
+        singleIssues {
+          _id
+          title
+          issueNo
+          coverImgUrl
+          releaseDate
+        }
       }
     }
   }

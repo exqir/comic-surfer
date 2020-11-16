@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import {
@@ -15,7 +15,9 @@ import { query, fetcher } from 'data/getComicBook'
 import { token } from 'lib/tokens'
 import { Head } from 'components/Head'
 import { Stack } from 'components/Stack'
+import { Tiles } from 'components/Tiles'
 import { Heading } from 'components/Heading'
+import { ComicBook as ComicBookComponent } from 'components/ComicBook'
 
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
@@ -96,6 +98,30 @@ const ComicBook = ({
             </Link>
           ) : null}
         </Stack>
+        {comicBook.description ? (
+          <Stack space="medium">
+            <Heading component="h2">Description</Heading>
+            <p
+              dangerouslySetInnerHTML={{ __html: comicBook.description }}
+              style={{ margin: 0 }}
+            />
+          </Stack>
+        ) : null}
+        <Heading component="h2">Other Issues</Heading>
+        <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
+          {comicBook.comicSeries
+            ? comicBook.comicSeries.singleIssues.map((comicBook) => (
+                <Link
+                  key={comicBook._id}
+                  href="/comic-book/[id]"
+                  as={`/comic-book/${comicBook._id}`}
+                  passHref
+                >
+                  <ComicBookComponent {...comicBook} />
+                </Link>
+              ))
+            : null}
+        </Tiles>
       </Stack>
       <style jsx>{`
         .cover {
