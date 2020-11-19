@@ -8,7 +8,7 @@ import {
   ComicBookAPI,
   ComicSeriesAPI,
   PublisherAPI,
-  PullListAPI,
+  PullListRepository,
   QueueRepository,
 } from './datasources'
 import { GraphQLContext, DataSources } from 'types/app'
@@ -30,7 +30,7 @@ const apolloServer = new ApolloServer({
     comicBook: new ComicBookAPI(),
     comicSeries: new ComicSeriesAPI(),
     publisher: new PublisherAPI(),
-    pullList: new PullListAPI(),
+    pullList: new PullListRepository(),
     queue: new QueueRepository(),
   }),
   context: async ({

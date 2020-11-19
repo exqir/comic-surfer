@@ -1,5 +1,5 @@
 export * from './ComicBookAPI'
 export * from './ComicSeriesAPI'
 export * from './PublisherAPI'
-export * from './PullListAPI'
+export * from './PullListRepository'
 export * from './QueueRepository'

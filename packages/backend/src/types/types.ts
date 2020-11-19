@@ -6,10 +6,11 @@ import {
   ComicBookAPI,
   ComicSeriesAPI,
   PublisherAPI,
-  PullListAPI,
+  PullListRepository,
   QueueRepository,
 } from '../datasources'
 import { IScraper } from 'services/ScrapeService'
+import { ILogger } from 'services/LogService'
 import mongad from 'mongad'
 
 export interface Logger {
@@ -24,13 +25,13 @@ export interface DataSources {
   comicBook: ComicBookAPI
   comicSeries: ComicSeriesAPI
   publisher: PublisherAPI
-  pullList: PullListAPI
+  pullList: PullListRepository
   queue: QueueRepository
 }
 
 export interface Services {
   scrape: IScraper
-  logger: Logger
+  logger: ILogger
 }
 
 /**

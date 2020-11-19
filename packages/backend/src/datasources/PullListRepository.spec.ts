@@ -1,5 +1,8 @@
 import { MongoError, ObjectID } from 'mongodb'
-import { PullListAPI, pullListCollection as collection } from './PullListAPI'
+import {
+  PullListRepository,
+  pullListCollection as collection,
+} from './PullListRepository'
 import {
   createMockConfig,
   createMockReaderWithReturnValue,
@@ -16,7 +19,7 @@ const defaultPullList: PullListDbObject = {
   list: [],
 }
 
-const ds = new PullListAPI()
+const ds = new PullListRepository()
 ds.initialize(config)
 
 describe('[PullListAPI.insert]', () => {

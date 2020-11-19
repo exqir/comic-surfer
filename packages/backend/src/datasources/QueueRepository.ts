@@ -1,6 +1,5 @@
-import { ObjectID, WithId } from 'mongodb'
+import { ObjectID } from 'mongodb'
 import { MongoDataSource } from './MongoDataSource'
-import { pipe } from 'fp-ts/lib/pipeable'
 
 export enum TaskType {
   SCRAPSINGLEISSUELIST = 'SCRAP_SINGLE_ISSUE_LIST',
@@ -10,36 +9,35 @@ export enum TaskType {
   UPDATECOMICSERIESPUBLISHER = 'UPDATE_COMIC_SERIES_PUBLISHER',
 }
 
-type Queue = WithId<
+// TODO: Add a status to the Task type: 'Queued' | 'Error' | 'Done'
+type Task =
   | {
+      _id: ObjectID
       type: TaskType.SCRAPSINGLEISSUELIST | TaskType.SCRAPCOLLECTIONLIST
       data: { url: string; comicSeriesId: ObjectID }
     }
   | {
+      _id: ObjectID
       type: TaskType.UPDATECOMICBOOKRELEASE
       data: { comicBookId: ObjectID; url: string }
     }
   | {
+      _id: ObjectID
       type: TaskType.UPDATECOMICSERIESPUBLISHER
       data: { comicSeriesId: ObjectID }
     }
   | {
+      _id: ObjectID
       type: TaskType.SCRAPCOMICBOOK
       data: { comicBookUrl: string }
     }
->
 
 export const queueCollection = 'queue'
-export class QueueRepository extends MongoDataSource<Queue> {
+export class QueueRepository extends MongoDataSource<Task> {
   public constructor() {
     super(queueCollection)
   }
 
-  public insertMany = (documents: Omit<Queue, '_id'>[]) => {
-    const { insertMany } = this.dataLayer!
-    return pipe(
-      insertMany<Omit<Queue, '_id'>>(this.collection, documents),
-      this.logError,
-    )
-  }
+  public enqueueTask = (task: Task) => this.insertOne(task)
+  public enqueueTasks = (tasks: Task[]) => this.insertMany(tasks)
 }

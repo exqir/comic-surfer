@@ -1,59 +1,216 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource'
 import { pipe } from 'fp-ts/lib/pipeable'
-import { ObjectID, FilterQuery, ObjectId } from 'mongodb'
-import { mapLeft } from 'fp-ts/lib/ReaderTaskEither'
-import { GraphQLContext, DataLayer, Omit } from 'types/app'
-import { logError } from 'lib'
+import { flow, identity } from 'fp-ts/lib/function'
+import {
+  ObjectID,
+  FilterQuery,
+  UpdateQuery,
+  ObjectId,
+  CollectionInsertOneOptions,
+  CollectionInsertManyOptions,
+  UpdateOneOptions,
+  UpdateManyOptions,
+  FindOneOptions,
+  CommonOptions,
+  MongoError,
+  Db,
+} from 'mongodb'
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import * as E from 'fp-ts/lib/Either'
+import { GraphQLContext, DataLayer, DataSources } from 'types/app'
+import { ILogger } from 'services/LogService'
+
+type Update<T> = UpdateQuery<T> | Partial<T>
+type WithNonNullable = { nonNullable?: boolean; onNullError?: Error }
 
 export const toObjectId = (id: ObjectID | string) => {
   if (id instanceof ObjectID) return id
   return new ObjectId(id)
 }
 
+const getDataLayer: (
+  dataLayer?: DataLayer,
+) => RTE.ReaderTaskEither<unknown, Error, DataLayer> = flow(
+  E.fromNullable(new Error('Failed to initialize `dataLayer`.')),
+  RTE.fromEither,
+)
+
 export class MongoDataSource<T extends { _id: ObjectID }> extends DataSource<
   GraphQLContext
 > {
   protected collection: string
-  protected context?: GraphQLContext
   protected dataLayer?: DataLayer
+  protected logger?: ILogger
   public constructor(collection: string) {
     super()
     this.collection = collection
+
+    this.findOne = this.findOne.bind(this)
+    this.updateOne = this.updateOne.bind(this)
+    this.deleteOne = this.deleteOne.bind(this)
   }
 
   public initialize({ context }: DataSourceConfig<GraphQLContext>) {
-    this.context = context
     this.dataLayer = context.dataLayer
+    this.logger = context.services.logger
   }
 
-  protected get logError() {
-    const { logger } = this.context?.services!
-    return mapLeft(logError(logger))
+  protected error<A extends Error>(err: A): A {
+    this.logger?.error(err.message)()
+
+    return err
   }
 
-  public insert = (document: Omit<T, '_id'>) => {
-    const { insertOne } = this.dataLayer!
-    return pipe(
-      insertOne<Omit<T, '_id'>>(this.collection, document),
-      this.logError,
+  protected nonNullable(query: FilterQuery<T>, onNullError?: Error) {
+    return RTE.chainW((document: T | null) =>
+      RTE.fromEither(
+        E.fromNullable(
+          onNullError ??
+            new MongoError(
+              `Failed to find a document matching ${JSON.stringify(
+                query,
+              )} in "${this.collection}" for a non-nullable operation.`,
+            ),
+        )(document),
+      ),
     )
   }
 
-  public getById = (id: ObjectID) => {
-    const { findOne } = this.dataLayer!
+  public insertOne = (
+    document: Omit<T, '_id'>,
+    options?: CollectionInsertOneOptions,
+  ) => {
     return pipe(
-      findOne<T>(this.collection, { _id: toObjectId(id) } as T),
-      this.logError,
+      getDataLayer(this.dataLayer),
+      RTE.chainW((dataLayer) =>
+        dataLayer.insertOne<Omit<T, '_id'>>(this.collection, document, options),
+      ),
+      RTE.mapLeft(this.error),
     )
   }
 
-  public getByIds = (ids: ObjectID[]) => {
-    const { findMany } = this.dataLayer!
+  public insertMany = (
+    documents: Omit<T, '_id'>[],
+    options?: CollectionInsertManyOptions,
+  ) => {
     return pipe(
-      findMany<T>(this.collection, {
-        _id: { $in: ids.map(toObjectId) },
-      } as FilterQuery<T>),
-      this.logError,
+      getDataLayer(this.dataLayer),
+      RTE.chainW((dataLayer) =>
+        dataLayer.insertMany<Omit<T, '_id'>>(
+          this.collection,
+          documents,
+          options,
+        ),
+      ),
+      RTE.mapLeft(this.error),
+    )
+  }
+
+  public findOne<O extends WithNonNullable>(
+    query: FilterQuery<T>,
+    options?: FindOneOptions & O,
+  ): RTE.ReaderTaskEither<
+    Db,
+    Error | MongoError,
+    O['nonNullable'] extends true ? NonNullable<T> : T | null
+  >
+  public findOne<O extends WithNonNullable>(
+    query: FilterQuery<T>,
+    options?: FindOneOptions & O,
+  ): RTE.ReaderTaskEither<Db, Error | MongoError, T | null> {
+    const { nonNullable, onNullError, ...o } = options ?? {}
+
+    return pipe(
+      getDataLayer(this.dataLayer),
+      RTE.chainW((dataLayer) =>
+        dataLayer.findOne<T>(this.collection, query, o),
+      ),
+      nonNullable ? this.nonNullable(query, onNullError) : identity,
+      RTE.mapLeft(this.error),
+    )
+  }
+
+  public findMany = (query: FilterQuery<T>, options?: FindOneOptions) => {
+    return pipe(
+      getDataLayer(this.dataLayer),
+      RTE.chainW((dataLayer) =>
+        dataLayer.findMany<T>(this.collection, query, options),
+      ),
+      RTE.mapLeft(this.error),
+    )
+  }
+
+  public updateOne<O extends WithNonNullable>(
+    query: FilterQuery<T>,
+    update: Update<T>,
+    options?: UpdateOneOptions & O,
+  ): RTE.ReaderTaskEither<
+    Db,
+    Error | MongoError,
+    O['nonNullable'] extends true ? NonNullable<T> : T | null
+  >
+  public updateOne<O extends WithNonNullable>(
+    query: FilterQuery<T>,
+    update: Update<T>,
+    options?: UpdateOneOptions & O,
+  ): RTE.ReaderTaskEither<Db, Error | MongoError, T | null> {
+    const { nonNullable, onNullError, ...o } = options ?? {}
+
+    return pipe(
+      getDataLayer(this.dataLayer),
+      RTE.chainW((dataLayer) =>
+        dataLayer.updateOne<T>(this.collection, query, update, o),
+      ),
+      nonNullable ? this.nonNullable(query, onNullError) : identity,
+      RTE.mapLeft(this.error),
+    )
+  }
+
+  public updateMany = (
+    query: FilterQuery<T>,
+    update: Update<T>,
+    options?: UpdateManyOptions,
+  ) => {
+    return pipe(
+      getDataLayer(this.dataLayer),
+      RTE.chainW((dataLayer) =>
+        dataLayer.updateMany<T>(this.collection, query, update, options),
+      ),
+      RTE.mapLeft(this.error),
+    )
+  }
+
+  public deleteOne<O extends WithNonNullable>(
+    query: FilterQuery<T>,
+    options?: CommonOptions & O,
+  ): RTE.ReaderTaskEither<
+    Db,
+    Error | MongoError,
+    O['nonNullable'] extends true ? NonNullable<T> : T | null
+  >
+  public deleteOne<O extends WithNonNullable>(
+    query: FilterQuery<T>,
+    options?: CommonOptions & O,
+  ): RTE.ReaderTaskEither<Db, Error | MongoError, T | null> {
+    const { nonNullable, onNullError, ...o } = options ?? {}
+
+    return pipe(
+      getDataLayer(this.dataLayer),
+      RTE.chainW((dataLayer) =>
+        dataLayer.deleteOne<T>(this.collection, query, o),
+      ),
+      nonNullable ? this.nonNullable(query, onNullError) : identity,
+      RTE.mapLeft(this.error),
+    )
+  }
+
+  public deleteMany = (query: FilterQuery<T>, options?: CommonOptions) => {
+    return pipe(
+      getDataLayer(this.dataLayer),
+      RTE.chainW((dataLayer) =>
+        dataLayer.deleteMany<T>(this.collection, query, options),
+      ),
+      RTE.mapLeft(this.error),
     )
   }
 }
