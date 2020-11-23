@@ -1,29 +1,46 @@
+import { Db, MongoError, ObjectID } from 'mongodb'
+
 import { PullListDbObject } from 'types/server-schema'
-import { MongoDataSource, toObjectId } from './MongoDataSource'
-import { ObjectID } from 'mongodb'
+import {
+  MongoDataSource,
+  MongoDataSourceOptions,
+  toObjectId,
+} from './MongoDataSource'
+import { IPullListRepoitory } from '../models/PullList/PullListModel'
 
 export const pullListCollection = 'pullList'
-export class PullListRepository extends MongoDataSource<PullListDbObject> {
-  public constructor() {
-    super(pullListCollection)
+export class PullListRepository extends MongoDataSource<PullListDbObject>
+  implements IPullListRepoitory<Db, Error | MongoError> {
+  public constructor({
+    dataLayer,
+    logger,
+  }: {
+    dataLayer: MongoDataSourceOptions['dataLayer']
+    logger: MongoDataSourceOptions['logger']
+  }) {
+    super({ collection: pullListCollection, dataLayer, logger })
   }
 
-  public getPullListByUser = (user: string) =>
-    this.findOne({ owner: user }, { nonNullable: true })
+  public createPullList = (owner: string) => this.insertOne({ owner, list: [] })
 
-  public addComicSeriesToPullList = (user: string, comicSeriesId: ObjectID) =>
+  public getPullListByOwner = (owner: string) =>
+    this.findOne({ owner }, { nonNullable: true })
+
+  public getPullListByOwnerOrNull = (owner: string) => this.findOne({ owner })
+
+  public addComicSeriesToPullList = (owner: string, comicSeriesId: ObjectID) =>
     this.updateOne(
-      { owner: user },
+      { owner },
       { $addToSet: { list: toObjectId(comicSeriesId) } },
       { nonNullable: true },
     )
 
   public removeComicSeriesFromPullList = (
-    user: string,
+    owner: string,
     comicSeriesId: ObjectID,
   ) =>
     this.updateOne(
-      { owner: user },
+      { owner },
       { $pull: { list: toObjectId(comicSeriesId) } },
       { nonNullable: true },
     )

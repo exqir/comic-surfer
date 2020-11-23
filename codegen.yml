@@ -9,7 +9,7 @@ config:
     enumValues: upper-case#upperCase
 generates:
   packages/app/src/types/graphql-client-schema.ts:
-    schema: 'packages/backend/src/schema/**/*.@(root|client).graphql'
+    schema: 'packages/backend/src/schema/**/*.@(root|server).graphql'
     documents: 'packages/app/src/data/**/!(*.d).{ts,tsx}'
     plugins:
       - 'typescript'

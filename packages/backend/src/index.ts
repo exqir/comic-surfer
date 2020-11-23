@@ -30,8 +30,8 @@ const apolloServer = new ApolloServer({
     comicBook: new ComicBookAPI(),
     comicSeries: new ComicSeriesAPI(),
     publisher: new PublisherAPI(),
-    pullList: new PullListRepository(),
-    queue: new QueueRepository(),
+    pullList: new PullListRepository({ dataLayer: mongad, logger }),
+    queue: new QueueRepository({ dataLayer: mongad, logger }),
   }),
   context: async ({
     req,

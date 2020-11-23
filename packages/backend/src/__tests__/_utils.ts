@@ -12,7 +12,7 @@ import {
   ComicBookAPI,
   ComicSeriesAPI,
   PublisherAPI,
-  PullListAPI,
+  PullListRepository,
   QueueRepository,
 } from '../datasources'
 import { IScraper } from 'services/ScrapeService'
@@ -132,7 +132,7 @@ export const constructTestServer = (context: {} = {}) => {
   const comicBook = new ComicBookAPI()
   const comicSeries = new ComicSeriesAPI()
   const publisher = new PublisherAPI()
-  const pullList = new PullListAPI()
+  const pullList = new PullListRepository()
   const queue = new QueueRepository()
 
   const server = new ApolloServer({

@@ -1,43 +1,26 @@
-import { ObjectID } from 'mongodb'
-import { MongoDataSource } from './MongoDataSource'
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import { Db, MongoError } from 'mongodb'
+import { MongoDataSource, MongoDataSourceOptions } from './MongoDataSource'
 
-export enum TaskType {
-  SCRAPSINGLEISSUELIST = 'SCRAP_SINGLE_ISSUE_LIST',
-  SCRAPCOLLECTIONLIST = 'SCRAP_COLLECTION_LIST',
-  SCRAPCOMICBOOK = 'SCRAP_COMIC_BOOK',
-  UPDATECOMICBOOKRELEASE = 'UPDATE_COMIC_BOOK_RELEASE',
-  UPDATECOMICSERIESPUBLISHER = 'UPDATE_COMIC_SERIES_PUBLISHER',
-}
-
-// TODO: Add a status to the Task type: 'Queued' | 'Error' | 'Done'
-type Task =
-  | {
-      _id: ObjectID
-      type: TaskType.SCRAPSINGLEISSUELIST | TaskType.SCRAPCOLLECTIONLIST
-      data: { url: string; comicSeriesId: ObjectID }
-    }
-  | {
-      _id: ObjectID
-      type: TaskType.UPDATECOMICBOOKRELEASE
-      data: { comicBookId: ObjectID; url: string }
-    }
-  | {
-      _id: ObjectID
-      type: TaskType.UPDATECOMICSERIESPUBLISHER
-      data: { comicSeriesId: ObjectID }
-    }
-  | {
-      _id: ObjectID
-      type: TaskType.SCRAPCOMICBOOK
-      data: { comicBookUrl: string }
-    }
+import { Task, NewTask, IQueueRepository } from '../models/Queue/QueueModel'
 
 export const queueCollection = 'queue'
-export class QueueRepository extends MongoDataSource<Task> {
-  public constructor() {
-    super(queueCollection)
+export class QueueRepository extends MongoDataSource<Task>
+  implements IQueueRepository<Db, Error | MongoError> {
+  public constructor({
+    dataLayer,
+    logger,
+  }: Omit<MongoDataSourceOptions, 'collection'>) {
+    super({ collection: queueCollection, dataLayer, logger })
   }
 
-  public enqueueTask = (task: Task) => this.insertOne(task)
-  public enqueueTasks = (tasks: Task[]) => this.insertMany(tasks)
+  // TODO: Fix WithId type in mongad
+  public addTaskToQueue = (task: NewTask) =>
+    this.insertOne(task) as RTE.ReaderTaskEither<Db, Error | MongoError, Task>
+  public addTasksToQueue = (tasks: NewTask[]) =>
+    this.insertMany(tasks) as RTE.ReaderTaskEither<
+      Db,
+      Error | MongoError,
+      Task[]
+    >
 }

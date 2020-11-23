@@ -1,5 +1,5 @@
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
-import { Db } from 'mongodb'
+import { Db, ObjectID } from 'mongodb'
 import { Response, Request } from 'express'
 import { Option } from 'fp-ts/lib/Option'
 import {
@@ -82,4 +82,12 @@ export type NonNullableResolver<
   info: Info,
 ) => Result | Promise<Result>
 
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+// https://stackoverflow.com/questions/57103834/typescript-omit-a-property-from-all-interfaces-in-a-union-but-keep-the-union-s
+export type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
+  ? Omit<T, K>
+  : never
+
+// Use this instead of mongodb's WithId because its use of Omit
+// removes type information from union types for which we use
+// DistributiveOmit in order to preserve them.
+export type WithId<T> = T & { _id: ObjectID }

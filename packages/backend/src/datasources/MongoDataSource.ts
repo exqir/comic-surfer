@@ -17,7 +17,12 @@ import {
 } from 'mongodb'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as E from 'fp-ts/lib/Either'
-import { GraphQLContext, DataLayer, DataSources } from 'types/app'
+import {
+  GraphQLContext,
+  DataLayer,
+  DistributiveOmit,
+  DataSources,
+} from 'types/app'
 import { ILogger } from 'services/LogService'
 
 type Update<T> = UpdateQuery<T> | Partial<T>
@@ -35,15 +40,28 @@ const getDataLayer: (
   RTE.fromEither,
 )
 
+export interface MongoDataSourceOptions {
+  collection: string
+  dataLayer: DataLayer
+  logger: ILogger
+}
+
 export class MongoDataSource<T extends { _id: ObjectID }> extends DataSource<
   GraphQLContext
 > {
   protected collection: string
-  protected dataLayer?: DataLayer
-  protected logger?: ILogger
-  public constructor(collection: string) {
+  protected dataLayer: DataLayer
+  protected logger: ILogger
+  protected context?: GraphQLContext
+  public constructor({
+    collection,
+    dataLayer,
+    logger,
+  }: MongoDataSourceOptions) {
     super()
     this.collection = collection
+    this.dataLayer = dataLayer
+    this.logger = logger
 
     this.findOne = this.findOne.bind(this)
     this.updateOne = this.updateOne.bind(this)
@@ -51,8 +69,7 @@ export class MongoDataSource<T extends { _id: ObjectID }> extends DataSource<
   }
 
   public initialize({ context }: DataSourceConfig<GraphQLContext>) {
-    this.dataLayer = context.dataLayer
-    this.logger = context.services.logger
+    this.context = context
   }
 
   protected error<A extends Error>(err: A): A {
@@ -77,26 +94,30 @@ export class MongoDataSource<T extends { _id: ObjectID }> extends DataSource<
   }
 
   public insertOne = (
-    document: Omit<T, '_id'>,
+    document: DistributiveOmit<T, '_id'>,
     options?: CollectionInsertOneOptions,
   ) => {
     return pipe(
       getDataLayer(this.dataLayer),
       RTE.chainW((dataLayer) =>
-        dataLayer.insertOne<Omit<T, '_id'>>(this.collection, document, options),
+        dataLayer.insertOne<DistributiveOmit<T, '_id'>>(
+          this.collection,
+          document,
+          options,
+        ),
       ),
       RTE.mapLeft(this.error),
     )
   }
 
   public insertMany = (
-    documents: Omit<T, '_id'>[],
+    documents: DistributiveOmit<T, '_id'>[],
     options?: CollectionInsertManyOptions,
   ) => {
     return pipe(
       getDataLayer(this.dataLayer),
       RTE.chainW((dataLayer) =>
-        dataLayer.insertMany<Omit<T, '_id'>>(
+        dataLayer.insertMany<DistributiveOmit<T, '_id'>>(
           this.collection,
           documents,
           options,
