@@ -63,6 +63,9 @@ export class MongoDataSource<T extends { _id: ObjectID }> extends DataSource<
     this.dataLayer = dataLayer
     this.logger = logger
 
+    this.error = this.error.bind(this)
+    this.nonNullable = this.nonNullable.bind(this)
+
     this.findOne = this.findOne.bind(this)
     this.updateOne = this.updateOne.bind(this)
     this.deleteOne = this.deleteOne.bind(this)
@@ -73,7 +76,7 @@ export class MongoDataSource<T extends { _id: ObjectID }> extends DataSource<
   }
 
   protected error<A extends Error>(err: A): A {
-    this.logger?.error(err.message)()
+    this.logger.error(err.message)()
 
     return err
   }

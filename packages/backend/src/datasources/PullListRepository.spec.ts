@@ -1,4 +1,4 @@
-import { MongoError, ObjectID } from 'mongodb'
+import { MongoError, ObjectID, Db } from 'mongodb'
 import {
   PullListRepository,
   pullListCollection as collection,
@@ -28,56 +28,47 @@ const dataLayer = ({
 
 const logger = {
   log: IO.of(jest.fn()),
-  error: IO.of(jest.fn()),
+  error: jest.fn(IO.of),
   warn: IO.of(jest.fn()),
   info: IO.of(jest.fn()),
 }
 const repo = new PullListRepository({ dataLayer, logger })
 
 describe('[PullListRepository.createPullList]', () => {
-  it('should insert PullList using dataLayer and return left in case of Error', async () => {
+  it('should return RTE.left in case of Error', async () => {
     const { _id: _, ...mockPullList } = defaultPullList
     const { insertOne } = dataLayer
-    // insertOne.mockReturnValueOnce(
-    //   RTE.left(new MongoError('Failed to create PullList')),
-    // )
+    ;(insertOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failed to create PullList')),
+    )
 
     const res = repo.createPullList(mockPullList.owner)
-
-    expect.assertions(2)
     await pipe(
       res,
       RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
-      (rte) => RTE.run(rte, {}),
+      (rte) => RTE.run(rte, {} as Db),
     )
-    expect(insertOne).toBeCalledWith(collection, mockPullList)
-    // TODO: The mock function is actually being called which can be tested by
-    // a mock implementation and via debugger. However, this information
-    // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
-    // expect(config.context.logger.error.mock).toBeCalledWith('TestError')
+    expect(insertOne).toBeCalledWith(collection, mockPullList, undefined)
+    expect(logger.error).toBeCalledWith('Failed to create PullList')
+    expect.assertions(3)
   })
 
-  // it('should insert PullList using dataLayer and return right with result', async () => {
-  //   const mockPullList = { ...defaultPullList }
-  //   delete mockPullList._id
-  //   const { insertOne } = config.context.dataLayer
-  //   ;(insertOne as jest.Mock).mockReturnValueOnce(
-  //     createMockReaderWithReturnValue<PullListDbObject>({
-  //       ...mockPullList,
-  //       _id: new ObjectID(),
-  //     }),
-  //   )
+  it('should insert PullList using dataLayer and return right with result', async () => {
+    const { _id, ...mockPullList } = defaultPullList
+    const mockPullListWithId = { ...mockPullList, _id }
+    const { insertOne } = dataLayer
+    ;(insertOne as jest.Mock).mockReturnValueOnce(RTE.right(mockPullListWithId))
 
-  //   const res = ds.insert(mockPullList)
+    const res = repo.createPullList(mockPullList.owner)
 
-  //   expect.assertions(2)
-  //   await pipe(
-  //     res,
-  //     RTE.map((d) => expect(d).toMatchObject(mockPullList)),
-  //     runRTEwithMockDb,
-  //   )
-  //   expect(insertOne).toBeCalledWith(collection, mockPullList)
-  // })
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(mockPullListWithId)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(insertOne).toBeCalledWith(collection, mockPullList, undefined)
+    expect.assertions(2)
+  })
 })
 
 // describe('[PullListAPI.addComicSeries]', () => {

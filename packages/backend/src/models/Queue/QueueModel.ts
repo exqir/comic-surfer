@@ -2,9 +2,11 @@ import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { ObjectID } from 'mongodb'
 
 import { WithId, DistributiveOmit } from 'types/app'
+import { ComicSeriesDbObject } from 'types/server-schema'
 
 type Url = string
 type ComicSeriesId = ObjectID
+type ComicSeries = ComicSeriesDbObject
 
 export enum TaskType {
   SCRAPSINGLEISSUELIST = 'SCRAP_SINGLE_ISSUE_LIST',
@@ -61,5 +63,28 @@ export function PullListModel<R, E extends Error>({
         type: TaskType.UPDATECOMICSERIESPUBLISHER,
         data: { comicSeriesId },
       }),
+    enqueueInitializeComicSeries: (comicSeries: ComicSeries) =>
+      queueRepository.addTasksToQueue([
+        {
+          type: TaskType.UPDATECOMICSERIESPUBLISHER,
+          data: {
+            comicSeriesId: comicSeries._id,
+          },
+        },
+        {
+          type: TaskType.SCRAPSINGLEISSUELIST,
+          data: {
+            comicSeriesId: comicSeries._id,
+            url: comicSeries.singleIssuesUrl!,
+          },
+        },
+        {
+          type: TaskType.SCRAPCOLLECTIONLIST,
+          data: {
+            comicSeriesId: comicSeries._id,
+            url: comicSeries.collectionsUrl!,
+          },
+        },
+      ]),
   }
 }
