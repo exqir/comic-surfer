@@ -47,7 +47,7 @@ interface QueueModelOptions<R, E extends Error> {
   queueRepository: IQueueRepository<R, E>
 }
 
-export function PullListModel<R, E extends Error>({
+export function QueueModel<R, E extends Error>({
   queueRepository,
 }: QueueModelOptions<R, E>) {
   return {
