@@ -1,30 +1,11 @@
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
-import * as IO from 'fp-ts/lib/IO'
 import { MongoError, ObjectID, Db } from 'mongodb'
 
+import { dataLayer, logger } from '../__tests__/_mock'
 import { MongoDataSource } from './MongoDataSource'
-import { DataLayer } from '../types/types'
 
 const collection = 'collection'
-
-const dataLayer = ({
-  findOne: jest.fn(),
-  findMany: jest.fn(),
-  insertOne: jest.fn(),
-  insertMany: jest.fn(),
-  updateOne: jest.fn(),
-  updateMany: jest.fn(),
-  deleteOne: jest.fn(),
-  deleteMany: jest.fn(),
-} as unknown) as DataLayer
-
-const logger = {
-  log: IO.of(jest.fn()),
-  error: jest.fn(IO.of),
-  warn: IO.of(jest.fn()),
-  info: IO.of(jest.fn()),
-}
 
 const ds = new MongoDataSource<{ _id: ObjectID; prop: string }>({
   collection,
@@ -221,7 +202,7 @@ describe('[MongoDataSource.findOne]', () => {
     expect.assertions(1)
   })
 
-  it('should return null as RTE.left when `nonNubllable` is `true`', async () => {
+  it('should return null as RTE.left when `nonNullable` is `true`', async () => {
     const query = { prop: 'value' }
     const options = { nonNullable: true }
     const { findOne } = dataLayer
@@ -238,7 +219,7 @@ describe('[MongoDataSource.findOne]', () => {
     expect.assertions(2)
   })
 
-  it('should return null as RTE.right when `nonNubllable` is falsy', async () => {
+  it('should return null as RTE.right when `nonNullable` is falsy', async () => {
     const query = { prop: 'value' }
     const { findOne } = dataLayer
     ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
@@ -383,7 +364,7 @@ describe('[MongoDataSource.updateOne]', () => {
     expect.assertions(1)
   })
 
-  it('should return null as RTE.left when `nonNubllable` is `true`', async () => {
+  it('should return null as RTE.left when `nonNullable` is `true`', async () => {
     const query = { prop: 'value' }
     const options = { nonNullable: true }
     const { updateOne } = dataLayer
@@ -400,7 +381,7 @@ describe('[MongoDataSource.updateOne]', () => {
     expect.assertions(2)
   })
 
-  it('should return null as RTE.right when `nonNubllable` is falsy', async () => {
+  it('should return null as RTE.right when `nonNullable` is falsy', async () => {
     const query = { prop: 'value' }
     const { updateOne } = dataLayer
     ;(updateOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
@@ -546,7 +527,7 @@ describe('[MongoDataSource.deleteOne]', () => {
     expect.assertions(1)
   })
 
-  it('should return null as RTE.left when `nonNubllable` is `true`', async () => {
+  it('should return null as RTE.left when `nonNullable` is `true`', async () => {
     const query = { prop: 'value' }
     const options = { nonNullable: true }
     const { deleteOne } = dataLayer
@@ -563,7 +544,7 @@ describe('[MongoDataSource.deleteOne]', () => {
     expect.assertions(2)
   })
 
-  it('should return null as RTE.right when `nonNubllable` is falsy', async () => {
+  it('should return null as RTE.right when `nonNullable` is falsy', async () => {
     const query = { prop: 'value' }
     const { deleteOne } = dataLayer
     ;(deleteOne as jest.Mock).mockReturnValueOnce(RTE.right(null))

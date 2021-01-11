@@ -12,8 +12,8 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react",
     "baseUrl": "./src",
+    "rootDir": "./src",
     "paths": {
       "types/client-schema": ["types/graphql-client-schema.ts"],
       "types/server-schema": ["types/graphql-server-schema.ts"],
@@ -22,11 +22,6 @@
       "lib/*": ["lib/*"]
     }
   },
-  "exclude": [
-    "src/types/graphql-schema.ts",
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "node_modules"
-  ],
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "node_modules"],
   "include": ["**/*.ts", "**/*.graphql"]
 }

@@ -1,14 +1,13 @@
 import { MongoError, ObjectID, Db } from 'mongodb'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
-import * as IO from 'fp-ts/lib/IO'
 
+import { dataLayer, logger } from '../__tests__/_mock'
 import {
   PullListRepository,
   pullListCollection as collection,
 } from './PullListRepository'
 import { PullListDbObject } from '../types/graphql-server-schema'
-import { DataLayer } from '../types/types'
 
 const defaultPullList: PullListDbObject = {
   _id: new ObjectID(),
@@ -16,23 +15,6 @@ const defaultPullList: PullListDbObject = {
   list: [],
 }
 
-const dataLayer = ({
-  findOne: jest.fn(),
-  findMany: jest.fn(),
-  insertOne: jest.fn(),
-  insertMany: jest.fn(),
-  updateOne: jest.fn(),
-  updateMany: jest.fn(),
-  deleteOne: jest.fn(),
-  deleteMany: jest.fn(),
-} as unknown) as DataLayer
-
-const logger = {
-  log: IO.of(jest.fn()),
-  error: jest.fn(IO.of),
-  warn: IO.of(jest.fn()),
-  info: IO.of(jest.fn()),
-}
 // TODO: type of options is lost, dataLayer and logger are any here
 const repo = new PullListRepository({ dataLayer, logger })
 
@@ -73,120 +55,280 @@ describe('[PullListRepository.createPullList]', () => {
   })
 })
 
-// describe('[PullListAPI.addComicSeries]', () => {
-//   it('should add ComicSeries to PullList using dataLayer and return left in case of Error', async () => {
-//     const mockPullList = { ...defaultPullList }
-//     const mockComicSeriesId = new ObjectID()
-//     const { updateOne } = config.context.dataLayer
-//     ;(updateOne as jest.Mock).mockReturnValueOnce(
-//       createMockReaderWithReturnValue({}, true),
-//     )
+describe('[PullListRepository.getPullListByOwner]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const { _id: _, ...mockPullList } = defaultPullList
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failed to find PullList')),
+    )
 
-//     const res = ds.addComicSeries(mockPullList.owner, mockComicSeriesId)
+    const res = repo.getPullListByOwner(mockPullList.owner)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      {},
+    )
+    expect(logger.error).toBeCalledWith('Failed to find PullList')
+    expect.assertions(3)
+  })
 
-//     expect.assertions(2)
-//     await pipe(
-//       res,
-//       RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
-//       runRTEwithMockDb,
-//     )
-//     expect(updateOne).toBeCalledWith(
-//       collection,
-//       { owner: mockPullList.owner },
-//       { $addToSet: { list: mockComicSeriesId } },
-//     )
-//     // TODO: The mock function is actually being called which can be tested by
-//     // a mock implementation and via debugger. However, this information
-//     // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
-//     // expect(config.context.logger.error.mock).toBeCalledWith('TestError')
-//   })
+  it('should return RTE.left in case of null', async () => {
+    const { _id: _, ...mockPullList } = defaultPullList
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
 
-//   it('should add ComicSeries to PullList using dataLayer and return right with result', async () => {
-//     const mockComicSeries = {
-//       _id: new ObjectID(),
-//       title: 'Comic',
-//       url: '/path',
-//     }
-//     const mockPullList = {
-//       ...defaultPullList,
-//       list: [mockComicSeries._id],
-//     }
-//     const { updateOne } = config.context.dataLayer
-//     ;(updateOne as jest.Mock).mockReturnValueOnce(
-//       createMockReaderWithReturnValue<PullListDbObject>(mockPullList),
-//     )
+    const res = repo.getPullListByOwner(mockPullList.owner)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      {},
+    )
+    expect.assertions(2)
+  })
 
-//     const res = ds.addComicSeries(mockPullList.owner, mockComicSeries._id)
+  it('should find PullList using dataLayer and return right with result', async () => {
+    const { _id, ...mockPullList } = defaultPullList
+    const mockPullListWithId = { ...mockPullList, _id }
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right(mockPullListWithId))
 
-//     expect.assertions(2)
-//     await pipe(
-//       res,
-//       RTE.map((d) => expect(d).toMatchObject(mockPullList)),
-//       runRTEwithMockDb,
-//     )
-//     expect(updateOne).toBeCalledWith(
-//       collection,
-//       { owner: mockPullList.owner },
-//       { $addToSet: { list: mockComicSeries._id } },
-//     )
-//   })
-// })
+    const res = repo.getPullListByOwner(mockPullList.owner)
 
-// describe('[PullListAPI.removeComicSeries]', () => {
-//   it('should remove ComicSeries from PullList using dataLayer and return left in case of Error', async () => {
-//     const mockPullList = { ...defaultPullList }
-//     const mockComicSeriesId = new ObjectID()
-//     const { updateOne } = config.context.dataLayer
-//     ;(updateOne as jest.Mock).mockReturnValueOnce(
-//       createMockReaderWithReturnValue({}, true),
-//     )
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(mockPullListWithId)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      {},
+    )
+    expect.assertions(2)
+  })
+})
 
-//     const res = ds.removeComicSeries(mockPullList.owner, mockComicSeriesId)
+describe('[PullListRepository.getPullListByOwnerOrNull]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const { _id: _, ...mockPullList } = defaultPullList
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failed to find PullList')),
+    )
 
-//     expect.assertions(2)
-//     await pipe(
-//       res,
-//       RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
-//       runRTEwithMockDb,
-//     )
-//     expect(updateOne).toBeCalledWith(
-//       collection,
-//       { owner: mockPullList.owner },
-//       { $pull: { list: mockComicSeriesId } },
-//     )
-//     // TODO: The mock function is actually being called which can be tested by
-//     // a mock implementation and via debugger. However, this information
-//     // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
-//     // expect(config.context.logger.error.mock).toBeCalledWith('TestError')
-//   })
+    const res = repo.getPullListByOwnerOrNull(mockPullList.owner)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      {},
+    )
+    expect(logger.error).toBeCalledWith('Failed to find PullList')
+    expect.assertions(3)
+  })
 
-//   it('should remove ComicSeries from PullList using dataLayer and return right with result', async () => {
-//     const mockComicSeries = {
-//       _id: new ObjectID(),
-//       title: 'Comic',
-//       url: '/path',
-//     }
-//     const mockPullList = {
-//       ...defaultPullList,
-//       list: [],
-//     }
-//     const { updateOne } = config.context.dataLayer
-//     ;(updateOne as jest.Mock).mockReturnValueOnce(
-//       createMockReaderWithReturnValue<PullListDbObject>(mockPullList),
-//     )
+  it('should find PullList using dataLayer and return right with result', async () => {
+    const { _id, ...mockPullList } = defaultPullList
+    const mockPullListWithId = { ...mockPullList, _id }
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right(mockPullListWithId))
 
-//     const res = ds.removeComicSeries(mockPullList.owner, mockComicSeries._id)
+    const res = repo.getPullListByOwnerOrNull(mockPullList.owner)
 
-//     expect.assertions(2)
-//     await pipe(
-//       res,
-//       RTE.map((d) => expect(d).toMatchObject(mockPullList)),
-//       runRTEwithMockDb,
-//     )
-//     expect(updateOne).toBeCalledWith(
-//       collection,
-//       { owner: mockPullList.owner },
-//       { $pull: { list: mockComicSeries._id } },
-//     )
-//   })
-// })
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(mockPullListWithId)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      {},
+    )
+    expect.assertions(2)
+  })
+
+  it('should find PullList using dataLayer and return right with null', async () => {
+    const { _id, ...mockPullList } = defaultPullList
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
+
+    const res = repo.getPullListByOwnerOrNull(mockPullList.owner)
+
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toBe(null)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      {},
+    )
+    expect.assertions(2)
+  })
+})
+
+describe('[PullListRepository.addComicSeriesToPullList]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const { _id: _, ...mockPullList } = defaultPullList
+    const { updateOne } = dataLayer
+    const comicSeriesId = new ObjectID()
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failed to find PullList')),
+    )
+
+    const res = repo.addComicSeriesToPullList(mockPullList.owner, comicSeriesId)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      { $addToSet: { list: comicSeriesId } },
+      {},
+    )
+    expect(logger.error).toBeCalledWith('Failed to find PullList')
+    expect.assertions(3)
+  })
+
+  it('should return RTE.left in case of null', async () => {
+    const { _id: _, ...mockPullList } = defaultPullList
+    const { updateOne } = dataLayer
+    const comicSeriesId = new ObjectID()
+    ;(updateOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
+
+    const res = repo.addComicSeriesToPullList(mockPullList.owner, comicSeriesId)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      { $addToSet: { list: comicSeriesId } },
+      {},
+    )
+    expect.assertions(2)
+  })
+
+  it('should add ComicSeries to PullList using dataLayer and return right with result', async () => {
+    const { _id, ...mockPullList } = defaultPullList
+    const mockPullListWithId = { ...mockPullList, _id }
+    const { updateOne } = dataLayer
+    const comicSeriesId = new ObjectID()
+    ;(updateOne as jest.Mock).mockReturnValueOnce(RTE.right(mockPullListWithId))
+
+    const res = repo.addComicSeriesToPullList(mockPullList.owner, comicSeriesId)
+
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(mockPullListWithId)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      { $addToSet: { list: comicSeriesId } },
+      {},
+    )
+    expect.assertions(2)
+  })
+})
+
+describe('[PullListRepository.removeComicSeriesFromPullList]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const { _id: _, ...mockPullList } = defaultPullList
+    const { updateOne } = dataLayer
+    const comicSeriesId = new ObjectID()
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failed to find PullList')),
+    )
+
+    const res = repo.removeComicSeriesFromPullList(
+      mockPullList.owner,
+      comicSeriesId,
+    )
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      { $pull: { list: comicSeriesId } },
+      {},
+    )
+    expect(logger.error).toBeCalledWith('Failed to find PullList')
+    expect.assertions(3)
+  })
+
+  it('should return RTE.left in case of null', async () => {
+    const { _id: _, ...mockPullList } = defaultPullList
+    const { updateOne } = dataLayer
+    const comicSeriesId = new ObjectID()
+    ;(updateOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
+
+    const res = repo.removeComicSeriesFromPullList(
+      mockPullList.owner,
+      comicSeriesId,
+    )
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      { $pull: { list: comicSeriesId } },
+      {},
+    )
+    expect.assertions(2)
+  })
+
+  it('should add ComicSeries to PullList using dataLayer and return right with result', async () => {
+    const { _id, ...mockPullList } = defaultPullList
+    const mockPullListWithId = { ...mockPullList, _id }
+    const { updateOne } = dataLayer
+    const comicSeriesId = new ObjectID()
+    ;(updateOne as jest.Mock).mockReturnValueOnce(RTE.right(mockPullListWithId))
+
+    const res = repo.removeComicSeriesFromPullList(
+      mockPullList.owner,
+      comicSeriesId,
+    )
+
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(mockPullListWithId)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      { $pull: { list: comicSeriesId } },
+      {},
+    )
+    expect.assertions(2)
+  })
+})

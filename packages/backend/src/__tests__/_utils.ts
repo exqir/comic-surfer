@@ -16,6 +16,7 @@ import {
   QueueRepository,
 } from '../datasources'
 import { IScraper } from 'services/ScrapeService'
+import { ILogger } from 'services/LogService'
 
 /**
  * Creates a `ReaderTaskEither<Db, MongoError, T>` that returns `value` as right
