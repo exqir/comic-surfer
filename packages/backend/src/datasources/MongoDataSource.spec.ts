@@ -1,148 +1,645 @@
-import { MongoError, ObjectID } from 'mongodb'
-import { MongoDataSource } from './MongoDataSource'
-import {
-  createMockConfig,
-  createMockReaderWithReturnValue,
-  runRTEwithMockDb,
-} from 'tests/_utils'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import * as IO from 'fp-ts/lib/IO'
+import { MongoError, ObjectID, Db } from 'mongodb'
 
-const config = createMockConfig()
+import { MongoDataSource } from './MongoDataSource'
+import { DataLayer } from '../types/types'
 
 const collection = 'collection'
-const ds = new MongoDataSource(collection)
-ds.initialize(config)
 
-describe('[MongoDataSource.insert]', () => {
-  it('should insert Document using dataLayer and return left in case of Error', async () => {
-    const mockComicBook = { title: 'Comic', url: '/path' }
-    const { insertOne } = config.context.dataLayer
+const dataLayer = ({
+  findOne: jest.fn(),
+  findMany: jest.fn(),
+  insertOne: jest.fn(),
+  insertMany: jest.fn(),
+  updateOne: jest.fn(),
+  updateMany: jest.fn(),
+  deleteOne: jest.fn(),
+  deleteMany: jest.fn(),
+} as unknown) as DataLayer
+
+const logger = {
+  log: IO.of(jest.fn()),
+  error: jest.fn(IO.of),
+  warn: IO.of(jest.fn()),
+  info: IO.of(jest.fn()),
+}
+
+const ds = new MongoDataSource<{ _id: ObjectID; prop: string }>({
+  collection,
+  dataLayer,
+  logger,
+})
+
+describe('[MongoDataSource.insertOne]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const document = { prop: 'value' }
+    const { insertOne } = dataLayer
     ;(insertOne as jest.Mock).mockReturnValueOnce(
-      createMockReaderWithReturnValue({}, true),
+      RTE.left(new MongoError('Failure')),
     )
 
-    const res = ds.insert(mockComicBook)
+    const res = ds.insertOne(document)
 
-    expect.assertions(2)
     await pipe(
       res,
       RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
-      runRTEwithMockDb,
+      (rte) => RTE.run(rte, {} as Db),
     )
-    expect(insertOne).toBeCalledWith(collection, mockComicBook)
-    // TODO: The mock function is actually being called which can be tested by
-    // a mock implementation and via debugger. However, this information
-    // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
-    // expect(config.context.logger.error.mock).toBeCalledWith('TestError')
+    expect(insertOne).toBeCalledWith(collection, document, undefined)
+    expect.assertions(2)
   })
 
-  it('should insert Document using dataLayer and return right with result', async () => {
-    const mockDocument = { title: 'Comic', url: '/path' }
-    const { insertOne } = config.context.dataLayer
+  it('should call logger.error in case of Error', async () => {
+    const document = { prop: 'value' }
+    const { insertOne } = dataLayer
     ;(insertOne as jest.Mock).mockReturnValueOnce(
-      createMockReaderWithReturnValue({
-        ...mockDocument,
-        _id: new ObjectID(),
-      }),
+      RTE.left(new MongoError('Failure')),
     )
 
-    const res = ds.insert(mockDocument)
+    const res = ds.insertOne(document)
 
-    expect.assertions(2)
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(logger.error).toBeCalledWith('Failure')
+    expect.assertions(1)
+  })
+
+  it('should insert document using dataLayer and return right with result', async () => {
+    const document = { prop: 'value' }
+    const documentWithId = { _id: new ObjectID(), ...document }
+    const { insertOne } = dataLayer
+    ;(insertOne as jest.Mock).mockReturnValueOnce(RTE.right(documentWithId))
+
+    const res = ds.insertOne(document)
+
     await pipe(
       res,
-      RTE.map((d) => expect(d).toMatchObject(mockDocument)),
-      runRTEwithMockDb,
+      RTE.map((d) => expect(d).toMatchObject(documentWithId)),
+      (rte) => RTE.run(rte, {} as Db),
     )
-    expect(insertOne).toBeCalledWith(collection, mockDocument)
+    expect(insertOne).toBeCalledWith(collection, document, undefined)
+    expect.assertions(2)
+  })
+
+  it('should forward options to the dataLayer', async () => {
+    const document = { prop: 'value' }
+    const options = { forceServerObjectId: true }
+    const { insertOne } = dataLayer
+    ;(insertOne as jest.Mock).mockReturnValueOnce(RTE.right({}))
+
+    const res = ds.insertOne(document, options)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(insertOne).toBeCalledWith(collection, document, options)
+    expect.assertions(1)
   })
 })
 
-describe('[MongoDataSource.getById]', () => {
-  it('should query dataLayer for Document with id and return left in case of Error', async () => {
-    const mockDocument = { _id: new ObjectID() }
-    const { findOne } = config.context.dataLayer
-    ;(findOne as jest.Mock).mockReturnValueOnce(
-      createMockReaderWithReturnValue({}, true),
+describe('[MongoDataSource.insertMany]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const documents = [{ prop: 'value' }]
+    const { insertMany } = dataLayer
+    ;(insertMany as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
     )
 
-    const res = ds.getById(mockDocument._id)
+    const res = ds.insertMany(documents)
 
-    expect.assertions(2)
     await pipe(
       res,
       RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
-      runRTEwithMockDb,
+      (rte) => RTE.run(rte, {} as Db),
     )
-    expect(findOne).toBeCalledWith(collection, { _id: mockDocument._id })
-    // TODO: The mock function is actually being called which can be tested by
-    // a mock implementation and via debugger. However, this information
-    // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
-    // expect(config.context.logger.error.mock).toBeCalledWith('TestError')
+    expect(insertMany).toBeCalledWith(collection, documents, undefined)
+    expect.assertions(2)
   })
 
-  it('should query dataLayer for Document with id and return right with result', async () => {
-    const mockDocument = { _id: new ObjectID(), title: 'Comic', url: '/path' }
-    const { findOne } = config.context.dataLayer
-    ;(findOne as jest.Mock).mockReturnValueOnce(
-      createMockReaderWithReturnValue(mockDocument),
+  it('should call logger.error in case of Error', async () => {
+    const documents = [{ prop: 'value' }]
+    const { insertMany } = dataLayer
+    ;(insertMany as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
     )
 
-    const res = ds.getById(mockDocument._id)
+    const res = ds.insertMany(documents)
 
-    expect.assertions(2)
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(logger.error).toBeCalledWith('Failure')
+    expect.assertions(1)
+  })
+
+  it('should insert documents using dataLayer and return right with result', async () => {
+    const documents = [{ prop: 'value' }]
+    const documentsWithId = [{ _id: new ObjectID(), ...documents[0] }]
+    const { insertMany } = dataLayer
+    ;(insertMany as jest.Mock).mockReturnValueOnce(RTE.right(documentsWithId))
+
+    const res = ds.insertMany(documents)
+
     await pipe(
       res,
-      RTE.map((d) => expect(d).toMatchObject(mockDocument)),
-      runRTEwithMockDb,
+      RTE.map((d) => expect(d).toMatchObject(documentsWithId)),
+      (rte) => RTE.run(rte, {} as Db),
     )
-    expect(findOne).toBeCalledWith(collection, { _id: mockDocument._id })
+    expect(insertMany).toBeCalledWith(collection, documents, undefined)
+    expect.assertions(2)
+  })
+
+  it('should forward options to the dataLayer', async () => {
+    const options = { forceServerObjectId: true }
+    const { insertMany } = dataLayer
+    ;(insertMany as jest.Mock).mockReturnValueOnce(RTE.right({}))
+
+    const res = ds.insertMany([{ prop: '' }], options)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(insertMany).toBeCalledWith(collection, [{ prop: '' }], options)
+    expect.assertions(1)
   })
 })
 
-describe('[MongoDataSource.getByIds]', () => {
-  it('should query dataLayer for Document with ids and return left in case of Error', async () => {
-    const mockDocument = { _id: new ObjectID() }
-    const { findMany } = config.context.dataLayer
-    ;(findMany as jest.Mock).mockReturnValueOnce(
-      createMockReaderWithReturnValue({}, true),
+describe('[MongoDataSource.findOne]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const query = { prop: 'value' }
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
     )
 
-    const res = ds.getByIds([mockDocument._id])
+    const res = ds.findOne(query)
 
-    expect.assertions(2)
     await pipe(
       res,
       RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
-      runRTEwithMockDb,
+      (rte) => RTE.run(rte, {} as Db),
     )
-    expect(findMany).toBeCalledWith(collection, {
-      _id: { $in: [mockDocument._id] },
-    })
-    // TODO: The mock function is actually being called which can be tested by
-    // a mock implementation and via debugger. However, this information
-    // (config.context.logger.error.mock) seems to be reseted before it can be checked here.
-    // expect(config.context.logger.error.mock).toBeCalledWith('TestError')
+    expect(findOne).toBeCalledWith(collection, query, {})
+    expect.assertions(2)
   })
 
-  it('should query dataLayer for Document with ids and return right with result', async () => {
-    const mockDocument = [{ _id: new ObjectID(), title: 'Comic', url: '/path' }]
-    const { findMany } = config.context.dataLayer
-    ;(findMany as jest.Mock).mockReturnValueOnce(
-      createMockReaderWithReturnValue(mockDocument),
+  it('should call logger.error in case of Error', async () => {
+    const query = { prop: 'value' }
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
     )
 
-    const res = ds.getByIds([mockDocument[0]._id])
+    const res = ds.findOne(query)
 
-    expect.assertions(2)
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(logger.error).toBeCalledWith('Failure')
+    expect.assertions(1)
+  })
+
+  it('should retrieve document matching the query using dataLayer and return right with result', async () => {
+    const query = { prop: 'value' }
+    const document = { _id: new ObjectID(), ...query }
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right(document))
+
+    const res = ds.findOne(query)
+
     await pipe(
       res,
-      RTE.map((d) => expect(d).toMatchObject(mockDocument)),
-      runRTEwithMockDb,
+      RTE.map((d) => expect(d).toMatchObject(document)),
+      (rte) => RTE.run(rte, {} as Db),
     )
-    expect(findMany).toBeCalledWith(collection, {
-      _id: { $in: [mockDocument[0]._id] },
-    })
+    expect(findOne).toBeCalledWith(collection, query, {})
+    expect.assertions(2)
+  })
+
+  it('should forward options to the dataLayer', async () => {
+    const options = { max: 5 }
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right({}))
+
+    const res = ds.findOne({}, options)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(findOne).toBeCalledWith(collection, {}, options)
+    expect.assertions(1)
+  })
+
+  it('should return null as RTE.left when `nonNubllable` is `true`', async () => {
+    const query = { prop: 'value' }
+    const options = { nonNullable: true }
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
+
+    const res = ds.findOne(query, options)
+
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findOne).toBeCalledWith(collection, query, {})
+    expect.assertions(2)
+  })
+
+  it('should return null as RTE.right when `nonNubllable` is falsy', async () => {
+    const query = { prop: 'value' }
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
+
+    const res = ds.findOne(query)
+
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toBeNull()),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findOne).toBeCalledWith(collection, query, {})
+    expect.assertions(2)
+  })
+})
+
+describe('[MongoDataSource.findMany]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const query = { prop: 'value' }
+    const { findMany } = dataLayer
+    ;(findMany as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
+    )
+
+    const res = ds.findMany(query)
+
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findMany).toBeCalledWith(collection, query, undefined)
+    expect.assertions(2)
+  })
+
+  it('should call logger.error in case of Error', async () => {
+    const query = { prop: 'value' }
+    const { findMany } = dataLayer
+    ;(findMany as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
+    )
+
+    const res = ds.findMany(query)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(logger.error).toBeCalledWith('Failure')
+    expect.assertions(1)
+  })
+
+  it('should retrieve documents matching the query using dataLayer and return right with result', async () => {
+    const query = { prop: 'value' }
+    const documents = [{ _id: new ObjectID(), ...query }]
+    const { findMany } = dataLayer
+    ;(findMany as jest.Mock).mockReturnValueOnce(RTE.right(documents))
+
+    const res = ds.findMany(query)
+
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(documents)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findMany).toBeCalledWith(collection, query, undefined)
+    expect.assertions(2)
+  })
+
+  it('should forward options to the dataLayer', async () => {
+    const options = { max: 5 }
+    const { findMany } = dataLayer
+    ;(findMany as jest.Mock).mockReturnValueOnce(RTE.right([{}]))
+
+    const res = ds.findMany({}, options)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(findMany).toBeCalledWith(collection, {}, options)
+    expect.assertions(1)
+  })
+})
+
+describe('[MongoDataSource.updateOne]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const query = { prop: 'value' }
+    const update = { prop: 'new' }
+    const { updateOne } = dataLayer
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
+    )
+
+    const res = ds.updateOne(query, update)
+
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(collection, query, update, {})
+    expect.assertions(2)
+  })
+
+  it('should call logger.error in case of Error', async () => {
+    const query = { prop: 'value' }
+    const update = { prop: 'new' }
+    const { updateOne } = dataLayer
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
+    )
+
+    const res = ds.updateOne(query, update)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(logger.error).toBeCalledWith('Failure')
+    expect.assertions(1)
+  })
+
+  it('should retrieve document matching the query using dataLayer and return right with result', async () => {
+    const query = { prop: 'value' }
+    const update = { prop: 'new' }
+    const document = { _id: new ObjectID(), ...update }
+    const { updateOne } = dataLayer
+    ;(updateOne as jest.Mock).mockReturnValueOnce(RTE.right(document))
+
+    const res = ds.updateOne(query, update)
+
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(document)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(collection, query, update, {})
+    expect.assertions(2)
+  })
+
+  it('should forward options to the dataLayer', async () => {
+    const options = { upsert: true }
+    const { updateOne } = dataLayer
+    ;(updateOne as jest.Mock).mockReturnValueOnce(RTE.right({}))
+
+    const res = ds.updateOne({}, {}, options)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(updateOne).toBeCalledWith(collection, {}, {}, options)
+    expect.assertions(1)
+  })
+
+  it('should return null as RTE.left when `nonNubllable` is `true`', async () => {
+    const query = { prop: 'value' }
+    const options = { nonNullable: true }
+    const { updateOne } = dataLayer
+    ;(updateOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
+
+    const res = ds.updateOne(query, {}, options)
+
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(collection, query, {}, {})
+    expect.assertions(2)
+  })
+
+  it('should return null as RTE.right when `nonNubllable` is falsy', async () => {
+    const query = { prop: 'value' }
+    const { updateOne } = dataLayer
+    ;(updateOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
+
+    const res = ds.updateOne(query, {})
+
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toBeNull()),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(collection, query, {}, {})
+    expect.assertions(2)
+  })
+})
+
+describe('[MongoDataSource.updateMany]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const query = { prop: 'value' }
+    const update = { prop: 'new' }
+    const { updateMany } = dataLayer
+    ;(updateMany as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
+    )
+
+    const res = ds.updateMany(query, update)
+
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateMany).toBeCalledWith(collection, query, update, undefined)
+    expect.assertions(2)
+  })
+
+  it('should call logger.error in case of Error', async () => {
+    const query = { prop: 'value' }
+    const update = { prop: 'new' }
+    const { updateMany } = dataLayer
+    ;(updateMany as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
+    )
+
+    const res = ds.updateMany(query, update)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(logger.error).toBeCalledWith('Failure')
+    expect.assertions(1)
+  })
+
+  it('should retrieve documents matching the query using dataLayer and return right with result', async () => {
+    const query = { prop: 'value' }
+    const update = { prop: 'new' }
+    const documents = [{ _id: new ObjectID(), ...update }]
+    const { updateMany } = dataLayer
+    ;(updateMany as jest.Mock).mockReturnValueOnce(RTE.right(documents))
+
+    const res = ds.updateMany(query, update)
+
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(documents)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateMany).toBeCalledWith(collection, query, update, undefined)
+    expect.assertions(2)
+  })
+
+  it('should forward options to the dataLayer', async () => {
+    const options = { upsert: true }
+    const { updateMany } = dataLayer
+    ;(updateMany as jest.Mock).mockReturnValueOnce(RTE.right([{}]))
+
+    const res = ds.updateMany({}, {}, options)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(updateMany).toBeCalledWith(collection, {}, {}, options)
+    expect.assertions(1)
+  })
+})
+
+describe('[MongoDataSource.deleteOne]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const query = { prop: 'value' }
+    const { deleteOne } = dataLayer
+    ;(deleteOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
+    )
+
+    const res = ds.deleteOne(query)
+
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(deleteOne).toBeCalledWith(collection, query, {})
+    expect.assertions(2)
+  })
+
+  it('should call logger.error in case of Error', async () => {
+    const query = { prop: 'value' }
+    const { deleteOne } = dataLayer
+    ;(deleteOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
+    )
+
+    const res = ds.deleteOne(query)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(logger.error).toBeCalledWith('Failure')
+    expect.assertions(1)
+  })
+
+  it('should retrieve document matching the query using dataLayer and return right with result', async () => {
+    const query = { prop: 'value' }
+    const document = { _id: new ObjectID(), ...query }
+    const { deleteOne } = dataLayer
+    ;(deleteOne as jest.Mock).mockReturnValueOnce(RTE.right(document))
+
+    const res = ds.deleteOne(query)
+
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(document)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(deleteOne).toBeCalledWith(collection, query, {})
+    expect.assertions(2)
+  })
+
+  it.skip('should forward options to the dataLayer', async () => {
+    const options = { session: {} }
+    const { deleteOne } = dataLayer
+    ;(deleteOne as jest.Mock).mockReturnValueOnce(RTE.right({}))
+
+    // @ts-ignore
+    const res = ds.deleteOne({}, {}, options)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(deleteOne).toBeCalledWith(collection, {}, options)
+    expect.assertions(1)
+  })
+
+  it('should return null as RTE.left when `nonNubllable` is `true`', async () => {
+    const query = { prop: 'value' }
+    const options = { nonNullable: true }
+    const { deleteOne } = dataLayer
+    ;(deleteOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
+
+    const res = ds.deleteOne(query, options)
+
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(deleteOne).toBeCalledWith(collection, query, {})
+    expect.assertions(2)
+  })
+
+  it('should return null as RTE.right when `nonNubllable` is falsy', async () => {
+    const query = { prop: 'value' }
+    const { deleteOne } = dataLayer
+    ;(deleteOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
+
+    const res = ds.deleteOne(query, {})
+
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toBeNull()),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(deleteOne).toBeCalledWith(collection, query, {})
+    expect.assertions(2)
+  })
+})
+
+describe('[MongoDataSource.deleteMany]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const query = { prop: 'value' }
+    const { deleteMany } = dataLayer
+    ;(deleteMany as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
+    )
+
+    const res = ds.deleteMany(query)
+
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(deleteMany).toBeCalledWith(collection, query, undefined)
+    expect.assertions(2)
+  })
+
+  it('should call logger.error in case of Error', async () => {
+    const query = { prop: 'value' }
+    const { deleteMany } = dataLayer
+    ;(deleteMany as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failure')),
+    )
+
+    const res = ds.deleteMany(query)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(logger.error).toBeCalledWith('Failure')
+    expect.assertions(1)
+  })
+
+  it('should retrieve documents matching the query using dataLayer and return right with result', async () => {
+    const query = { prop: 'value' }
+    const documents = [{ _id: new ObjectID(), ...query }]
+    const { deleteMany } = dataLayer
+    ;(deleteMany as jest.Mock).mockReturnValueOnce(RTE.right(documents))
+
+    const res = ds.deleteMany(query)
+
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(documents)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(deleteMany).toBeCalledWith(collection, query, undefined)
+    expect.assertions(2)
+  })
+
+  it.skip('should forward options to the dataLayer', async () => {
+    const options = { session: {} }
+    const { deleteMany } = dataLayer
+    ;(deleteMany as jest.Mock).mockReturnValueOnce(RTE.right({}))
+
+    // @ts-ignore
+    const res = ds.deleteMany({}, {}, options)
+
+    await pipe(res, (rte) => RTE.run(rte, {} as Db))
+    expect(deleteMany).toBeCalledWith(collection, {}, options)
+    expect.assertions(1)
   })
 })

@@ -1,13 +1,14 @@
 import { MongoError, ObjectID, Db } from 'mongodb'
+import { pipe } from 'fp-ts/lib/pipeable'
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import * as IO from 'fp-ts/lib/IO'
+
 import {
   PullListRepository,
   pullListCollection as collection,
 } from './PullListRepository'
 import { PullListDbObject } from '../types/graphql-server-schema'
 import { DataLayer } from '../types/types'
-import { pipe } from 'fp-ts/lib/pipeable'
-import * as RTE from 'fp-ts/lib/ReaderTaskEither'
-import * as IO from 'fp-ts/lib/IO'
 
 const defaultPullList: PullListDbObject = {
   _id: new ObjectID(),
@@ -32,6 +33,7 @@ const logger = {
   warn: IO.of(jest.fn()),
   info: IO.of(jest.fn()),
 }
+// TODO: type of options is lost, dataLayer and logger are any here
 const repo = new PullListRepository({ dataLayer, logger })
 
 describe('[PullListRepository.createPullList]', () => {
