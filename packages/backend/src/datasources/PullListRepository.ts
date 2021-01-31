@@ -6,11 +6,11 @@ import {
   MongoDataSourceOptions,
   toObjectId,
 } from './MongoDataSource'
-import { IPullListRepoitory } from '../models/PullList/PullListModel'
+import { IPullListRepository } from '../models/PullList/PullListModel'
 
 export const pullListCollection = 'pullList'
 export class PullListRepository extends MongoDataSource<PullListDbObject>
-  implements IPullListRepoitory<Db, Error | MongoError> {
+  implements IPullListRepository<Db, Error | MongoError> {
   public constructor({
     dataLayer,
     logger,

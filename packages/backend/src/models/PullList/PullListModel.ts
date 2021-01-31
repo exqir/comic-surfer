@@ -7,7 +7,7 @@ import { PullListDbObject } from 'types/server-schema'
 type Owner = string
 type ComicSeriesId = ObjectID
 
-export interface IPullListRepoitory<R, E extends Error = Error> {
+export interface IPullListRepository<R, E extends Error = Error> {
   createPullList: (owner: Owner) => RTE.ReaderTaskEither<R, E, PullListDbObject>
 
   getPullListByOwner: (
@@ -30,7 +30,7 @@ export interface IPullListRepoitory<R, E extends Error = Error> {
 }
 
 interface PullListModelOptions<R, E extends Error> {
-  pullListRepository: IPullListRepoitory<R, E>
+  pullListRepository: IPullListRepository<R, E>
 }
 
 export function PullListModel<R, E extends Error>({

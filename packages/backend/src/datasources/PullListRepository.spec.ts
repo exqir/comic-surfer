@@ -7,7 +7,7 @@ import {
   PullListRepository,
   pullListCollection as collection,
 } from './PullListRepository'
-import { PullListDbObject } from '../types/graphql-server-schema'
+import { PullListDbObject } from 'types/server-schema'
 
 const defaultPullList: PullListDbObject = {
   _id: new ObjectID(),
