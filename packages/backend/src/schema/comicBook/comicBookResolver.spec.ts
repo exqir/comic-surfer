@@ -22,7 +22,7 @@ import {
   ComicSeriesAPI,
   QueueRepository,
 } from 'datasources'
-import { TaskType } from 'datasources/QueueRepository'
+import { TaskType } from 'models/Queue/Queue.repository'
 import { IScraper } from 'services/ScrapeService'
 
 const defaultComicBook: ComicBookDbObject = {

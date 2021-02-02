@@ -1,47 +1,13 @@
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { ObjectID } from 'mongodb'
 
-import { WithId, DistributiveOmit } from 'types/app'
-import { ComicSeriesDbObject } from 'types/server-schema'
-
-type Url = string
-type ComicSeriesId = ObjectID
-type ComicSeries = ComicSeriesDbObject
-
-export enum TaskType {
-  SCRAPSINGLEISSUELIST = 'SCRAP_SINGLE_ISSUE_LIST',
-  SCRAPCOLLECTIONLIST = 'SCRAP_COLLECTION_LIST',
-  SCRAPCOMICBOOK = 'SCRAP_COMIC_BOOK',
-  UPDATECOMICBOOKRELEASE = 'UPDATE_COMIC_BOOK_RELEASE',
-  UPDATECOMICSERIESPUBLISHER = 'UPDATE_COMIC_SERIES_PUBLISHER',
-}
-
-// TODO: Add a status to the Task type: 'Queued' | 'Error' | 'Done'
-export type Task = WithId<
-  | {
-      type: TaskType.SCRAPSINGLEISSUELIST | TaskType.SCRAPCOLLECTIONLIST
-      data: { url: Url; comicSeriesId: ObjectID }
-    }
-  | {
-      type: TaskType.UPDATECOMICBOOKRELEASE
-      data: { url: Url; comicBookId: ObjectID }
-    }
-  | {
-      type: TaskType.UPDATECOMICSERIESPUBLISHER
-      data: { comicSeriesId: ObjectID }
-    }
-  | {
-      type: TaskType.SCRAPCOMICBOOK
-      data: { comicBookUrl: Url }
-    }
->
-
-export type NewTask = DistributiveOmit<Task, '_id'>
-
-export interface IQueueRepository<R, E extends Error = Error> {
-  addTaskToQueue: (task: NewTask) => RTE.ReaderTaskEither<R, E, Task>
-  addTasksToQueue: (tasks: NewTask[]) => RTE.ReaderTaskEither<R, E, Task[]>
-}
+import type {
+  IQueueRepository,
+  ComicSeries,
+  ComicSeriesId,
+  Url,
+} from './Queue.interface'
+import { TaskType } from './Queue.interface'
 
 interface QueueModelOptions<R, E extends Error> {
   queueRepository: IQueueRepository<R, E>

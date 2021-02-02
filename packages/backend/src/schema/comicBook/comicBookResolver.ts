@@ -25,7 +25,7 @@ import * as O from 'fp-ts/lib/Option'
 import { TaskEither } from 'fp-ts/lib/TaskEither'
 import { MongoError } from 'mongodb'
 import { ComicBookListData, ComicBookData } from 'services/ScrapeService'
-import { TaskType } from 'datasources/QueueRepository'
+import { TaskType } from 'models/Queue/Queue.repository'
 import { toObjectId } from 'datasources/MongoDataSource'
 import { ApolloError } from 'apollo-server'
 

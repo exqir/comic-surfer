@@ -5,7 +5,7 @@ import * as mongad from 'mongad'
 import scrapeIt from 'scrape-it'
 import typeDefs, { resolvers } from './schema'
 import {
-  ComicBookAPI,
+  ComicBookRepository,
   ComicSeriesAPI,
   PublisherAPI,
   PullListRepository,
@@ -27,7 +27,7 @@ const apolloServer = new ApolloServer({
   typeDefs: [DIRECTIVES, ...typeDefs],
   resolvers,
   dataSources: () => ({
-    comicBook: new ComicBookAPI(),
+    comicBook: new ComicBookRepository({ dataLayer: mongad, logger }),
     comicSeries: new ComicSeriesAPI(),
     publisher: new PublisherAPI(),
     pullList: new PullListRepository({ dataLayer: mongad, logger }),

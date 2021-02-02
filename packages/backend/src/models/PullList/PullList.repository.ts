@@ -5,8 +5,8 @@ import {
   MongoDataSource,
   MongoDataSourceOptions,
   toObjectId,
-} from './MongoDataSource'
-import { IPullListRepository } from '../models/PullList/PullListModel'
+} from '../../datasources/MongoDataSource'
+import { IPullListRepository } from './PullList.interface'
 
 export const pullListCollection = 'pullList'
 export class PullListRepository extends MongoDataSource<PullListDbObject>

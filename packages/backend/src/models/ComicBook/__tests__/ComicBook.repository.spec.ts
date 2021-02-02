@@ -2,12 +2,12 @@ import { MongoError, ObjectID, Db } from 'mongodb'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
-import { dataLayer, logger } from '../__tests__/_mock'
+import { dataLayer, logger } from '../../../__tests__/_mock'
 
 import {
   ComicBookRepository,
   comicBookCollection as collection,
-} from './ComicBookRepository'
+} from '../ComicBook.repository'
 import { ComicBookDbObject, ComicBookType } from 'types/server-schema'
 
 const defaultComicBook: ComicBookDbObject = {

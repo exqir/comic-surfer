@@ -19,7 +19,7 @@ import {
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as A from 'fp-ts/lib/Array'
 import * as O from 'fp-ts/lib/Option'
-import { TaskType } from 'datasources/QueueRepository'
+import { TaskType } from 'models/Queue/Queue.repository'
 import { ApolloError } from 'apollo-server'
 import { constNull } from 'fp-ts/lib/function'
 

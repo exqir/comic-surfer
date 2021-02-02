@@ -2,12 +2,12 @@ import { MongoError, ObjectID, Db } from 'mongodb'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
-import { dataLayer, logger } from '../__tests__/_mock'
-import { Task, TaskType } from '../models/Queue/QueueModel'
+import { dataLayer, logger } from '../../../__tests__/_mock'
+import { Task, TaskType } from '../Queue.interface'
 import {
   QueueRepository,
   queueCollection as collection,
-} from './QueueRepository'
+} from '../Queue.repository'
 
 const defaultTask: Task = {
   _id: new ObjectID(),

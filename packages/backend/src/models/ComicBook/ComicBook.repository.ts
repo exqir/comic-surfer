@@ -1,18 +1,18 @@
-import { Db, MongoError, ObjectID } from 'mongodb'
+import { Db, MongoError } from 'mongodb'
 
-import { ComicBookDbObject, ComicBookType } from 'types/server-schema'
-import {
-  MongoDataSource,
-  MongoDataSourceOptions,
-  toObjectId,
-} from './MongoDataSource'
-import {
+import type { ComicBookDbObject, ComicBookType } from 'types/server-schema'
+import type {
   IComicBookRepository,
   ComicBookId,
   ComicSeriesId,
   Month,
   IComicBookDetails,
-} from '../models/ComicBook/ComicBookModel'
+} from './ComicBook.interface'
+import {
+  MongoDataSource,
+  MongoDataSourceOptions,
+  toObjectId,
+} from '../../datasources/MongoDataSource'
 
 export const comicBookCollection = 'comicBook'
 export class ComicBookRepository extends MongoDataSource<ComicBookDbObject>

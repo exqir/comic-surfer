@@ -2,11 +2,11 @@ import { MongoError, ObjectID, Db } from 'mongodb'
 import { pipe } from 'fp-ts/lib/pipeable'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
-import { dataLayer, logger } from '../__tests__/_mock'
+import { dataLayer, logger } from '../../../__tests__/_mock'
 import {
   PullListRepository,
   pullListCollection as collection,
-} from './PullListRepository'
+} from '../PullList.repository'
 import { PullListDbObject } from 'types/server-schema'
 
 const defaultPullList: PullListDbObject = {

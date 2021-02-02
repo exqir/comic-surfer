@@ -1,8 +1,11 @@
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { Db, MongoError } from 'mongodb'
-import { MongoDataSource, MongoDataSourceOptions } from './MongoDataSource'
+import {
+  MongoDataSource,
+  MongoDataSourceOptions,
+} from '../../datasources/MongoDataSource'
 
-import { Task, NewTask, IQueueRepository } from '../models/Queue/QueueModel'
+import type { Task, NewTask, IQueueRepository } from './Queue.interface'
 
 export const queueCollection = 'queue'
 export class QueueRepository extends MongoDataSource<Task>

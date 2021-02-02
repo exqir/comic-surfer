@@ -26,7 +26,7 @@ import * as O from 'fp-ts/lib/Option'
 import { constTrue, identity, flow } from 'fp-ts/lib/function'
 import { ApolloError, AuthenticationError } from 'apollo-server'
 import { Authentication } from 'services/Authentication'
-import { TaskType } from 'datasources/QueueRepository'
+import { TaskType } from 'models/Queue/Queue.repository'
 
 interface PullListQuery {
   // TODO: This actually returns a PullList but this is not what the function returns
