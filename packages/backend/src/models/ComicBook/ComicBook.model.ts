@@ -1,11 +1,16 @@
-import type { IComicBookRepository } from './ComicBook.interface'
+import type {
+  IComicBookRepository,
+  IComicBookModel,
+} from './ComicBook.interface'
 
 interface ComicBookModelOptions<R, E extends Error> {
   comicBookRepository: IComicBookRepository<R, E>
 }
 
-export function ComicBookModel<R, E extends Error>({
+export function createComicBookModel<R, E extends Error>({
   comicBookRepository,
-}: ComicBookModelOptions<R, E>) {
-  return {}
+}: ComicBookModelOptions<R, E>): IComicBookModel<R, E> {
+  return {
+    getById: comicBookRepository.getById,
+  }
 }

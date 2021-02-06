@@ -16,6 +16,8 @@ export interface IComicBookDetails {
 }
 
 export interface IComicBookRepository<R, E extends Error = Error> {
+  getById: (id: ComicBookId) => RTE.ReaderTaskEither<R, E, ComicBookDbObject>
+
   getByUrls: (urls: string[]) => RTE.ReaderTaskEither<R, E, ComicBookDbObject[]>
 
   getBySeriesAndReleaseInMonth: (
@@ -48,4 +50,8 @@ export interface IComicBookRepository<R, E extends Error = Error> {
     url: string,
     comicBookDetails: IComicBookDetails,
   ) => RTE.ReaderTaskEither<R, E, ComicBookDbObject>
+}
+
+export interface IComicBookModel<R, E extends Error = Error> {
+  getById: (id: ComicBookId) => RTE.ReaderTaskEither<R, E, ComicBookDbObject>
 }

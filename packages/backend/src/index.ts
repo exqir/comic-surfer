@@ -6,8 +6,8 @@ import scrapeIt from 'scrape-it'
 import typeDefs, { resolvers } from './schema'
 import {
   ComicBookRepository,
-  ComicSeriesAPI,
-  PublisherAPI,
+  ComicSeriesRepository,
+  PublisherRepository,
   PullListRepository,
   QueueRepository,
 } from './datasources'
@@ -28,8 +28,8 @@ const apolloServer = new ApolloServer({
   resolvers,
   dataSources: () => ({
     comicBook: new ComicBookRepository({ dataLayer: mongad, logger }),
-    comicSeries: new ComicSeriesAPI(),
-    publisher: new PublisherAPI(),
+    comicSeries: new ComicSeriesRepository({ dataLayer: mongad, logger }),
+    publisher: new PublisherRepository({ dataLayer: mongad, logger }),
     pullList: new PullListRepository({ dataLayer: mongad, logger }),
     queue: new QueueRepository({ dataLayer: mongad, logger }),
   }),

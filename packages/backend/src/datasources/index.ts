@@ -1,5 +1,5 @@
 export * from '../models/ComicBook/ComicBook.repository'
 export * from '../models/ComicSeries/ComicSeries.repository'
-export * from './PublisherAPI'
+export * from '../models/Publisher/Publisher.repository'
 export * from '../models/PullList/PullList.repository'
 export * from '../models/Queue/Queue.repository'

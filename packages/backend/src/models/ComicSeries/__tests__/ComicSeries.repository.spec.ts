@@ -8,11 +8,7 @@ import {
   ComicSeriesRepository,
   comicSeriesCollection as collection,
 } from '../ComicSeries.repository'
-import {
-  ComicSeriesDbObject,
-  ComicBookDbObject,
-  ComicBookType,
-} from 'types/server-schema'
+import { ComicSeriesDbObject, ComicBookType } from 'types/server-schema'
 
 const defaultComicSeries: ComicSeriesDbObject = {
   _id: new ObjectID(),
@@ -28,6 +24,75 @@ const defaultComicSeries: ComicSeriesDbObject = {
 
 // TODO: type of options is lost, dataLayer and logger are any here
 const repo = new ComicSeriesRepository({ dataLayer, logger })
+
+describe('[ComicSeriesRepository.getById]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const { _id } = defaultComicSeries
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failed to find ComicSeries')),
+    )
+
+    const res = repo.getById(_id)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findOne).toBeCalledWith(
+      collection,
+      {
+        _id,
+      },
+      {},
+    )
+    expect(logger.error).toBeCalledWith('Failed to find ComicSeries')
+    expect.assertions(3)
+  })
+
+  it('should return RTE.left in case of null', async () => {
+    const { _id } = defaultComicSeries
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
+
+    const res = repo.getById(_id)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findOne).toBeCalledWith(
+      collection,
+      {
+        _id,
+      },
+      {},
+    )
+    expect.assertions(2)
+  })
+
+  it('should find ComicSeries using dataLayer and return right with result', async () => {
+    const { _id, ...comicSeriesWithoutId } = defaultComicSeries
+    const mockComicSeries = { _id, ...comicSeriesWithoutId }
+    const { findOne } = dataLayer
+    ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right(mockComicSeries))
+
+    const res = repo.getById(_id)
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(mockComicSeries)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findOne).toBeCalledWith(
+      collection,
+      {
+        _id,
+      },
+      {},
+    )
+    expect.assertions(2)
+  })
+})
 
 describe('[ComicSeriesRepository.addComicBook]', () => {
   it('should return RTE.left in case of Error', async () => {

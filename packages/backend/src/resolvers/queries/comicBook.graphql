@@ -1,0 +1,6 @@
+extend type Query {
+  """
+  Get the ComicBook matching the provided ID.
+  """
+  comicBook(id: ID!): ComicBook
+}

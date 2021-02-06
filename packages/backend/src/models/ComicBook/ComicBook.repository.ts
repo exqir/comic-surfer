@@ -66,6 +66,9 @@ export class ComicBookRepository extends MongoDataSource<ComicBookDbObject>
       { nonNullable: true },
     )
 
+  public getById = (id: ComicBookId) =>
+    this.findOne({ _id: id }, { nonNullable: true })
+
   public getByUrls = (urls: string[]) => this.findMany({ url: { $in: urls } })
 
   public getBySeriesAndReleaseInMonth = (

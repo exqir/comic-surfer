@@ -12,6 +12,10 @@ export type PartialSeries = Omit<
 >
 
 export interface IComicSeriesRepository<R, E extends Error = Error> {
+  getById: (
+    id: ComicSeriesId,
+  ) => RTE.ReaderTaskEither<R, E, ComicSeriesDbObject>
+
   addComicBook: (
     id: ComicSeriesId,
     comicBookId: ComicBookId,

@@ -2,12 +2,13 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import * as O from 'fp-ts/lib/Option'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as RT from 'fp-ts/lib/ReaderTask'
+import * as R from 'fp-ts/lib/Reader'
 import * as TE from 'fp-ts/lib/TaskEither'
 import * as T from 'fp-ts/lib/Task'
 import { Maybe } from 'types/server-schema'
 import { Logger } from 'types/app'
 import { Db, MongoError } from 'mongodb'
-import { identity } from 'fp-ts/lib/function'
+import { constNull, flow, identity } from 'fp-ts/lib/function'
 
 export const logError = (logger: Logger) => (err: MongoError) => {
   logger.error(err.message)
@@ -47,17 +48,18 @@ export const mapOtoRTEnullable = <T, L, R, V>(
 export const filterMaybe = <T>(m: Maybe<T>[]): T[] =>
   m.filter((mm): mm is T => mm !== null)
 
-//
-export const nullableField = <A, B>(
-  db: O.Option<Db>,
-  dbReader: (db: Db) => A | null,
-) => {
-  return pipe(db, O.map(dbReader), O.toNullable)
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+
+export const nullableField = <L, R>(
+  dbReader: RTE.ReaderTaskEither<Db, L, Maybe<R>>,
+): ((db: O.Option<Db>) => Promise<Maybe<R>> | null) => {
+  return flow(O.map(runRTEtoNullable(dbReader)), O.toNullable)
 }
 
 export const nonNullableField = <A>(
   db: O.Option<Db>,
-  dbReader: (db: Db) => A,
+  dbReader: R.Reader<Db, A>,
 ) => {
   return pipe(
     db,

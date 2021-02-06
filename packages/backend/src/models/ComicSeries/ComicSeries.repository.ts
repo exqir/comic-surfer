@@ -28,7 +28,10 @@ export class ComicSeriesRepository extends MongoDataSource<ComicSeriesDbObject>
     super({ collection: comicSeriesCollection, dataLayer, logger })
   }
 
-  addComicBook = (
+  public getById = (id: ComicBookId) =>
+    this.findOne({ _id: id }, { nonNullable: true })
+
+  public addComicBook = (
     id: ComicSeriesId,
     comicBookId: ComicBookId,
     type: ComicBookType,
@@ -45,7 +48,7 @@ export class ComicSeriesRepository extends MongoDataSource<ComicSeriesDbObject>
     )
   }
 
-  addComicBooks = (
+  public addComicBooks = (
     id: ComicSeriesId,
     comicBookIds: ComicBookId[],
     type: ComicBookType,
@@ -62,7 +65,7 @@ export class ComicSeriesRepository extends MongoDataSource<ComicSeriesDbObject>
     )
   }
 
-  getOrCreate = (series: PartialSeries) =>
+  public getOrCreate = (series: PartialSeries) =>
     this.updateOne(
       { url: series.url },
       {
@@ -77,7 +80,7 @@ export class ComicSeriesRepository extends MongoDataSource<ComicSeriesDbObject>
       { upsert: true, nonNullable: true },
     )
 
-  getLastUpdatedBefore = (date: Date) =>
+  public getLastUpdatedBefore = (date: Date) =>
     this.findMany({
       // lastModified more then a month ago
       lastModified: {
@@ -85,7 +88,7 @@ export class ComicSeriesRepository extends MongoDataSource<ComicSeriesDbObject>
       },
     })
 
-  setPublisher = (id: ComicSeriesId, publisherId: PublisherId) =>
+  public setPublisher = (id: ComicSeriesId, publisherId: PublisherId) =>
     this.updateOne(
       { _id: toObjectId(id) },
       {

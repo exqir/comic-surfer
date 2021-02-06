@@ -3,9 +3,9 @@ import { Db, ObjectID } from 'mongodb'
 import { Response, Request } from 'express'
 import { Option } from 'fp-ts/lib/Option'
 import {
-  ComicBookAPI,
-  ComicSeriesAPI,
-  PublisherAPI,
+  ComicBookRepository,
+  ComicSeriesRepository,
+  PublisherRepository,
   PullListRepository,
   QueueRepository,
 } from '../datasources'
@@ -22,9 +22,9 @@ export interface Logger {
 export type DataLayer = typeof mongad
 
 export interface DataSources {
-  comicBook: ComicBookAPI
-  comicSeries: ComicSeriesAPI
-  publisher: PublisherAPI
+  comicBook: ComicBookRepository
+  comicSeries: ComicSeriesRepository
+  publisher: PublisherRepository
   pullList: PullListRepository
   queue: QueueRepository
 }

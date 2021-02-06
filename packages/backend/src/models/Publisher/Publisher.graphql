@@ -1,0 +1,26 @@
+type Publisher {
+  """
+  ID of the Publisher.
+  """
+  _id: String!
+  """
+  Name of the Publisher.
+  """
+  name: String!
+  """
+  URL of the Icon of the Publisher.
+  """
+  iconUrl: String
+  """
+  URL of the Publisher.
+  """
+  url: String
+  """
+  URL of the Publisher on Comixology.
+  """
+  cxUrl: String
+  """
+  List of ComicSeries published by the Publisher.
+  """
+  comicSeries: [ComicSeries!]
+}
