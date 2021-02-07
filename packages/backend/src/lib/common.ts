@@ -1,8 +1,13 @@
-import { Db, MongoError, ObjectID } from 'mongodb'
+import type { Db, MongoError, ObjectID } from 'mongodb'
+import { pipe, flow } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
-export function getById<T>(repo: {
+interface RepoWithGetById<T> {
   getById: (id: ObjectID) => RTE.ReaderTaskEither<Db, Error | MongoError, T>
-}) {
-  return (id: ObjectID) => repo.getById(id)
+}
+
+export function getById<T>(
+  repo: RepoWithGetById<T>,
+): (id: ObjectID) => RTE.ReaderTaskEither<Db, Error | MongoError, T> {
+  return flow(repo.getById)
 }

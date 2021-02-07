@@ -1,0 +1,6 @@
+extend type Query {
+  """
+  The PullList of the currently loggedin user.
+  """
+  pullList: PullList!
+}

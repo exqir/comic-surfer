@@ -51,21 +51,28 @@ export const filterMaybe = <T>(m: Maybe<T>[]): T[] =>
 ///////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////
 
+const getOrThrow = flow(
+  RTE.fold((error) => {
+    throw error
+  }, RT.of),
+)
+
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+
 export const nullableField = <L, R>(
-  dbReader: RTE.ReaderTaskEither<Db, L, Maybe<R>>,
+  rte: RTE.ReaderTaskEither<Db, L, Maybe<R>>,
 ): ((db: O.Option<Db>) => Promise<Maybe<R>> | null) => {
-  return flow(O.map(runRTEtoNullable(dbReader)), O.toNullable)
+  return flow(O.map(runRTEtoNullable(rte)), O.toNullable)
 }
 
-export const nonNullableField = <A>(
-  db: O.Option<Db>,
-  dbReader: R.Reader<Db, A>,
-) => {
-  return pipe(
-    db,
-    O.map(dbReader),
+export const nonNullableField = <L, R>(
+  rte: RTE.ReaderTaskEither<Db, L, R>,
+): ((db: O.Option<Db>) => Promise<R>) => {
+  return flow(
+    O.map(flow(runRT(getOrThrow(rte)))),
     O.fold(() => {
-      throw new Error('Unable to connect to Database.')
+      throw new Error('Connection error.')
     }, identity),
   )
 }

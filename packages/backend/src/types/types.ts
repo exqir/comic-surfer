@@ -1,17 +1,15 @@
 import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
-import { Db, ObjectID } from 'mongodb'
+import { Db, MongoError, ObjectID } from 'mongodb'
 import { Response, Request } from 'express'
 import { Option } from 'fp-ts/lib/Option'
-import {
-  ComicBookRepository,
-  ComicSeriesRepository,
-  PublisherRepository,
-  PullListRepository,
-  QueueRepository,
-} from '../datasources'
 import { IScraper } from 'services/ScrapeService'
 import { ILogger } from 'services/LogService'
 import mongad from 'mongad'
+import { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
+import { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
+import { IPublisherRepository } from 'models/Publisher/Publisher.interface'
+import { IPullListRepository } from 'models/PullList/PullList.interface'
+import { IQueueRepository } from 'models/Queue/Queue.interface'
 
 export interface Logger {
   log: (...args: any[]) => void
@@ -22,11 +20,11 @@ export interface Logger {
 export type DataLayer = typeof mongad
 
 export interface DataSources {
-  comicBook: ComicBookRepository
-  comicSeries: ComicSeriesRepository
-  publisher: PublisherRepository
-  pullList: PullListRepository
-  queue: QueueRepository
+  comicBook: IComicBookRepository<Db, Error | MongoError>
+  comicSeries: IComicSeriesRepository<Db, Error | MongoError>
+  publisher: IPublisherRepository<Db, Error | MongoError>
+  pullList: IPullListRepository<Db, Error | MongoError>
+  queue: IQueueRepository<Db, Error | MongoError>
 }
 
 export interface Services {
