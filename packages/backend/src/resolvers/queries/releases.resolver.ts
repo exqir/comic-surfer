@@ -34,7 +34,7 @@ export const releases: Resolver<ComicBookDbObject[], QueryReleasesArgs> = (
         RTE.chain(getByOwner(dataSources.pullList)),
         RTE.chain(
           getReleasesInMonthFromList(dataSources.comicBook)(
-            // TODO: Validate month
+            // TODO: Validate month or use a GraphQL enum
             // @ts-ignore
             month ?? new Date().getMonth() + 1,
             year ?? new Date().getFullYear(),

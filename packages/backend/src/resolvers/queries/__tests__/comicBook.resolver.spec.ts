@@ -10,6 +10,32 @@ import { ComicBookType } from 'types/server-schema'
 
 import { comicBook } from '../comicBook.resolver'
 
+describe('[Query.comicBook]', () => {
+  it('should return null in case of an Error', async () => {
+    getById.mockReturnValueOnce(RTE.left(new Error()))
+
+    const res = await comicBook(
+      parent,
+      { id: defaultComicBook._id },
+      context,
+      info,
+    )
+
+    expect(res).toBeNull()
+  })
+
+  it('should return ComicBook', async () => {
+    const res = await comicBook(
+      parent,
+      { id: defaultComicBook._id },
+      context,
+      info,
+    )
+
+    expect(res).toMatchObject(defaultComicBook)
+  })
+})
+
 const defaultComicBook: ComicBookDbObject = {
   _id: new ObjectID(),
   title: 'Comic',
@@ -39,29 +65,3 @@ const context = {
 
 const info = {} as GraphQLResolveInfo
 const parent = {}
-
-describe('[Query.comicBook]', () => {
-  it('should return null in case of an Error', async () => {
-    getById.mockReturnValueOnce(RTE.left(new Error()))
-
-    const res = await comicBook(
-      parent,
-      { id: defaultComicBook._id },
-      context,
-      info,
-    )
-
-    expect(res).toBeNull()
-  })
-
-  it('should return ComicBook', async () => {
-    const res = await comicBook(
-      parent,
-      { id: defaultComicBook._id },
-      context,
-      info,
-    )
-
-    expect(res).toMatchObject(defaultComicBook)
-  })
-})
