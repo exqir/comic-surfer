@@ -3,17 +3,13 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 import { dataLayer, logger } from '../../../__tests__/_mock'
+
+import { defaultPullList } from '__mocks__/PullList.mock'
+
 import {
   PullListRepository,
   pullListCollection as collection,
 } from '../PullList.repository'
-import { PullListDbObject } from 'types/server-schema'
-
-const defaultPullList: PullListDbObject = {
-  _id: new ObjectID(),
-  owner: 'John',
-  list: [],
-}
 
 // TODO: type of options is lost, dataLayer and logger are any here
 const repo = new PullListRepository({ dataLayer, logger })

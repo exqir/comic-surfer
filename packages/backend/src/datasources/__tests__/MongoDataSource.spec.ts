@@ -2,8 +2,8 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { MongoError, ObjectID, Db } from 'mongodb'
 
-import { dataLayer, logger } from '../__tests__/_mock'
-import { MongoDataSource } from './MongoDataSource'
+import { dataLayer, logger } from '../../__tests__/_mock'
+import { MongoDataSource } from '../MongoDataSource'
 
 const collection = 'collection'
 

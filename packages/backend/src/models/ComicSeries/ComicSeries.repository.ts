@@ -31,6 +31,8 @@ export class ComicSeriesRepository extends MongoDataSource<ComicSeriesDbObject>
   public getById = (id: ComicBookId) =>
     this.findOne({ _id: id }, { nonNullable: true })
 
+  public getByIds = (ids: ComicBookId[]) => this.findMany({ _id: { $in: ids } })
+
   public addComicBook = (
     id: ComicSeriesId,
     comicBookId: ComicBookId,

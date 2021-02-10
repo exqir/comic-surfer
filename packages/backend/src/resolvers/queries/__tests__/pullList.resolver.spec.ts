@@ -1,12 +1,12 @@
 import type { GraphQLResolveInfo } from 'graphql'
-import { Db, MongoError, ObjectID } from 'mongodb'
+import { Db, MongoError } from 'mongodb'
 import { ApolloError, AuthenticationError } from 'apollo-server'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as O from 'fp-ts/lib/Option'
 
-import type { PullListDbObject } from 'types/server-schema'
 import type { GraphQLContext } from 'types/app'
 import type { IPullListRepository } from 'models/PullList/PullList.interface'
+import { defaultPullList } from '__mocks__/PullList.mock'
 
 import { pullList } from '../pullList.resolver'
 
@@ -32,12 +32,6 @@ describe('[Query.pullList]', () => {
     expect(res).toMatchObject(defaultPullList)
   })
 })
-
-const defaultPullList: PullListDbObject = {
-  _id: new ObjectID(),
-  owner: 'user',
-  list: [],
-}
 
 const getPullListByOwner = jest.fn().mockReturnValue(RTE.right(defaultPullList))
 const pullListRepository: IPullListRepository<Db, Error | MongoError> = ({

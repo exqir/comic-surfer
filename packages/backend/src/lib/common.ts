@@ -1,5 +1,5 @@
 import type { Db, MongoError, ObjectID } from 'mongodb'
-import { pipe, flow } from 'fp-ts/lib/function'
+import { flow } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 interface RepoWithGetById<T> {

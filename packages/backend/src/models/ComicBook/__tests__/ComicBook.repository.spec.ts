@@ -4,26 +4,13 @@ import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 import { dataLayer, logger } from '../../../__tests__/_mock'
 
+import { ComicBookType } from 'types/server-schema'
+import { defaultComicBook } from '__mocks__/ComicBook.mock'
+
 import {
   ComicBookRepository,
   comicBookCollection as collection,
 } from '../ComicBook.repository'
-import { ComicBookDbObject, ComicBookType } from 'types/server-schema'
-
-const defaultComicBook: ComicBookDbObject = {
-  _id: new ObjectID(),
-  title: 'Comic',
-  url: '/path',
-  issueNo: null,
-  creators: [],
-  coverImgUrl: null,
-  publisher: null,
-  releaseDate: null,
-  comicSeries: new ObjectID(),
-  description: null,
-  type: ComicBookType.SINGLEISSUE,
-  lastModified: new Date(),
-}
 
 // TODO: type of options is lost, dataLayer and logger are any here
 const repo = new ComicBookRepository({ dataLayer, logger })

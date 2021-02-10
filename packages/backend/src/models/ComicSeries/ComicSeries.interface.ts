@@ -16,6 +16,10 @@ export interface IComicSeriesRepository<R, E extends Error = Error> {
     id: ComicSeriesId,
   ) => RTE.ReaderTaskEither<R, E, ComicSeriesDbObject>
 
+  getByIds: (
+    ids: ComicSeriesId[],
+  ) => RTE.ReaderTaskEither<R, E, ComicSeriesDbObject[]>
+
   addComicBook: (
     id: ComicSeriesId,
     comicBookId: ComicBookId,

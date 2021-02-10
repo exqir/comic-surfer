@@ -4,6 +4,7 @@ import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 import { dataLayer, logger } from '../../../__tests__/_mock'
 import { Task, TaskType } from '../Queue.interface'
+
 import {
   QueueRepository,
   queueCollection as collection,

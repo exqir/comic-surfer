@@ -3,14 +3,12 @@ import { Db, MongoError, ObjectID } from 'mongodb'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as O from 'fp-ts/lib/Option'
 
-import {
-  PullListDbObject,
-  ComicBookDbObject,
-  ComicBookType,
-} from 'types/server-schema'
 import type { GraphQLContext } from 'types/app'
 import type { IPullListRepository } from 'models/PullList/PullList.interface'
 import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
+import { ComicBookType } from 'types/server-schema'
+import { defaultComicBook } from '__mocks__/ComicBook.mock'
+import { defaultPullList } from '__mocks__/PullList.mock'
 
 import { releases } from '../releases.resolver'
 
@@ -97,26 +95,6 @@ describe('[Query.releases]', () => {
   })
 })
 
-const defaultPullList: PullListDbObject = {
-  _id: new ObjectID(),
-  owner: 'user',
-  list: [],
-}
-
-const defaultComicBook: ComicBookDbObject = {
-  _id: new ObjectID(),
-  title: 'Comic',
-  url: '/path',
-  issueNo: null,
-  creators: [],
-  coverImgUrl: null,
-  publisher: null,
-  releaseDate: null,
-  comicSeries: null,
-  type: ComicBookType.SINGLEISSUE,
-  description: null,
-  lastModified: new Date(),
-}
 const userReleases = [defaultComicBook]
 const generalReleases = [
   { ...defaultComicBook, title: 'General Comic', _id: new ObjectID() },

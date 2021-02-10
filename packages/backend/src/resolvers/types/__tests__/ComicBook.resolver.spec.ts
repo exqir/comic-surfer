@@ -1,17 +1,14 @@
 import type { GraphQLResolveInfo } from 'graphql'
-import { Db, MongoError, ObjectID } from 'mongodb'
+import { Db, MongoError } from 'mongodb'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as O from 'fp-ts/lib/Option'
 
-import {
-  ComicBookDbObject,
-  ComicSeriesDbObject,
-  PublisherDbObject,
-  ComicBookType,
-} from 'types/server-schema'
 import type { GraphQLContext } from 'types/app'
 import type { IPublisherRepository } from 'models/Publisher/Publisher.interface'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
+import { defaultComicBook } from '__mocks__/ComicBook.mock'
+import { defaultComicSeries } from '__mocks__/ComicSeries.mock'
+import { defaultPublisher } from '__mocks__/Publisher.mock'
 
 import { ComicBook } from '../ComicBook.resolver'
 
@@ -78,42 +75,6 @@ describe('[ComicBook.comicSeries]', () => {
     expect(res).toMatchObject(defaultComicSeries)
   })
 })
-
-const defaultComicBook: ComicBookDbObject = {
-  _id: new ObjectID(),
-  title: 'Comic',
-  url: '/path',
-  issueNo: null,
-  creators: [],
-  coverImgUrl: null,
-  publisher: new ObjectID(),
-  releaseDate: null,
-  comicSeries: new ObjectID(),
-  type: ComicBookType.SINGLEISSUE,
-  description: null,
-  lastModified: new Date(),
-}
-
-const defaultComicSeries: ComicSeriesDbObject = {
-  _id: new ObjectID(),
-  title: 'Comic',
-  url: '/path',
-  collectionsUrl: null,
-  collections: [],
-  singleIssuesUrl: null,
-  singleIssues: [],
-  publisher: null,
-  lastModified: new Date(),
-}
-
-const defaultPublisher: PublisherDbObject = {
-  _id: new ObjectID(),
-  name: 'Image',
-  iconUrl: null,
-  url: null,
-  cxUrl: null,
-  comicSeries: [],
-}
 
 const getComicSeriesById = jest
   .fn()

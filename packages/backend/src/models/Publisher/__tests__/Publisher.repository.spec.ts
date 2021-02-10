@@ -4,20 +4,12 @@ import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 import { dataLayer, logger } from '../../../__tests__/_mock'
 
+import { defaultPublisher } from '__mocks__/Publisher.mock'
+
 import {
   PublisherRepository,
   publisherCollection as collection,
 } from '../Publisher.repository'
-import { PublisherDbObject } from 'types/server-schema'
-
-const defaultPublisher: PublisherDbObject = {
-  _id: new ObjectID(),
-  name: 'Image',
-  iconUrl: null,
-  url: '/path',
-  cxUrl: null,
-  comicSeries: [],
-}
 
 // TODO: type of options is lost, dataLayer and logger are any here
 const repo = new PublisherRepository({ dataLayer, logger })

@@ -1,11 +1,11 @@
 import type { GraphQLResolveInfo } from 'graphql'
-import { Db, MongoError, ObjectID } from 'mongodb'
+import { Db, MongoError } from 'mongodb'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as O from 'fp-ts/lib/Option'
 
-import type { ComicSeriesDbObject } from 'types/server-schema'
 import type { GraphQLContext } from 'types/app'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
+import { defaultComicSeries } from '__mocks__/ComicSeries.mock'
 
 import { comicSeries } from '../comicSeries.resolver'
 
@@ -34,18 +34,6 @@ describe('[Query.comicSeries]', () => {
     expect(res).toMatchObject(defaultComicSeries)
   })
 })
-
-const defaultComicSeries: ComicSeriesDbObject = {
-  _id: new ObjectID(),
-  title: 'Comic',
-  url: '/path',
-  collectionsUrl: null,
-  collections: [],
-  singleIssuesUrl: null,
-  singleIssues: [],
-  publisher: null,
-  lastModified: new Date(),
-}
 
 const getById = jest.fn().mockReturnValue(RTE.right(defaultComicSeries))
 const comicSeriesRepository: IComicSeriesRepository<Db, Error | MongoError> = ({
