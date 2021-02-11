@@ -1,5 +1,5 @@
 import type { GraphQLResolveInfo } from 'graphql'
-import { Db, MongoError } from 'mongodb'
+import type { Db, MongoError } from 'mongodb'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as O from 'fp-ts/lib/Option'
 

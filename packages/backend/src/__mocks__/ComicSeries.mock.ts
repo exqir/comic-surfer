@@ -7,9 +7,9 @@ export const defaultComicSeries: ComicSeriesDbObject = {
   title: 'Comic',
   url: '/path',
   collectionsUrl: null,
-  collections: [],
+  collections: [new ObjectID()],
   singleIssuesUrl: null,
-  singleIssues: [],
-  publisher: null,
+  singleIssues: [new ObjectID()],
+  publisher: new ObjectID(),
   lastModified: new Date(),
 }

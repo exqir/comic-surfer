@@ -6,7 +6,7 @@ import type {
   ComicSeriesDbObject,
 } from 'types/server-schema'
 import { nonNullableField } from 'lib'
-import { getByIds } from 'lib/comicSeries'
+import { getByIds } from 'lib/common'
 
 interface PublisherResolver {
   comicSeries: NonNullableResolver<ComicSeriesDbObject[], {}, PublisherDbObject>

@@ -18,6 +18,10 @@ export interface IComicBookDetails {
 export interface IComicBookRepository<R, E extends Error = Error> {
   getById: (id: ComicBookId) => RTE.ReaderTaskEither<R, E, ComicBookDbObject>
 
+  getByIds: (
+    ids: ComicBookId[],
+  ) => RTE.ReaderTaskEither<R, E, ComicBookDbObject[]>
+
   getByUrls: (urls: string[]) => RTE.ReaderTaskEither<R, E, ComicBookDbObject[]>
 
   getBySeriesAndReleaseInMonth: (

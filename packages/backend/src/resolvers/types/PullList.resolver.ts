@@ -3,7 +3,7 @@ import { pipe } from 'fp-ts/lib/function'
 import type { NonNullableResolver } from 'types/app'
 import type { PullListDbObject, ComicSeriesDbObject } from 'types/server-schema'
 import { nonNullableField } from 'lib'
-import { getByIds } from 'lib/comicSeries'
+import { getByIds } from 'lib/common'
 
 interface PullListResolver {
   list: NonNullableResolver<ComicSeriesDbObject[], {}, PullListDbObject>

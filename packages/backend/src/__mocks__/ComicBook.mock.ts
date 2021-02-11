@@ -8,7 +8,7 @@ export const defaultComicBook: ComicBookDbObject = {
   url: '/path',
   issueNo: null,
   creators: [],
-  coverImgUrl: null,
+  coverImgUrl: '/cover.jpg',
   publisher: new ObjectID(),
   releaseDate: null,
   comicSeries: new ObjectID(),

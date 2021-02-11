@@ -84,6 +84,50 @@ describe('[ComicBookRepository.getById]', () => {
   })
 })
 
+describe('[ComicBookRepository.getByIds]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const { _id } = defaultComicBook
+    const { findMany } = dataLayer
+    ;(findMany as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failed to find ComicBook')),
+    )
+
+    const res = repo.getByIds([_id])
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findMany).toBeCalledWith(
+      collection,
+      { _id: { $in: [_id] } },
+      undefined,
+    )
+    expect(logger.error).toBeCalledWith('Failed to find ComicBook')
+    expect.assertions(3)
+  })
+
+  it('should find ComicBooks using dataLayer and return right with result', async () => {
+    const { _id, ...comicBookWithoutId } = defaultComicBook
+    const mockComicBook = { _id, ...comicBookWithoutId }
+    const { findMany } = dataLayer
+    ;(findMany as jest.Mock).mockReturnValueOnce(RTE.right([mockComicBook]))
+
+    const res = repo.getByIds([_id])
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject([mockComicBook])),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(findMany).toBeCalledWith(
+      collection,
+      { _id: { $in: [_id] } },
+      undefined,
+    )
+    expect.assertions(2)
+  })
+})
+
 describe('[ComicBookRepository.getByUrls]', () => {
   it('should return RTE.left in case of Error', async () => {
     const { url } = defaultComicBook
