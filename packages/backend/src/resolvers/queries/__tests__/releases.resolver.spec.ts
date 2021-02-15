@@ -13,7 +13,7 @@ import { defaultPullList } from '__mocks__/PullList.mock'
 import { releases } from '../releases.resolver'
 
 describe('[Query.releases]', () => {
-  it('should return null in case of an Error when use is in context', async () => {
+  it('should return null in case of an Error when user is in context', async () => {
     getBySeriesAndReleaseInMonth.mockReturnValueOnce(RTE.left(new Error()))
     getByReleaseInMonth.mockReturnValueOnce(RTE.left(new Error()))
 
