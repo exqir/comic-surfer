@@ -17,7 +17,7 @@ import { getByIds } from 'lib/common'
 import { getUser } from 'lib/user'
 import { getByOwner } from 'lib/pullList'
 
-type EnhancedSearchResult = Omit<Search, 'inPullList'> & {
+export type EnhancedSearchResult = Omit<Search, 'inPullList'> & {
   comicSeriesUrlsInPullList: string[]
 }
 
