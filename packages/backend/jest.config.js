@@ -1,5 +1,6 @@
 module.exports = {
   roots: ['<rootDir>/src'],
+  testEnvironment: 'node',
   transform: {
     '\\.(gql|graphql)$': 'jest-transform-graphql',
     '^.+\\.tsx?$': 'ts-jest',
@@ -12,6 +13,7 @@ module.exports = {
     '^lib/(.*)$': '<rootDir>/src/lib/$1',
     '^services/(.*)$': '<rootDir>/src/services/$1',
     '^datasources/(.*)$': '<rootDir>/src/datasources/$1',
+    '^models/(.*)$': '<rootDir>/src/models/$1',
     '^lib': '<rootDir>/src/lib/',
     '^types/server-schema': '<rootDir>/src/types/graphql-server-schema.ts',
   },

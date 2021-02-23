@@ -85,9 +85,8 @@ export class ComicSeriesRepository extends MongoDataSource<ComicSeriesDbObject>
 
   public getLastUpdatedBefore = (date: Date) =>
     this.findMany({
-      // lastModified more then a month ago
       lastModified: {
-        $lte: new Date(date.getFullYear(), date.getMonth() - 1, date.getDate()),
+        $lte: date,
       },
     })
 

@@ -1,9 +1,6 @@
 extend type Query {
+  """
+  Searchs for ComicSeries containing the given query.
+  """
   search(query: String!): [SearchResult!]
-}
-
-type SearchResult {
-  title: String!
-  url: String!
-  inPullList: Boolean!
 }

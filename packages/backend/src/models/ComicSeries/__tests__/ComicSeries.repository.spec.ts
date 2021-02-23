@@ -444,11 +444,7 @@ describe('[ComicSeriesRepository.getLastUpdatedBefore]', () => {
       collection,
       {
         lastModified: {
-          $lte: new Date(
-            mockDate.getFullYear(),
-            mockDate.getMonth() - 1,
-            mockDate.getDate(),
-          ),
+          $lte: mockDate,
         },
       },
       undefined,
@@ -473,11 +469,7 @@ describe('[ComicSeriesRepository.getLastUpdatedBefore]', () => {
       collection,
       {
         lastModified: {
-          $lte: new Date(
-            mockDate.getFullYear(),
-            mockDate.getMonth() - 1,
-            mockDate.getDate(),
-          ),
+          $lte: mockDate,
         },
       },
       undefined,
