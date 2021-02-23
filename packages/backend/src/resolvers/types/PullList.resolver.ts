@@ -7,6 +7,7 @@ import { getByIds } from 'lib/common'
 
 interface PullListResolver {
   list: NonNullableResolver<ComicSeriesDbObject[], {}, PullListDbObject>
+  [index: string]: any
 }
 
 export const PullList: PullListResolver = {

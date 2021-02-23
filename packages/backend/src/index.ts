@@ -1,9 +1,9 @@
 import { ApolloServer } from 'apollo-server'
 import { ApolloServerPluginUsageReporting } from 'apollo-server-core'
-import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
 import * as mongad from 'mongad'
 import scrapeIt from 'scrape-it'
-import typeDefs, { resolvers } from './schema'
+import { schema } from 'schema'
+import { resolvers } from 'resolvers'
 import {
   ComicBookRepository,
   ComicSeriesRepository,
@@ -24,7 +24,7 @@ const logger = createLogger('Comic-Surfer', 'de-DE')
 const connectToDb = createConnectToDb(logger)
 
 const apolloServer = new ApolloServer({
-  typeDefs: [DIRECTIVES, ...typeDefs],
+  typeDefs: schema,
   resolvers,
   dataSources: () => ({
     comicBook: new ComicBookRepository({ dataLayer: mongad, logger }),

@@ -10,6 +10,7 @@ import { getByIds } from 'lib/common'
 
 interface PublisherResolver {
   comicSeries: NonNullableResolver<ComicSeriesDbObject[], {}, PublisherDbObject>
+  [index: string]: any
 }
 
 export const Publisher: PublisherResolver = {

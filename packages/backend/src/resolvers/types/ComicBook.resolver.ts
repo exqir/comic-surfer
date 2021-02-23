@@ -10,6 +10,7 @@ import { getById } from 'lib/common'
 interface ComicBookResolver {
   publisher: Resolver<PublisherDbObject, {}, ComicBookDbObject>
   comicSeries: Resolver<ComicSeriesDbObject, {}, ComicBookDbObject>
+  [index: string]: any
 }
 
 export const ComicBook: ComicBookResolver = {
