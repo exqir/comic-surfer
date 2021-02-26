@@ -30,6 +30,8 @@ export const addToPullList: Resolver<
         getComicSeries(services.scrape),
         RTE.chain(getOrCreateComicSeries(dataSources.comicSeries)),
         RTE.chainFirst(
+          // TODO: Only enqueue tasks when necessary, publisher has not been
+          // set yet and lists have not been scraped before.
           flow(getNewComicSeriesTasks, enqueueTasks(dataSources.queue)),
         ),
         RTE.chain(

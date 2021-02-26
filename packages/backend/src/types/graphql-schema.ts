@@ -100,11 +100,18 @@ export type Mutation = {
   addNewReleases: Maybe<Array<ComicSeries>>;
   /** Add a ComicSeries to the users PullList based on its url. */
   addToPullList: Maybe<PullList>;
+  /** Remove a ComicSeries from the users PullList based on its id. */
+  removeFromPullList: Maybe<PullList>;
 };
 
 
 export type MutationAddToPullListArgs = {
   comicSeriesUrl: Scalars['String'];
+};
+
+
+export type MutationRemoveFromPullListArgs = {
+  comicSeriesId: Scalars['ID'];
 };
 
 export type Publisher = {
