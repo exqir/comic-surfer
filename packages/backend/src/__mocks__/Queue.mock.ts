@@ -19,3 +19,9 @@ export const defaultScrapSingleIssuesTask: Task = {
   type: TaskType.SCRAPSINGLEISSUELIST,
   data: { comicSeriesId: new ObjectID(), url: '/collections' },
 }
+
+export const defaultUpdatePublisherTask: Task = {
+  _id: new ObjectID(),
+  type: TaskType.UPDATECOMICSERIESPUBLISHER,
+  data: { comicSeriesId: new ObjectID() },
+}

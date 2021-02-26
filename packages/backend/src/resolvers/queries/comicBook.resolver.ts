@@ -1,7 +1,10 @@
 import { pipe } from 'fp-ts/lib/function'
 
 import type { Resolver } from 'types/app'
-import type { QueryComicBookArgs, ComicBookDbObject } from 'types/server-schema'
+import type {
+  QueryComicBookArgs,
+  ComicBookDbObject,
+} from 'types/graphql-schema'
 import { nullableField } from 'lib'
 import { getById } from 'lib/common'
 

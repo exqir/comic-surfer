@@ -1,7 +1,10 @@
 import { pipe } from 'fp-ts/lib/function'
 
 import type { NonNullableResolver } from 'types/app'
-import type { PullListDbObject, ComicSeriesDbObject } from 'types/server-schema'
+import type {
+  PullListDbObject,
+  ComicSeriesDbObject,
+} from 'types/graphql-schema'
 import { nonNullableField } from 'lib'
 import { getByIds } from 'lib/common'
 

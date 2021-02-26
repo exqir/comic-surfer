@@ -4,7 +4,7 @@ import type { Resolver } from 'types/app'
 import type {
   QueryComicSeriesArgs,
   ComicSeriesDbObject,
-} from 'types/server-schema'
+} from 'types/graphql-schema'
 import { nullableField } from 'lib'
 import { getById } from 'lib/common'
 

@@ -6,6 +6,6 @@ import * as O from 'fp-ts/lib/Option'
 
 export const getUser: (
   user: O.Option<string>,
-) => RTE.ReaderTaskEither<Db, AuthenticationError, string> = flow(
+) => RTE.ReaderTaskEither<unknown, AuthenticationError, string> = flow(
   RTE.fromOption(() => new AuthenticationError('Unauthenticated user.')),
 )

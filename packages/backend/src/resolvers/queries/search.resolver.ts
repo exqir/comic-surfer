@@ -3,13 +3,12 @@ import { AuthenticationError } from 'apollo-server'
 import { flow, pipe } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
-// TODO: Use SearchResult type
+import type { Resolver } from 'types/app'
 import type {
   PullListDbObject,
   QuerySearchArgs,
-  Search,
-} from 'types/server-schema'
-import type { Resolver } from 'types/app'
+  SearchResult,
+} from 'types/graphql-schema'
 import type { ComicSeriesSearchData, IScraper } from 'services/ScrapeService'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import { nullableField } from 'lib'
@@ -17,23 +16,20 @@ import { getByIds } from 'lib/common'
 import { getUser } from 'lib/user'
 import { getByOwner } from 'lib/pullList'
 
-export type EnhancedSearchResult = Omit<Search, 'inPullList'> & {
+export type EnhancedSearchResult = Omit<SearchResult, 'inPullList'> & {
   comicSeriesUrlsInPullList: string[]
 }
 
 export const search: Resolver<EnhancedSearchResult[], QuerySearchArgs> = (
   _,
-  {
-    // TODO: Use query
-    q,
-  },
+  { query },
   { services, dataSources, user, db },
 ) =>
   pipe(
     db,
     nullableField(
       pipe(
-        q,
+        query,
         getComicSeriesSearchResults(services.scrape),
         RTE.chain(
           mergeSearchResultsWithUrls(

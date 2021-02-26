@@ -4,7 +4,7 @@ import type { NonNullableResolver } from 'types/app'
 import type {
   PublisherDbObject,
   ComicSeriesDbObject,
-} from 'types/server-schema'
+} from 'types/graphql-schema'
 import { nonNullableField } from 'lib'
 import { getByIds } from 'lib/common'
 

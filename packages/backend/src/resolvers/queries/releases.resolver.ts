@@ -2,13 +2,13 @@ import type { Db, MongoError } from 'mongodb'
 import { flow, pipe } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
+import type { Resolver } from 'types/app'
 import type {
   ComicBookDbObject,
   PullListDbObject,
   QueryReleasesArgs,
-} from 'types/server-schema'
-import { ComicBookType } from 'types/server-schema'
-import { Resolver } from 'types/app'
+} from 'types/graphql-schema'
+import { ComicBookType } from 'types/graphql-schema'
 import { nullableField } from 'lib'
 import { getUser } from 'lib/user'
 import { getByOwner } from 'lib/pullList'

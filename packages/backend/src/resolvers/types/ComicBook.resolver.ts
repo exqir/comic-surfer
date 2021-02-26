@@ -3,7 +3,7 @@ import type {
   ComicBookDbObject,
   PublisherDbObject,
   ComicSeriesDbObject,
-} from 'types/server-schema'
+} from 'types/graphql-schema'
 import { mapOtoRTEnullable, chainMaybeToNullable } from 'lib'
 import { getById } from 'lib/common'
 

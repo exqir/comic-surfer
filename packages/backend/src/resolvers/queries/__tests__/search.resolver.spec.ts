@@ -31,7 +31,7 @@ describe('[Query.search]', () => {
     expect(res).toBeNull()
   })
 
-  it('should return null in case of an Error wjile getting ComicSeries', async () => {
+  it('should return null in case of an Error while getting ComicSeries', async () => {
     getComicSeriesByIds.mockReturnValueOnce(RTE.left(new Error()))
 
     const res = await search(parent, args, context, info)
@@ -95,4 +95,4 @@ const context = {
 
 const info = {} as GraphQLResolveInfo
 const parent = {}
-const args = { q: 'Series Title' }
+const args = { query: 'Series Title' }

@@ -1,0 +1,6 @@
+extend type Mutation {
+  """
+  Add a ComicSeries to the users PullList based on its url.
+  """
+  addToPullList(comicSeriesUrl: String!): PullList
+}

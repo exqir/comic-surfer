@@ -3,16 +3,13 @@ import { flow, pipe } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as A from 'fp-ts/lib/Array'
 
-import type { ComicSeriesDbObject } from 'types/server-schema'
+import type { ComicSeriesDbObject } from 'types/graphql-schema'
 import type { Resolver } from 'types/app'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
-import type {
-  IQueueRepository,
-  NewTask,
-  Task,
-} from 'models/Queue/Queue.interface'
+import type { NewTask } from 'models/Queue/Queue.interface'
 import { TaskType } from 'models/Queue/Queue.interface'
 import { nullableField } from 'lib'
+import { enqueueTasks } from 'lib/queue'
 
 export const addNewReleases: Resolver<ComicSeriesDbObject[], {}> = (
   _,
@@ -46,13 +43,7 @@ function getLastUpdatedBefore(
 ): (
   updateBefore: Date,
 ) => RTE.ReaderTaskEither<Db, Error | MongoError, ComicSeriesDbObject[]> {
-  return (updateBefore) => repo.getLastUpdatedBefore(updateBefore)
-}
-
-function enqueueTasks(
-  repo: IQueueRepository<Db, Error | MongoError>,
-): (tasks: NewTask[]) => RTE.ReaderTaskEither<Db, Error | MongoError, Task[]> {
-  return (tasks) => repo.addTasksToQueue(tasks)
+  return repo.getLastUpdatedBefore
 }
 
 function getNewReleaseTasks({

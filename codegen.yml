@@ -2,23 +2,23 @@ overwrite: true
 require:
   - ts-node/register
 config:
-  scalars:
-    Date: string
   avoidOptionals: true
   namingConvention:
     enumValues: upper-case#upperCase
 generates:
-  packages/app/src/types/graphql-client-schema.ts:
-    schema: 'packages/backend/src/schema/**/*.@(root|server).graphql'
-    documents: 'packages/app/src/data/**/!(*.d).{ts,tsx}'
+  # packages/app/src/types/graphql-client-schema.ts:
+  #   schema: 'packages/backend/src/schema/**/*.graphql'
+  #   documents: 'packages/app/src/data/**/!(*.d).{ts,tsx}'
+  #   plugins:
+  #     - 'typescript'
+  #     - 'typescript-operations'
+  #   config:
+  #     scalars:
+  #       Date: string
+  packages/backend/src/types/graphql-schema.ts:
+    schema: 'packages/backend/src/schema/**/*.graphql'
     plugins:
       - 'typescript'
-      - 'typescript-operations'
-  packages/backend/src/types/graphql-server-schema.ts:
-    schema: 'packages/backend/src/schema/**/*.@(root|server).graphql'
-    plugins:
-      - 'typescript'
-      - 'typescript-operations'
       - 'typescript-mongodb'
     config:
       scalars:

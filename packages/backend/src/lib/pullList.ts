@@ -1,6 +1,6 @@
 import type { Db, MongoError } from 'mongodb'
 import { ApolloError } from 'apollo-server'
-import { flow, pipe } from 'fp-ts/lib/function'
+import { flow } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 import type { PullListDbObject } from 'types/server-schema'
