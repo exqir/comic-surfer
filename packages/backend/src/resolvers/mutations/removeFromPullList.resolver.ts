@@ -10,6 +10,7 @@ import type {
 import type { Resolver } from 'types/app'
 import { IPullListRepository } from 'models/PullList/PullList.interface'
 import { nullableField } from 'lib'
+import { throwWhenAuthenticationError } from 'lib/common'
 import { getUser } from 'lib/user'
 
 export const removeFromPullList: Resolver<
@@ -27,12 +28,7 @@ export const removeFromPullList: Resolver<
             removeComicSeriesFromPullList(dataSources.pullList),
           ),
         ),
-        RTE.mapLeft((error) => {
-          if (error instanceof AuthenticationError) {
-            throw error
-          }
-          return error
-        }),
+        RTE.mapLeft(throwWhenAuthenticationError),
       ),
     ),
   )
