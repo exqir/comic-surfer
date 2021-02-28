@@ -8,9 +8,7 @@ import { IPullListRepository } from 'models/PullList/PullList.interface'
 
 export function getByOwner(
   repo: IPullListRepository<Db, Error | MongoError>,
-): (
-  owner: string,
-) => RTE.ReaderTaskEither<Db, Error | MongoError, PullListDbObject> {
+): (owner: string) => RTE.ReaderTaskEither<Db, ApolloError, PullListDbObject> {
   return flow(
     repo.getPullListByOwner,
     RTE.mapLeft(

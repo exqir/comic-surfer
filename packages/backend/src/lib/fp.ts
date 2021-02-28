@@ -66,6 +66,9 @@ export const nullableField = <L, R>(
   return flow(O.map(runRTEtoNullable(rte)), O.toNullable)
 }
 
+// TODO: Prevent MongoError from being thrown to not leak
+// internal error messages, only Apollo and AuthenticationErrors
+// should be allowed to be thrown.
 export const nonNullableField = <L, R>(
   rte: RTE.ReaderTaskEither<Db, L, R>,
 ): ((db: O.Option<Db>) => Promise<R>) => {

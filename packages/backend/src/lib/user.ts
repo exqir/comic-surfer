@@ -1,4 +1,3 @@
-import type { Db } from 'mongodb'
 import { AuthenticationError } from 'apollo-server'
 import { flow } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'

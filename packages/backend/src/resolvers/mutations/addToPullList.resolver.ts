@@ -11,12 +11,12 @@ import type {
 import type { Resolver } from 'types/app'
 import type { ComicSeriesData, IScraper } from 'services/ScrapeService'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
+import type { IPullListRepository } from 'models/PullList/PullList.interface'
 import type { NewTask } from 'models/Queue/Queue.interface'
 import { TaskType } from 'models/Queue/Queue.interface'
 import { nullableField } from 'lib'
 import { enqueueTasks } from 'lib/queue'
 import { getUser } from 'lib/user'
-import { IPullListRepository } from 'models/PullList/PullList.interface'
 
 export const addToPullList: Resolver<
   PullListDbObject,

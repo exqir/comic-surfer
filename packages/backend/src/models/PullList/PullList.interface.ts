@@ -9,13 +9,13 @@ export type ComicSeriesId = ObjectID
 export interface IPullListRepository<R, E extends Error = Error> {
   createPullList: (owner: Owner) => RTE.ReaderTaskEither<R, E, PullListDbObject>
 
-  getPullListByOwner: (
+  getOrCreatePullList: (
     owner: Owner,
   ) => RTE.ReaderTaskEither<R, E, PullListDbObject>
 
-  getPullListByOwnerOrNull: (
+  getPullListByOwner: (
     owner: Owner,
-  ) => RTE.ReaderTaskEither<R, E, PullListDbObject | null>
+  ) => RTE.ReaderTaskEither<R, E, PullListDbObject>
 
   addComicSeriesToPullList: (
     owner: Owner,

@@ -51,6 +51,74 @@ describe('[PullListRepository.createPullList]', () => {
   })
 })
 
+describe('[PullListRepository.getOrCreatePullList]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const { _id: _, ...mockPullList } = defaultPullList
+    const { updateOne } = dataLayer
+    ;(updateOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failed to create PullList')),
+    )
+
+    const res = repo.getOrCreatePullList(mockPullList.owner)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      { $setOnInsert: { owner: mockPullList.owner, list: [] } },
+      { upsert: true },
+    )
+    expect(logger.error).toBeCalledWith('Failed to create PullList')
+    expect.assertions(3)
+  })
+
+  it('should return RTE.left in case of null', async () => {
+    const { _id: _, ...mockPullList } = defaultPullList
+    const { updateOne } = dataLayer
+    ;(updateOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
+
+    const res = repo.getOrCreatePullList(mockPullList.owner)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      { $setOnInsert: { owner: mockPullList.owner, list: [] } },
+      { upsert: true },
+    )
+    expect(logger.error).toBeCalledWith('Failed to create PullList')
+    expect.assertions(3)
+  })
+
+  it('should upsert PullList using dataLayer and return right with result', async () => {
+    const { _id, ...mockPullList } = defaultPullList
+    const mockPullListWithId = { ...mockPullList, _id }
+    const { updateOne } = dataLayer
+    ;(updateOne as jest.Mock).mockReturnValueOnce(RTE.right(mockPullListWithId))
+
+    const res = repo.getOrCreatePullList(mockPullList.owner)
+
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(mockPullListWithId)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(updateOne).toBeCalledWith(
+      collection,
+      { owner: mockPullList.owner },
+      { $setOnInsert: { owner: mockPullList.owner, list: [] } },
+      { upsert: true },
+    )
+    expect.assertions(2)
+  })
+})
+
 describe('[PullListRepository.getPullListByOwner]', () => {
   it('should return RTE.left in case of Error', async () => {
     const { _id: _, ...mockPullList } = defaultPullList
@@ -104,71 +172,6 @@ describe('[PullListRepository.getPullListByOwner]', () => {
     await pipe(
       res,
       RTE.map((d) => expect(d).toMatchObject(mockPullListWithId)),
-      (rte) => RTE.run(rte, {} as Db),
-    )
-    expect(findOne).toBeCalledWith(
-      collection,
-      { owner: mockPullList.owner },
-      {},
-    )
-    expect.assertions(2)
-  })
-})
-
-describe('[PullListRepository.getPullListByOwnerOrNull]', () => {
-  it('should return RTE.left in case of Error', async () => {
-    const { _id: _, ...mockPullList } = defaultPullList
-    const { findOne } = dataLayer
-    ;(findOne as jest.Mock).mockReturnValueOnce(
-      RTE.left(new MongoError('Failed to find PullList')),
-    )
-
-    const res = repo.getPullListByOwnerOrNull(mockPullList.owner)
-    await pipe(
-      res,
-      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
-      (rte) => RTE.run(rte, {} as Db),
-    )
-    expect(findOne).toBeCalledWith(
-      collection,
-      { owner: mockPullList.owner },
-      {},
-    )
-    expect(logger.error).toBeCalledWith('Failed to find PullList')
-    expect.assertions(3)
-  })
-
-  it('should find PullList using dataLayer and return right with result', async () => {
-    const { _id, ...mockPullList } = defaultPullList
-    const mockPullListWithId = { ...mockPullList, _id }
-    const { findOne } = dataLayer
-    ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right(mockPullListWithId))
-
-    const res = repo.getPullListByOwnerOrNull(mockPullList.owner)
-
-    await pipe(
-      res,
-      RTE.map((d) => expect(d).toMatchObject(mockPullListWithId)),
-      (rte) => RTE.run(rte, {} as Db),
-    )
-    expect(findOne).toBeCalledWith(
-      collection,
-      { owner: mockPullList.owner },
-      {},
-    )
-    expect.assertions(2)
-  })
-
-  it('should find PullList using dataLayer and return right with null', async () => {
-    const { _id, ...mockPullList } = defaultPullList
-    const { findOne } = dataLayer
-    ;(findOne as jest.Mock).mockReturnValueOnce(RTE.right(null))
-
-    const res = repo.getPullListByOwnerOrNull(mockPullList.owner)
-
-    await pipe(
-      res,
-      RTE.map((d) => expect(d).toBe(null)),
       (rte) => RTE.run(rte, {} as Db),
     )
     expect(findOne).toBeCalledWith(

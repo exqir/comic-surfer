@@ -4,6 +4,7 @@ import { Response, Request } from 'express'
 import { Option } from 'fp-ts/lib/Option'
 import { IScraper } from 'services/ScrapeService'
 import { ILogger } from 'services/LogService'
+import { IAuthentication } from 'services/Authentication'
 import mongad from 'mongad'
 import { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
 import { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
@@ -30,6 +31,7 @@ export interface DataSources {
 export interface Services {
   scrape: IScraper
   logger: ILogger
+  authentication: IAuthentication
 }
 
 /**

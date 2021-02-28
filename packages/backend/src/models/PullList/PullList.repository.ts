@@ -23,6 +23,13 @@ export class PullListRepository extends MongoDataSource<PullListDbObject>
 
   public createPullList = (owner: string) => this.insertOne({ owner, list: [] })
 
+  public getOrCreatePullList = (owner: string) =>
+    this.updateOne(
+      { owner },
+      { $setOnInsert: { owner, list: [] } },
+      { upsert: true, nonNullable: true },
+    )
+
   public getPullListByOwner = (owner: string) =>
     this.findOne({ owner }, { nonNullable: true })
 

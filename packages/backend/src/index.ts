@@ -44,6 +44,7 @@ const apolloServer = new ApolloServer({
     services: {
       scrape: comixology(scrapeIt, logger, baseUrl),
       logger,
+      authentication: Authentication,
     },
     user: await Authentication.getUserFromSession(req)(),
   }),
