@@ -95,13 +95,22 @@ export type Mutation = {
   _empty: Maybe<Scalars['String']>;
   /**
    * Internal: Add new colletions and single issue releases of ComicSeries.
-   * Enqueues looking for new releases of ComicSeries which releases has not been updated for the longest time.
+   * Enqueues looking for new releases of ComicSeries which releases have not been updated for the longest time.
    */
   addNewReleases: Maybe<Array<ComicSeries>>;
   /** Add a ComicSeries to the users PullList based on its url. */
   addToPullList: Maybe<PullList>;
+  /**
+   * Login a user based on the token given in the Authorization header.
+   * If the user does not exist yet, a new one will be created.
+   */
+  login: PullList;
+  /** Logout the current user. */
+  logout: Scalars['Boolean'];
   /** Remove a ComicSeries from the users PullList based on its id. */
   removeFromPullList: Maybe<PullList>;
+  /** Internal: Set the Publisher of a ComicSeries. */
+  setComicSeriesPublisher: Maybe<ComicSeries>;
 };
 
 
@@ -111,6 +120,11 @@ export type MutationAddToPullListArgs = {
 
 
 export type MutationRemoveFromPullListArgs = {
+  comicSeriesId: Scalars['ID'];
+};
+
+
+export type MutationSetComicSeriesPublisherArgs = {
   comicSeriesId: Scalars['ID'];
 };
 

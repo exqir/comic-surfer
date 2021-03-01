@@ -4,5 +4,4 @@ extend type Mutation {
   If the user does not exist yet, a new one will be created.
   """
   login: PullList!
-  """
-} 
+}

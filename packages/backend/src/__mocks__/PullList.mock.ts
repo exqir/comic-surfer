@@ -1,6 +1,6 @@
 import { ObjectID } from 'mongodb'
 
-import { PullListDbObject } from 'types/server-schema'
+import { PullListDbObject } from 'types/graphql-schema'
 
 export const defaultPullList: PullListDbObject = {
   _id: new ObjectID(),

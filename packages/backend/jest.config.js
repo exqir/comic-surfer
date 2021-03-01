@@ -15,6 +15,6 @@ module.exports = {
     '^datasources/(.*)$': '<rootDir>/src/datasources/$1',
     '^models/(.*)$': '<rootDir>/src/models/$1',
     '^lib': '<rootDir>/src/lib/',
-    '^types/server-schema': '<rootDir>/src/types/graphql-server-schema.ts',
+    '^types/(.*)$': '<rootDir>/src/types/$1',
   },
 }

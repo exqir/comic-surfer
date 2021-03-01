@@ -1,6 +1,6 @@
 import { Db, MongoError, ObjectID } from 'mongodb'
 
-import { PullListDbObject } from 'types/server-schema'
+import { PullListDbObject } from 'types/graphql-schema'
 import {
   MongoDataSource,
   MongoDataSourceOptions,

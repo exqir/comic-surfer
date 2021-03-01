@@ -1,6 +1,6 @@
 import { ObjectID } from 'mongodb'
 
-import { ComicBookDbObject, ComicBookType } from 'types/server-schema'
+import { ComicBookDbObject, ComicBookType } from 'types/graphql-schema'
 
 export const defaultComicBook: ComicBookDbObject = {
   _id: new ObjectID(),

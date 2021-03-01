@@ -1,6 +1,6 @@
 import { Db, MongoError } from 'mongodb'
 
-import type { ComicBookDbObject, ComicBookType } from 'types/server-schema'
+import type { ComicBookDbObject, ComicBookType } from 'types/graphql-schema'
 import type {
   IComicBookRepository,
   ComicBookId,

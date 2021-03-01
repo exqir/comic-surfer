@@ -4,7 +4,7 @@ import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 import { dataLayer, logger } from '../../../__tests__/_mock'
 
-import { ComicBookType } from 'types/server-schema'
+import { ComicBookType } from 'types/graphql-schema'
 import { defaultComicSeries } from '__mocks__/ComicSeries.mock'
 
 import {

@@ -6,7 +6,7 @@ import * as O from 'fp-ts/lib/Option'
 import type { GraphQLContext } from 'types/app'
 import type { IPullListRepository } from 'models/PullList/PullList.interface'
 import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
-import { ComicBookType } from 'types/server-schema'
+import { ComicBookType } from 'types/graphql-schema'
 import { defaultComicBook } from '__mocks__/ComicBook.mock'
 import { defaultPullList } from '__mocks__/PullList.mock'
 

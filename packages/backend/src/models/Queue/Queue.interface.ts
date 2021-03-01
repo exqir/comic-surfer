@@ -2,7 +2,7 @@ import type { ObjectID } from 'mongodb'
 import type * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 import type { WithId, DistributiveOmit } from 'types/app'
-import type { ComicSeriesDbObject } from 'types/server-schema'
+import type { ComicSeriesDbObject } from 'types/graphql-schema'
 
 export type Url = string
 export type ComicSeriesId = ObjectID

@@ -60,6 +60,7 @@ const getOrThrow = flow(
 ///////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////
 
+// TODO: Log error
 export const nullableField = <L, R>(
   rte: RTE.ReaderTaskEither<Db, L, Maybe<R>>,
 ): ((db: O.Option<Db>) => Promise<Maybe<R>> | null) => {

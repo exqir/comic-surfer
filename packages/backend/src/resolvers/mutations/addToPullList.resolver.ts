@@ -31,8 +31,6 @@ export const addToPullList: Resolver<
         getComicSeries(services.scrape),
         RTE.chain(getOrCreateComicSeries(dataSources.comicSeries)),
         RTE.chainFirst(
-          // TODO: Only enqueue tasks when necessary, publisher has not been
-          // set yet and lists have not been scraped before.
           flow(getNewComicSeriesTasks, enqueueTasks(dataSources.queue)),
         ),
         RTE.chain(
@@ -76,17 +74,14 @@ function addComicSeriesToPullList(
 }
 
 function getNewComicSeriesTasks({
+  publisher,
   _id: comicSeriesId,
   singleIssuesUrl,
   collectionsUrl,
 }: ComicSeriesDbObject): NewTask[] {
-  return [
-    {
-      type: TaskType.UPDATECOMICSERIESPUBLISHER,
-      data: {
-        comicSeriesId,
-      },
-    },
+  // TODO: Scraping should only be necessary for new ComicSeries as well,
+  // however insertMany with an empty array would result in an error.
+  const tasks: NewTask[] = [
     {
       type: TaskType.SCRAPSINGLEISSUELIST,
       data: {
@@ -102,4 +97,17 @@ function getNewComicSeriesTasks({
       },
     },
   ]
+
+  // Only set publisher when needed. This should only be the case
+  // when the ComicSeries is being added for the first time.
+  if (publisher === null) {
+    tasks.unshift({
+      type: TaskType.UPDATECOMICSERIESPUBLISHER,
+      data: {
+        comicSeriesId,
+      },
+    })
+  }
+
+  return tasks
 }

@@ -37,10 +37,10 @@ export const ComicSeries: ComicSeriesResolver = {
       db,
       nonNullableField(pipe(singleIssues, getByIds(dataSources.comicBook))),
     ),
-  collections: ({ singleIssues }, _, { dataSources, db }) =>
+  collections: ({ collections }, _, { dataSources, db }) =>
     pipe(
       db,
-      nonNullableField(pipe(singleIssues, getByIds(dataSources.comicBook))),
+      nonNullableField(pipe(collections, getByIds(dataSources.comicBook))),
     ),
   publisher: ({ publisher }, _, { dataSources, db }) =>
     chainMaybeToNullable(

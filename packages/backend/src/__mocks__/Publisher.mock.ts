@@ -1,6 +1,6 @@
 import { ObjectID } from 'mongodb'
 
-import { PublisherDbObject } from 'types/server-schema'
+import { PublisherDbObject } from 'types/graphql-schema'
 
 export const defaultPublisher: PublisherDbObject = {
   _id: new ObjectID(),
