@@ -1,0 +1,6 @@
+extend type Mutation {
+  """
+  Internal: Update the release date of the ComicBook.
+  """
+  updateComicBookRelease(comicBookId: ID!): ComicBook
+}

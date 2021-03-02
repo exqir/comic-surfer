@@ -7,6 +7,6 @@ export const defaultComicBookData: ComicBookData = {
   coverImgUrl: '/image.jpg',
   creators: [{ name: 'Author' }],
   publisher: { name: 'Publisher', url: '/publisher' },
-  releaseDate: null,
+  releaseDate: new Date(),
   description: 'What is this about?',
 }

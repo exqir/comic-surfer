@@ -111,6 +111,8 @@ export type Mutation = {
   removeFromPullList: Maybe<PullList>;
   /** Internal: Set the Publisher of a ComicSeries. */
   setComicSeriesPublisher: Maybe<ComicSeries>;
+  /** Internal: Update the release date of the ComicBook. */
+  updateComicBookRelease: ComicBook;
 };
 
 
@@ -126,6 +128,11 @@ export type MutationRemoveFromPullListArgs = {
 
 export type MutationSetComicSeriesPublisherArgs = {
   comicSeriesId: Scalars['ID'];
+};
+
+
+export type MutationUpdateComicBookReleaseArgs = {
+  comicBookId: Scalars['ID'];
 };
 
 export type Publisher = {

@@ -20,6 +20,7 @@ import type {
 import type { IPublisherRepository } from 'models/Publisher/Publisher.interface'
 import { nullableField } from 'lib'
 import { getById } from 'lib/common'
+import { getComicBookByUrl } from 'lib/scraper'
 import { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 
 export const setComicSeriesPublisher: Resolver<
@@ -83,7 +84,7 @@ function getFirstComicBookFromList(
             'COMIC_SERIES_EMPTY_COMIC_BOOK_LIST',
           ),
       ),
-      TE.chain(({ url }) => pipe(url, getComicBook(scraper))),
+      TE.chain(getComicBookByUrl(scraper)),
       RTE.fromTaskEither,
     )
 }
@@ -127,10 +128,4 @@ function setPublisherForComicSeries(
 ) => RTE.ReaderTaskEither<Db, Error | MongoError, ComicSeriesDbObject> {
   return (comicSeriesId) => ({ _id: publisherId }) =>
     repo.setPublisher(comicSeriesId, publisherId)
-}
-
-function getComicBook(
-  scraper: IScraper,
-): (path: string) => TE.TaskEither<Error, ComicBookData> {
-  return scraper.getComicBook
 }
