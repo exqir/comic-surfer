@@ -24,7 +24,7 @@ export type Task = WithId<
     }
   | {
       type: TaskType.UPDATECOMICBOOKRELEASE
-      data: { url: Url; comicBookId: ObjectID }
+      data: { comicBookId: ObjectID }
     }
   | {
       type: TaskType.UPDATECOMICSERIESPUBLISHER

@@ -47,18 +47,18 @@ function getLastUpdatedBefore(
 }
 
 function getNewReleaseTasks({
-  _id,
+  _id: comicSeriesId,
   singleIssuesUrl,
   collectionsUrl,
 }: ComicSeriesDbObject): NewTask[] {
   return [
     {
       type: TaskType.SCRAPSINGLEISSUELIST,
-      data: { comicSeriesId: _id, url: singleIssuesUrl! },
+      data: { comicSeriesId, url: singleIssuesUrl! },
     },
     {
       type: TaskType.SCRAPCOLLECTIONLIST,
-      data: { comicSeriesId: _id, url: collectionsUrl! },
+      data: { comicSeriesId, url: collectionsUrl! },
     },
   ]
 }

@@ -314,7 +314,7 @@ describe('[ComicBookRepository.getByReleaseInMonth]', () => {
   })
 })
 
-describe('[ComicBookRepository.getUpcomingReleasesNotUpated]', () => {
+describe('[ComicBookRepository.getByReleaseBetweenAndLastUpdatedBefore]', () => {
   it('should return RTE.left in case of Error', async () => {
     const mockDate = new Date()
     const { findMany } = dataLayer
@@ -322,7 +322,11 @@ describe('[ComicBookRepository.getUpcomingReleasesNotUpated]', () => {
       RTE.left(new MongoError('Failed to find ComicBook')),
     )
 
-    const res = repo.getUpcomingReleasesNotUpated(mockDate)
+    const res = repo.getByReleaseBetweenAndLastUpdatedBefore(
+      mockDate,
+      mockDate,
+      mockDate,
+    )
     await pipe(
       res,
       RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
@@ -333,24 +337,14 @@ describe('[ComicBookRepository.getUpcomingReleasesNotUpated]', () => {
       {
         $and: [
           {
-            // releaseDate between now and a month from now
             releaseDate: {
               $gte: mockDate,
-              $lt: new Date(
-                mockDate.getFullYear(),
-                mockDate.getMonth() + 1,
-                mockDate.getDate(),
-              ),
+              $lt: mockDate,
             },
           },
           {
-            // lastModified more then two weeks ago
             lastModified: {
-              $lte: new Date(
-                mockDate.getFullYear(),
-                mockDate.getMonth(),
-                mockDate.getDate() - 14,
-              ),
+              $lte: mockDate,
             },
           },
         ],
@@ -367,7 +361,11 @@ describe('[ComicBookRepository.getUpcomingReleasesNotUpated]', () => {
     const { findMany } = dataLayer
     ;(findMany as jest.Mock).mockReturnValueOnce(RTE.right([mockComicBook]))
 
-    const res = repo.getUpcomingReleasesNotUpated(mockDate)
+    const res = repo.getByReleaseBetweenAndLastUpdatedBefore(
+      mockDate,
+      mockDate,
+      mockDate,
+    )
     await pipe(
       res,
       RTE.map((d) => expect(d).toMatchObject([mockComicBook])),
@@ -378,24 +376,14 @@ describe('[ComicBookRepository.getUpcomingReleasesNotUpated]', () => {
       {
         $and: [
           {
-            // releaseDate between now and a month from now
             releaseDate: {
               $gte: mockDate,
-              $lt: new Date(
-                mockDate.getFullYear(),
-                mockDate.getMonth() + 1,
-                mockDate.getDate(),
-              ),
+              $lt: mockDate,
             },
           },
           {
-            // lastModified more then two weeks ago
             lastModified: {
-              $lte: new Date(
-                mockDate.getFullYear(),
-                mockDate.getMonth(),
-                mockDate.getDate() - 14,
-              ),
+              $lte: mockDate,
             },
           },
         ],

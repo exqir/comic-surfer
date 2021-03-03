@@ -109,28 +109,22 @@ export class ComicBookRepository extends MongoDataSource<ComicBookDbObject>
       ],
     })
 
-  public getUpcomingReleasesNotUpated = (date: Date) =>
+  public getByReleaseBetweenAndLastUpdatedBefore = (
+    releaseAfter: Date,
+    releaseBefore: Date,
+    updatedBefore: Date,
+  ) =>
     this.findMany({
       $and: [
         {
-          // releaseDate between date and a month from it
           releaseDate: {
-            $gte: date,
-            $lt: new Date(
-              date.getFullYear(),
-              date.getMonth() + 1,
-              date.getDate(),
-            ),
+            $gte: releaseAfter,
+            $lt: releaseBefore,
           },
         },
         {
-          // lastModified more then two weeks before date
           lastModified: {
-            $lte: new Date(
-              date.getFullYear(),
-              date.getMonth(),
-              date.getDate() - 14,
-            ),
+            $lte: updatedBefore,
           },
         },
       ],

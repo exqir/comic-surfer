@@ -25,3 +25,9 @@ export const defaultUpdatePublisherTask: Task = {
   type: TaskType.UPDATECOMICSERIESPUBLISHER,
   data: { comicSeriesId: new ObjectID() },
 }
+
+export const defaultUpdateComicBookTask: Task = {
+  _id: new ObjectID(),
+  type: TaskType.UPDATECOMICBOOKRELEASE,
+  data: { comicBookId: new ObjectID() },
+}

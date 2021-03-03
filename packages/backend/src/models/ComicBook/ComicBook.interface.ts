@@ -37,8 +37,10 @@ export interface IComicBookRepository<R, E extends Error = Error> {
     type: ComicBookType,
   ) => RTE.ReaderTaskEither<R, E, ComicBookDbObject[]>
 
-  getUpcomingReleasesNotUpated: (
-    date: Date,
+  getByReleaseBetweenAndLastUpdatedBefore: (
+    releaseAfter: Date,
+    releaseBefore: Date,
+    updatedBefore: Date,
   ) => RTE.ReaderTaskEither<R, E, ComicBookDbObject[]>
 
   addComicBooks: (
