@@ -109,12 +109,12 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   /** Remove a ComicSeries from the users PullList based on its id. */
   removeFromPullList: Maybe<PullList>;
-  /** Internal: Set the Publisher of a ComicSeries. */
-  setComicSeriesPublisher: Maybe<ComicSeries>;
   /** Internal: Update ComicBook data. */
   updateComicBook: Maybe<ComicBook>;
   /** Internal: Update the release date of the ComicBook. */
   updateComicBookRelease: Maybe<ComicBook>;
+  /** Internal: Set the Publisher of a ComicSeries. */
+  updateComicSeriesPublisher: Maybe<ComicSeries>;
   /**
    * Internal: Verfies release dates of upcoming ComicBook releases.
    * Enqueues looking for updates to ComicBooks that are released soon but have not been updated.
@@ -133,11 +133,6 @@ export type MutationRemoveFromPullListArgs = {
 };
 
 
-export type MutationSetComicSeriesPublisherArgs = {
-  comicSeriesId: Scalars['ID'];
-};
-
-
 export type MutationUpdateComicBookArgs = {
   comicBookId: Scalars['ID'];
 };
@@ -145,6 +140,11 @@ export type MutationUpdateComicBookArgs = {
 
 export type MutationUpdateComicBookReleaseArgs = {
   comicBookId: Scalars['ID'];
+};
+
+
+export type MutationUpdateComicSeriesPublisherArgs = {
+  comicSeriesId: Scalars['ID'];
 };
 
 export type Publisher = {

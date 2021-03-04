@@ -13,15 +13,15 @@ import { defaultPublisher } from '__mocks__/Publisher.mock'
 import { defaultComicBookData } from '__mocks__/ComicBookData.mock'
 import { defaultComicBookListData } from '__mocks__/ComicBookListData.mock'
 
-import { setComicSeriesPublisher } from '../setComicSeriesPublisher.resolver'
+import { updateComicSeriesPublisher } from '../updateComicSeriesPublisher.resolver'
 
-describe('[Mutation.setComicSeriesPublisher]', () => {
+describe('[Mutation.updateComicSeriesPublisher]', () => {
   it('should return null in case of a missing singleIssuesUrl', async () => {
     getComicSeriesById.mockReturnValueOnce(
       RTE.right({ ...defaultComicSeries, singleIssuesUrl: null }),
     )
 
-    const res = await setComicSeriesPublisher(parent, args, context, info)
+    const res = await updateComicSeriesPublisher(parent, args, context, info)
 
     expect(res).toBeNull()
   })
@@ -29,7 +29,7 @@ describe('[Mutation.setComicSeriesPublisher]', () => {
   it('should return null in case of an Error during scraping ComicBook List', async () => {
     getComicBookList.mockReturnValueOnce(TE.left(new Error()))
 
-    const res = await setComicSeriesPublisher(parent, args, context, info)
+    const res = await updateComicSeriesPublisher(parent, args, context, info)
 
     expect(res).toBeNull()
   })
@@ -39,7 +39,7 @@ describe('[Mutation.setComicSeriesPublisher]', () => {
       TE.right({ ...defaultComicBookListData, comicBookList: [] }),
     )
 
-    const res = await setComicSeriesPublisher(parent, args, context, info)
+    const res = await updateComicSeriesPublisher(parent, args, context, info)
 
     expect(res).toBeNull()
   })
@@ -47,7 +47,7 @@ describe('[Mutation.setComicSeriesPublisher]', () => {
   it('should return null in case of an Error during scraping ComicBook', async () => {
     getComicBook.mockReturnValueOnce(TE.left(new Error()))
 
-    const res = await setComicSeriesPublisher(parent, args, context, info)
+    const res = await updateComicSeriesPublisher(parent, args, context, info)
 
     expect(res).toBeNull()
   })
@@ -55,7 +55,7 @@ describe('[Mutation.setComicSeriesPublisher]', () => {
   it('should return null in case of an Error during getting Publisher', async () => {
     getPublisherByUrl.mockReturnValueOnce(RTE.left(new Error()))
 
-    const res = await setComicSeriesPublisher(parent, args, context, info)
+    const res = await updateComicSeriesPublisher(parent, args, context, info)
 
     expect(res).toBeNull()
   })
@@ -63,7 +63,7 @@ describe('[Mutation.setComicSeriesPublisher]', () => {
   it('should return null in case of an Error during getting adding ComicSeries to Publisher', async () => {
     addComicSeriesToPublisher.mockReturnValueOnce(RTE.left(new Error()))
 
-    const res = await setComicSeriesPublisher(parent, args, context, info)
+    const res = await updateComicSeriesPublisher(parent, args, context, info)
 
     expect(res).toBeNull()
   })
@@ -71,13 +71,13 @@ describe('[Mutation.setComicSeriesPublisher]', () => {
   it('should return null in case of an Error during getting setting Publisher of ComicSeries', async () => {
     setPublisherForComicSeries.mockReturnValueOnce(RTE.left(new Error()))
 
-    const res = await setComicSeriesPublisher(parent, args, context, info)
+    const res = await updateComicSeriesPublisher(parent, args, context, info)
 
     expect(res).toBeNull()
   })
 
   it('should scrap ComicBook List from ComicSeries singleIssuesUrl', async () => {
-    await setComicSeriesPublisher(parent, args, context, info)
+    await updateComicSeriesPublisher(parent, args, context, info)
 
     expect(getComicBookList).toHaveBeenCalledWith(
       defaultComicSeries.singleIssuesUrl,
@@ -85,7 +85,7 @@ describe('[Mutation.setComicSeriesPublisher]', () => {
   })
 
   it('should scrap Publisher from the first ComicBook of the List', async () => {
-    await setComicSeriesPublisher(parent, args, context, info)
+    await updateComicSeriesPublisher(parent, args, context, info)
 
     expect(getComicBook).toHaveBeenCalledWith(
       defaultComicBookListData.comicBookList[0].url,
@@ -93,7 +93,7 @@ describe('[Mutation.setComicSeriesPublisher]', () => {
   })
 
   it('should request Publisher based on url from ComicBook', async () => {
-    await setComicSeriesPublisher(parent, args, context, info)
+    await updateComicSeriesPublisher(parent, args, context, info)
 
     expect(getPublisherByUrl).toHaveBeenCalledWith(
       defaultComicBookData.publisher?.url,
@@ -101,7 +101,7 @@ describe('[Mutation.setComicSeriesPublisher]', () => {
   })
 
   it('should return ComicSeries with Publisher', async () => {
-    const res = await setComicSeriesPublisher(parent, args, context, info)
+    const res = await updateComicSeriesPublisher(parent, args, context, info)
 
     expect(res).toMatchObject(defaultComicSeries)
   })

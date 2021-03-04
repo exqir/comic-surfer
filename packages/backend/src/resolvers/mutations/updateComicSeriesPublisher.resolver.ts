@@ -9,7 +9,7 @@ import * as A from 'fp-ts/lib/Array'
 import type {
   ComicSeriesDbObject,
   PublisherDbObject,
-  MutationSetComicSeriesPublisherArgs,
+  MutationUpdateComicSeriesPublisherArgs,
 } from 'types/graphql-schema'
 import type { Resolver } from 'types/app'
 import type {
@@ -24,9 +24,9 @@ import { getById } from 'lib/common'
 import { getComicBookPublisherByUrl } from 'lib/publisher'
 import { getComicBookByUrl } from 'lib/scraper'
 
-export const setComicSeriesPublisher: Resolver<
+export const updateComicSeriesPublisher: Resolver<
   ComicSeriesDbObject,
-  MutationSetComicSeriesPublisherArgs
+  MutationUpdateComicSeriesPublisherArgs
 > = (_, { comicSeriesId }, { dataSources, services, db }) =>
   pipe(
     db,

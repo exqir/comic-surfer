@@ -2,5 +2,5 @@ extend type Mutation {
   """
   Internal: Set the Publisher of a ComicSeries.
   """
-  setComicSeriesPublisher(comicSeriesId: ID!): ComicSeries
+  updateComicSeriesPublisher(comicSeriesId: ID!): ComicSeries
 }
