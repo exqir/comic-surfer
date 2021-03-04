@@ -53,7 +53,7 @@ export interface IComicBookRepository<R, E extends Error = Error> {
   ) => RTE.ReaderTaskEither<R, E, ComicBookDbObject>
 
   updateComicBookDetails: (
-    url: string,
+    id: ComicBookId,
     comicBookDetails: IComicBookDetails,
   ) => RTE.ReaderTaskEither<R, E, ComicBookDbObject>
 }

@@ -48,7 +48,7 @@ export class ComicBookRepository extends MongoDataSource<ComicBookDbObject>
     )
 
   public updateComicBookDetails = (
-    url: string,
+    id: ComicBookId,
     {
       publisher,
       coverImgUrl,
@@ -58,7 +58,7 @@ export class ComicBookRepository extends MongoDataSource<ComicBookDbObject>
     }: IComicBookDetails,
   ) =>
     this.updateOne(
-      { url },
+      { _id: id },
       {
         $set: { publisher, coverImgUrl, releaseDate, creators, description },
         $currentDate: { lastModified: true },

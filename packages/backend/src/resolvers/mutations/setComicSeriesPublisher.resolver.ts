@@ -18,10 +18,11 @@ import type {
   IScraper,
 } from 'services/ScrapeService'
 import type { IPublisherRepository } from 'models/Publisher/Publisher.interface'
+import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import { nullableField } from 'lib'
 import { getById } from 'lib/common'
+import { getComicBookPublisherByUrl } from 'lib/publisher'
 import { getComicBookByUrl } from 'lib/scraper'
-import { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 
 export const setComicSeriesPublisher: Resolver<
   ComicSeriesDbObject,
@@ -86,25 +87,6 @@ function getFirstComicBookFromList(
       ),
       TE.chain(getComicBookByUrl(scraper)),
       RTE.fromTaskEither,
-    )
-}
-
-function getComicBookPublisherByUrl(
-  repo: IPublisherRepository<Db, Error | MongoError>,
-): (
-  comicBookData: ComicBookData,
-) => RTE.ReaderTaskEither<Db, Error | MongoError, PublisherDbObject> {
-  return ({ publisher }) =>
-    pipe(
-      publisher?.url,
-      E.fromNullable(
-        new ApolloError(
-          'ComicBook is missing a publisher.',
-          'COMIC_BOOK_PUBLISHER_NOT_FOUND',
-        ),
-      ),
-      RTE.fromEither,
-      RTE.chain(repo.getByUrl),
     )
 }
 
