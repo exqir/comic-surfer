@@ -16,9 +16,9 @@ import type { IPullListRepository } from 'models/PullList/PullList.interface'
 import type { NewTask } from 'models/Queue/Queue.interface'
 import { TaskType } from 'models/Queue/Queue.interface'
 import { nullableField } from 'lib'
-import { throwWhenAuthenticationError } from 'lib/common'
-import { enqueueTasks } from 'lib/queue'
-import { getUser } from 'lib/user'
+import { throwOnAuthenticationError } from 'functions/common'
+import { enqueueTasks } from 'functions/queue'
+import { getUser } from 'functions/user'
 
 export const addToPullList: Resolver<
   PullListDbObject,
@@ -37,7 +37,7 @@ export const addToPullList: Resolver<
         RTE.chain(
           pipe(getUser(user), addComicSeriesToPullList(dataSources.pullList)),
         ),
-        RTE.mapLeft(throwWhenAuthenticationError),
+        RTE.mapLeft(throwOnAuthenticationError),
       ),
     ),
   )

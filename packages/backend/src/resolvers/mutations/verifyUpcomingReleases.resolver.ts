@@ -9,7 +9,7 @@ import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
 import type { NewTask } from 'models/Queue/Queue.interface'
 import { TaskType } from 'models/Queue/Queue.interface'
 import { nullableField } from 'lib'
-import { enqueueTasks } from 'lib/queue'
+import { enqueueTasks } from 'functions/queue'
 
 export const verifyUpcomingReleases: Resolver<ComicBookDbObject[], {}> = (
   _,

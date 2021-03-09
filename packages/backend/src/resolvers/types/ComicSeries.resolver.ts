@@ -15,7 +15,7 @@ import {
   nonNullableField,
   nullableField,
 } from 'lib'
-import { getById, getByIds } from 'lib/common'
+import { getById, getByIds } from 'functions/common'
 
 interface ComicSeriesResolver {
   singleIssues: NonNullableResolver<

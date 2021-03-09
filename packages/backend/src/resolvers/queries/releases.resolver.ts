@@ -8,14 +8,14 @@ import type {
   PullListDbObject,
   QueryReleasesArgs,
 } from 'types/graphql-schema'
-import { ComicBookType } from 'types/graphql-schema'
-import { nullableField } from 'lib'
-import { getUser } from 'lib/user'
-import { getByOwner } from 'lib/pullList'
-import {
+import type {
   IComicBookRepository,
   Month,
 } from 'models/ComicBook/ComicBook.interface'
+import { ComicBookType } from 'types/graphql-schema'
+import { nullableField } from 'lib'
+import { getUser } from 'functions/user'
+import { getByOwner } from 'functions/pullList'
 
 export const releases: Resolver<ComicBookDbObject[], QueryReleasesArgs> = (
   _,

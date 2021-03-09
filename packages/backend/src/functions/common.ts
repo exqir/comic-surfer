@@ -27,7 +27,7 @@ export function getByIds<T>(
   return flow(repo.getByIds)
 }
 
-export function throwWhenAuthenticationError<E extends Error>(error: E) {
+export function throwOnAuthenticationError<E extends Error>(error: E) {
   if (error instanceof AuthenticationError) {
     throw error
   }

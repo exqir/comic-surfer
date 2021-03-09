@@ -19,9 +19,9 @@ import type {
 import type { IPublisherRepository } from 'models/Publisher/Publisher.interface'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import { nullableField } from 'lib'
-import { getById } from 'lib/common'
-import { getComicBookPublisherByUrl } from 'lib/publisher'
-import { getComicBookByUrl, getComicBookList } from 'lib/scraper'
+import { getById } from 'functions/common'
+import { getComicBookPublisherByUrl } from 'functions/publisher'
+import { getComicBookByUrl, getComicBookList } from 'functions/scraper'
 
 export const updateComicSeriesPublisher: Resolver<
   ComicSeriesDbObject,

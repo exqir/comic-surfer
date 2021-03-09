@@ -6,7 +6,7 @@ import type {
   ComicSeriesDbObject,
 } from 'types/graphql-schema'
 import { nonNullableField } from 'lib'
-import { getByIds } from 'lib/common'
+import { getByIds } from 'functions/common'
 
 interface PullListResolver {
   list: NonNullableResolver<ComicSeriesDbObject[], {}, PullListDbObject>

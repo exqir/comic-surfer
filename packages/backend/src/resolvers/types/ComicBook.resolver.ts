@@ -5,7 +5,7 @@ import type {
   ComicSeriesDbObject,
 } from 'types/graphql-schema'
 import { mapOtoRTEnullable, chainMaybeToNullable } from 'lib'
-import { getById } from 'lib/common'
+import { getById } from 'functions/common'
 
 interface ComicBookResolver {
   publisher: Resolver<PublisherDbObject, {}, ComicBookDbObject>

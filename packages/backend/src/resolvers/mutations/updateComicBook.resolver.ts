@@ -14,9 +14,9 @@ import type {
   IComicBookDetails,
 } from 'models/ComicBook/ComicBook.interface'
 import { nullableField } from 'lib'
-import { getById } from 'lib/common'
-import { getComicBookPublisherByUrl } from 'lib/publisher'
-import { getComicBookByUrl } from 'lib/scraper'
+import { getById } from 'functions/common'
+import { getComicBookPublisherByUrl } from 'functions/publisher'
+import { getComicBookByUrl } from 'functions/scraper'
 
 export const updateComicBook: Resolver<
   ComicBookDbObject,

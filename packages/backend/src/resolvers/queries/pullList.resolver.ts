@@ -4,8 +4,8 @@ import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import type { NonNullableResolver } from 'types/app'
 import type { PullListDbObject } from 'types/graphql-schema'
 import { nonNullableField } from 'lib'
-import { getUser } from 'lib/user'
-import { getByOwner } from 'lib/pullList'
+import { getUser } from 'functions/user'
+import { getByOwner } from 'functions/pullList'
 
 export const pullList: NonNullableResolver<PullListDbObject, {}> = (
   _,

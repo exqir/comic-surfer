@@ -11,7 +11,7 @@ import type {
   ComicBookListData,
 } from 'services/ScrapeService'
 import type { IWithUrl } from 'types/common'
-import { getUrl } from 'lib/common'
+import { getUrl } from 'functions/common'
 
 export interface IMaybeWithUrl {
   url: Maybe<string>

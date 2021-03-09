@@ -24,9 +24,9 @@ import { toObjectId } from 'datasources/MongoDataSource'
 import { TaskType } from 'models/Queue/Queue.interface'
 import { ComicBookType } from 'types/graphql-schema'
 import { nullableField } from 'lib'
-import { getById, getUrl } from 'lib/common'
-import { enqueueTasks } from 'lib/queue'
-import { getComicBookList, IMaybeWithUrl } from 'lib/scraper'
+import { getById, getUrl } from 'functions/common'
+import { enqueueTasks } from 'functions/queue'
+import { getComicBookList, IMaybeWithUrl } from 'functions/scraper'
 
 export const updateComicSeriesBooks: Resolver<
   ComicBookDbObject[],

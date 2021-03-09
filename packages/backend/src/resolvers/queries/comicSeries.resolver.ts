@@ -6,7 +6,7 @@ import type {
   ComicSeriesDbObject,
 } from 'types/graphql-schema'
 import { nullableField } from 'lib'
-import { getById } from 'lib/common'
+import { getById } from 'functions/common'
 
 export const comicSeries: Resolver<
   ComicSeriesDbObject,

@@ -12,8 +12,8 @@ import type { Resolver } from 'types/app'
 import type { ComicBookData } from 'services/ScrapeService'
 import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
 import { nullableField } from 'lib'
-import { getById } from 'lib/common'
-import { getComicBookByUrl } from 'lib/scraper'
+import { getById } from 'functions/common'
+import { getComicBookByUrl } from 'functions/scraper'
 
 export const updateComicBookRelease: Resolver<
   ComicBookDbObject,

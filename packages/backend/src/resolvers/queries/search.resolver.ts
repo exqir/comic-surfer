@@ -12,9 +12,9 @@ import type {
 import type { ComicSeriesSearchData, IScraper } from 'services/ScrapeService'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import { nullableField } from 'lib'
-import { getByIds } from 'lib/common'
-import { getUser } from 'lib/user'
-import { getByOwner } from 'lib/pullList'
+import { getByIds } from 'functions/common'
+import { getUser } from 'functions/user'
+import { getByOwner } from 'functions/pullList'
 
 export type EnhancedSearchResult = Omit<SearchResult, 'inPullList'> & {
   comicSeriesUrlsInPullList: string[]
