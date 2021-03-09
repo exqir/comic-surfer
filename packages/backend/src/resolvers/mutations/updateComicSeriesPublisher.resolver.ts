@@ -3,7 +3,6 @@ import { ApolloError } from 'apollo-server'
 import { pipe } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as TE from 'fp-ts/lib/TaskEither'
-import * as E from 'fp-ts/lib/Either'
 import * as A from 'fp-ts/lib/Array'
 
 import type {
@@ -22,7 +21,7 @@ import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.inte
 import { nullableField } from 'lib'
 import { getById } from 'lib/common'
 import { getComicBookPublisherByUrl } from 'lib/publisher'
-import { getComicBookByUrl } from 'lib/scraper'
+import { getComicBookByUrl, getComicBookList } from 'lib/scraper'
 
 export const updateComicSeriesPublisher: Resolver<
   ComicSeriesDbObject,
@@ -34,6 +33,7 @@ export const updateComicSeriesPublisher: Resolver<
       pipe(
         comicSeriesId,
         getById(dataSources.comicSeries),
+        RTE.map(({ singleIssuesUrl: url }) => ({ url })),
         RTE.chain(getComicBookList(services.scrape)),
         RTE.chain(getFirstComicBookFromList(services.scrape)),
         RTE.chain(getComicBookPublisherByUrl(dataSources.publisher)),
@@ -49,26 +49,6 @@ export const updateComicSeriesPublisher: Resolver<
       ),
     ),
   )
-
-function getComicBookList(
-  scraper: IScraper,
-): (
-  comicSeries: ComicSeriesDbObject,
-) => RTE.ReaderTaskEither<any, Error, ComicBookListData> {
-  return ({ singleIssuesUrl }) =>
-    pipe(
-      singleIssuesUrl,
-      E.fromNullable(
-        new ApolloError(
-          'ComicSeries is missing a source for single issues.',
-          'COMIC_SERIES_MISSING_SINGLE_ISSUES_URL',
-        ),
-      ),
-      TE.fromEither,
-      TE.chain(scraper.getComicBookList),
-      RTE.fromTaskEither,
-    )
-}
 
 function getFirstComicBookFromList(
   scraper: IScraper,

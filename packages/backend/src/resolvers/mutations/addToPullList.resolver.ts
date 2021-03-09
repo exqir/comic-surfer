@@ -3,10 +3,11 @@ import { AuthenticationError } from 'apollo-server'
 import { flow, pipe } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
-import type {
+import {
   ComicSeriesDbObject,
   PullListDbObject,
   MutationAddToPullListArgs,
+  ComicBookType,
 } from 'types/graphql-schema'
 import type { Resolver } from 'types/app'
 import type { ComicSeriesData, IScraper } from 'services/ScrapeService'
@@ -83,17 +84,19 @@ function getNewComicSeriesTasks({
   // however insertMany with an empty array would result in an error.
   const tasks: NewTask[] = [
     {
-      type: TaskType.SCRAPSINGLEISSUELIST,
+      type: TaskType.SCRAPCOMICBOOKLIST,
       data: {
         comicSeriesId,
         url: singleIssuesUrl!,
+        type: ComicBookType.SINGLEISSUE,
       },
     },
     {
-      type: TaskType.SCRAPCOLLECTIONLIST,
+      type: TaskType.SCRAPCOMICBOOKLIST,
       data: {
         comicSeriesId,
         url: collectionsUrl!,
+        type: ComicBookType.COLLECTION,
       },
     },
   ]

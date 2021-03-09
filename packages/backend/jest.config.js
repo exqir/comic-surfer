@@ -7,6 +7,7 @@ module.exports = {
   },
   testRegex: '(/__tests__/.*(\\.|/)(test|spec)|(\\.|/)(test|spec))\\.tsx?$',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  clearMocks: true,
   moduleNameMapper: {
     '^__mocks__/(.*)$': '<rootDir>/src/__mocks__/$1',
     '^tests/(.*)$': '<rootDir>/src/__tests__/$1',

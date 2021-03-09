@@ -113,6 +113,8 @@ export type Mutation = {
   updateComicBook: Maybe<ComicBook>;
   /** Internal: Update the release date of the ComicBook. */
   updateComicBookRelease: Maybe<ComicBook>;
+  /** Internal: Update List of ComicBooks belonging to the ComicSeres. */
+  updateComicSeriesBooks: Maybe<Array<ComicBook>>;
   /** Internal: Set the Publisher of a ComicSeries. */
   updateComicSeriesPublisher: Maybe<ComicSeries>;
   /**
@@ -140,6 +142,13 @@ export type MutationUpdateComicBookArgs = {
 
 export type MutationUpdateComicBookReleaseArgs = {
   comicBookId: Scalars['ID'];
+};
+
+
+export type MutationUpdateComicSeriesBooksArgs = {
+  comicSeriesId: Scalars['ID'];
+  comicBookType: ComicBookType;
+  comicBookListPath: Maybe<Scalars['String']>;
 };
 
 

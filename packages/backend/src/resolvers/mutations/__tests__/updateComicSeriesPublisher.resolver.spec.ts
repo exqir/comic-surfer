@@ -60,7 +60,7 @@ describe('[Mutation.updateComicSeriesPublisher]', () => {
     expect(res).toBeNull()
   })
 
-  it('should return null in case of an Error during getting adding ComicSeries to Publisher', async () => {
+  it('should return null in case of an Error during adding ComicSeries to Publisher', async () => {
     addComicSeriesToPublisher.mockReturnValueOnce(RTE.left(new Error()))
 
     const res = await updateComicSeriesPublisher(parent, args, context, info)
@@ -68,7 +68,7 @@ describe('[Mutation.updateComicSeriesPublisher]', () => {
     expect(res).toBeNull()
   })
 
-  it('should return null in case of an Error during getting setting Publisher of ComicSeries', async () => {
+  it('should return null in case of an Error during setting Publisher of ComicSeries', async () => {
     setPublisherForComicSeries.mockReturnValueOnce(RTE.left(new Error()))
 
     const res = await updateComicSeriesPublisher(parent, args, context, info)

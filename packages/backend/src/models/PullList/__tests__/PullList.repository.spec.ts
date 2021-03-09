@@ -92,8 +92,7 @@ describe('[PullListRepository.getOrCreatePullList]', () => {
       { $setOnInsert: { owner: mockPullList.owner, list: [] } },
       { upsert: true },
     )
-    expect(logger.error).toBeCalledWith('Failed to create PullList')
-    expect.assertions(3)
+    expect.assertions(2)
   })
 
   it('should upsert PullList using dataLayer and return right with result', async () => {

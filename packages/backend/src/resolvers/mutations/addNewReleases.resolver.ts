@@ -3,7 +3,7 @@ import { flow, pipe } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as A from 'fp-ts/lib/Array'
 
-import type { ComicSeriesDbObject } from 'types/graphql-schema'
+import { ComicBookType, ComicSeriesDbObject } from 'types/graphql-schema'
 import type { Resolver } from 'types/app'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import type { NewTask } from 'models/Queue/Queue.interface'
@@ -53,12 +53,20 @@ function getNewReleaseTasks({
 }: ComicSeriesDbObject): NewTask[] {
   return [
     {
-      type: TaskType.SCRAPSINGLEISSUELIST,
-      data: { comicSeriesId, url: singleIssuesUrl! },
+      type: TaskType.SCRAPCOMICBOOKLIST,
+      data: {
+        comicSeriesId,
+        url: singleIssuesUrl!,
+        type: ComicBookType.SINGLEISSUE,
+      },
     },
     {
-      type: TaskType.SCRAPCOLLECTIONLIST,
-      data: { comicSeriesId, url: collectionsUrl! },
+      type: TaskType.SCRAPCOMICBOOKLIST,
+      data: {
+        comicSeriesId,
+        url: collectionsUrl!,
+        type: ComicBookType.COLLECTION,
+      },
     },
   ]
 }

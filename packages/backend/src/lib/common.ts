@@ -3,6 +3,8 @@ import { AuthenticationError } from 'apollo-server'
 import { flow } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
+import type { IWithUrl } from 'types/common'
+
 interface IRepoWithGetById<T> {
   getById: (id: ObjectID) => RTE.ReaderTaskEither<Db, Error | MongoError, T>
 }
@@ -30,4 +32,8 @@ export function throwWhenAuthenticationError<E extends Error>(error: E) {
     throw error
   }
   return error
+}
+
+export function getUrl<T extends IWithUrl>({ url }: T) {
+  return url
 }
