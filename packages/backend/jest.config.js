@@ -10,8 +10,9 @@ module.exports = {
   clearMocks: true,
   moduleNameMapper: {
     '^__mocks__/(.*)$': '<rootDir>/src/__mocks__/$1',
-    '^tests/(.*)$': '<rootDir>/src/__tests__/$1',
+    '^__tests__/(.*)$': '<rootDir>/src/__tests__/$1',
     '^lib/(.*)$': '<rootDir>/src/lib/$1',
+    '^functions/(.*)$': '<rootDir>/src/functions/$1',
     '^services/(.*)$': '<rootDir>/src/services/$1',
     '^datasources/(.*)$': '<rootDir>/src/datasources/$1',
     '^models/(.*)$': '<rootDir>/src/models/$1',

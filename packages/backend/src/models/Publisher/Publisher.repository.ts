@@ -1,6 +1,6 @@
 import { Db, MongoError } from 'mongodb'
 
-import type { PublisherDbObject } from 'types/server-schema'
+import type { PublisherDbObject } from 'types/graphql-schema'
 import type {
   IPublisherRepository,
   PublisherId,

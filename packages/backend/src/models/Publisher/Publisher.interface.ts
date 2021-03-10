@@ -1,7 +1,7 @@
 import type { ObjectID } from 'mongodb'
 import type * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
-import { PublisherDbObject } from 'types/server-schema'
+import { PublisherDbObject } from 'types/graphql-schema'
 
 export type PublisherId = ObjectID
 export type ComicSeriesId = ObjectID

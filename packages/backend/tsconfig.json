@@ -15,13 +15,8 @@
     "baseUrl": "./src",
     "rootDir": "./src",
     "paths": {
-      "types/client-schema": ["types/graphql-client-schema.ts"],
-      "types/server-schema": ["types/graphql-server-schema.ts"],
-      "types/app": ["types/types.ts"],
-      "tests/*": ["__tests__/*"],
-      "lib/*": ["lib/*"]
+      "types/app": ["types/types.ts"]
     }
   },
-  "exclude": ["**/*.spec.ts", "**/*.test.ts", "node_modules"],
   "include": ["**/*.ts", "**/*.graphql"]
 }

@@ -1,16 +1,17 @@
-import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
-import { Db, MongoError, ObjectID } from 'mongodb'
-import { Response, Request } from 'express'
-import { Option } from 'fp-ts/lib/Option'
-import { IScraper } from 'services/ScrapeService'
-import { ILogger } from 'services/LogService'
-import { IAuthentication } from 'services/Authentication'
-import mongad from 'mongad'
-import { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
-import { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
-import { IPublisherRepository } from 'models/Publisher/Publisher.interface'
-import { IPullListRepository } from 'models/PullList/PullList.interface'
-import { IQueueRepository } from 'models/Queue/Queue.interface'
+import type { GraphQLResolveInfo } from 'graphql'
+import type { Db, MongoError, ObjectID } from 'mongodb'
+import type { Response, Request } from 'express'
+import type { Option } from 'fp-ts/lib/Option'
+import type mongad from 'mongad'
+
+import type { IScraper } from 'services/ScrapeService'
+import type { ILogger } from 'services/LogService'
+import type { IAuthentication } from 'services/Authentication'
+import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
+import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
+import type { IPublisherRepository } from 'models/Publisher/Publisher.interface'
+import type { IPullListRepository } from 'models/PullList/PullList.interface'
+import type { IQueueRepository } from 'models/Queue/Queue.interface'
 
 export interface Logger {
   log: (...args: any[]) => void
@@ -46,15 +47,6 @@ export interface GraphQLContext {
   db: Option<Db>
   user: Option<string>
 }
-
-/**
- *
- */
-export type GraphQLResolver<Source, Argument> = GraphQLFieldResolver<
-  Source,
-  GraphQLContext,
-  Argument
->
 
 export type Resolver<
   Result,

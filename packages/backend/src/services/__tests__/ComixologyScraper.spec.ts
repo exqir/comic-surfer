@@ -1,6 +1,6 @@
-import { comixology } from './ComixologyScaper'
+import { comixology } from '../ComixologyScaper'
 import { isLeft, mapLeft, isRight, map } from 'fp-ts/lib/Either'
-import { createMockConfig } from 'tests/_utils'
+import { createMockConfig } from '__tests__/_utils'
 // import {
 //   comicSeries,
 //   comicBookList,

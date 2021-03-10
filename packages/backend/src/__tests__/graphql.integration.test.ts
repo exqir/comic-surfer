@@ -3,9 +3,9 @@ import { gql } from 'apollo-server'
 import {
   constructTestServer,
   createMockReaderWithReturnValue,
-} from 'tests/_utils'
+} from '__tests__/_utils'
 import { ObjectID } from 'mongodb'
-import { ComicBook, ComicBookType } from 'types/server-schema'
+import { ComicBook, ComicBookType } from 'types/graphql-schema'
 // import comicBook from 'schema/comicBook';
 
 const GET_COMICBOOK = gql`
