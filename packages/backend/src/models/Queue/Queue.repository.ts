@@ -2,8 +2,8 @@ import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import { Db, MongoError } from 'mongodb'
 import {
   MongoDataSource,
-  MongoDataSourceOptions,
-} from '../../datasources/MongoDataSource'
+  IMongoDataSourceOptions,
+} from 'datasources/MongoDataSource'
 
 import type { Task, NewTask, IQueueRepository } from './Queue.interface'
 
@@ -13,7 +13,7 @@ export class QueueRepository extends MongoDataSource<Task>
   public constructor({
     dataLayer,
     logger,
-  }: Omit<MongoDataSourceOptions, 'collection'>) {
+  }: Omit<IMongoDataSourceOptions, 'collection'>) {
     super({ collection: queueCollection, dataLayer, logger })
   }
 

@@ -6,7 +6,7 @@ import * as O from 'fp-ts/lib/Option'
 
 import type { GraphQLContext } from 'types/app'
 import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
-import type { IScraper } from 'services/ScrapeService'
+import type { IScraperService } from 'services/Scraper/Scraper.interface'
 import { defaultComicBook } from '__mocks__/ComicBook.mock'
 import { defaultComicBookData } from '__mocks__/ComicBookData.mock'
 
@@ -61,9 +61,9 @@ describe('[Mutation.updateComicBookRelease]', () => {
 })
 
 const getComicBook = jest.fn().mockReturnValue(TE.right(defaultComicBookData))
-const scrape: IScraper = ({
+const scrape: IScraperService = ({
   getComicBook,
-} as unknown) as IScraper
+} as unknown) as IScraperService
 
 const getComicBookById = jest.fn().mockReturnValue(RTE.right(defaultComicBook))
 const updateComicBookReleaseDate = jest

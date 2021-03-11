@@ -8,7 +8,7 @@ import type { GraphQLContext } from 'types/app'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
 import type { IQueueRepository } from 'models/Queue/Queue.interface'
-import type { IScraper } from 'services/ScrapeService'
+import type { IScraperService } from 'services/Scraper/Scraper.interface'
 import { ComicBookType } from 'types/graphql-schema'
 import { TaskType } from 'models/Queue/Queue.interface'
 import { defaultComicSeries } from '__mocks__/ComicSeries.mock'
@@ -267,9 +267,9 @@ const getComicBookList = jest.fn().mockReturnValue(
     ],
   }),
 )
-const scrape: IScraper = ({
+const scrape: IScraperService = ({
   getComicBookList,
-} as unknown) as IScraper
+} as unknown) as IScraperService
 
 const getComicSeriesById = jest
   .fn()

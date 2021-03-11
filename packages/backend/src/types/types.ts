@@ -4,7 +4,7 @@ import type { Response, Request } from 'express'
 import type { Option } from 'fp-ts/lib/Option'
 import type mongad from 'mongad'
 
-import type { IScraper } from 'services/ScrapeService'
+import type { IScraperService } from 'services/Scraper/Scraper.interface'
 import type { ILogger } from 'services/LogService'
 import type { IAuthentication } from 'services/Authentication'
 import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
@@ -21,16 +21,17 @@ export interface Logger {
 
 export type DataLayer = typeof mongad
 
-export interface DataSources {
+export interface IDataSources {
   comicBook: IComicBookRepository<Db, Error | MongoError>
   comicSeries: IComicSeriesRepository<Db, Error | MongoError>
   publisher: IPublisherRepository<Db, Error | MongoError>
   pullList: IPullListRepository<Db, Error | MongoError>
   queue: IQueueRepository<Db, Error | MongoError>
+  [index: string]: any
 }
 
 export interface Services {
-  scrape: IScraper
+  scrape: IScraperService
   logger: ILogger
   authentication: IAuthentication
 }
@@ -42,7 +43,7 @@ export interface GraphQLContext {
   req: Request
   res: Response
   dataLayer: DataLayer
-  dataSources: DataSources
+  dataSources: IDataSources
   services: Services
   db: Option<Db>
   user: Option<string>

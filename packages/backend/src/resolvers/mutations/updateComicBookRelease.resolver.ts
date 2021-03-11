@@ -9,7 +9,7 @@ import type {
   MutationUpdateComicBookReleaseArgs,
 } from 'types/graphql-schema'
 import type { Resolver } from 'types/app'
-import type { ComicBookData } from 'services/ScrapeService'
+import type { ComicBookData } from 'services/Scraper/Scraper.interface'
 import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
 import { nullableField } from 'lib'
 import { getById } from 'functions/common'

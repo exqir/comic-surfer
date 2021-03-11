@@ -4,7 +4,7 @@ import { flow } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 import type { PullListDbObject } from 'types/graphql-schema'
-import { IPullListRepository } from 'models/PullList/PullList.interface'
+import type { IPullListRepository } from 'models/PullList/PullList.interface'
 
 export function getByOwner(
   repo: IPullListRepository<Db, Error | MongoError>,

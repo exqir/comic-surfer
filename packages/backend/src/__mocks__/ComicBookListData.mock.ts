@@ -1,4 +1,4 @@
-import type { ComicBookListData } from 'services/ScrapeService'
+import type { ComicBookListData } from 'services/Scraper/Scraper.interface'
 
 export const defaultComicBookListData: ComicBookListData = {
   nextPage: '/next',

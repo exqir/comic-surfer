@@ -1,62 +1,61 @@
-import { comixology } from '../ComixologyScaper'
-import { isLeft, mapLeft, isRight, map } from 'fp-ts/lib/Either'
-import { createMockConfig } from '__tests__/_utils'
-// import {
-//   comicSeries,
-//   comicBookList,
-//   comicBook,
-//   comicSeriesSearch,
-// } from '../config/scraper'
+import { mapLeft, map, Either } from 'fp-ts/lib/Either'
+import { pipe } from 'fp-ts/lib/function'
+
+import { logger } from '__tests__/_mock'
+
+import { comixology } from '../Scraper/ComixologyScaper'
 
 const mockScraper = jest.fn()
 const baseUrl = 'https://base.com'
-const scraper = comixology(
-  mockScraper,
-  createMockConfig().context.services.logger,
-  baseUrl,
-)
+const scraper = comixology(mockScraper, logger, baseUrl)
 
-// TODO: Are unit test still necessary or are integration tests enough for the scraper
-describe('ScrapeService', () => {
-  xit('should return left in case of Error', async () => {
+describe.each([
+  'getComicSeries',
+  'getComicBookList',
+  'getComicBook',
+  'getComicSeriesSearch',
+] as const)('[ComixologyScaper.%s]', (method) => {
+  it('should return left in case of Error during scraping', async () => {
     mockScraper.mockRejectedValueOnce(new Error('Failed'))
-    const task = scraper.getComicSeries('/series')
 
-    const result = await task()
+    const result: Either<Error, any> = await scraper[method]('/path')()
 
-    expect.assertions(3)
-    expect(mockScraper).toHaveBeenCalledWith(`${baseUrl}/serie`, comicSeries.cx)
-    expect(isLeft(result)).toBe(true)
-    expect(() =>
-      mapLeft((e) => {
-        throw e
-      })(result),
-    ).toThrow(/Failed/)
+    expect.assertions(1)
+    pipe(
+      result,
+      mapLeft((err) => expect(err).toBeInstanceOf(Error)),
+    )
   })
 
-  xit('should return left in case of a non 200 status code', async () => {
+  it('should return left in case of a non 200 status code', async () => {
     mockScraper.mockResolvedValueOnce({
       response: { statusCode: 400 },
       data: {},
     })
+    const result: Either<Error, any> = await scraper[method]('/series')()
+
+    expect.assertions(1)
+    pipe(
+      result,
+      mapLeft((err) => expect(err).toBeInstanceOf(Error)),
+    )
+  })
+})
+
+describe('[ComixologyScaper.getComicSeries]', () => {
+  it('should scrop from url', async () => {
     const task = scraper.getComicSeries('/series')
 
-    const result = await task()
+    await task()
 
     expect(mockScraper).toHaveBeenCalledWith(
       `${baseUrl}/series`,
-      comicSeries.cx,
+      expect.any(Object),
     )
-    expect(isLeft(result)).toBe(true)
-    expect(() =>
-      mapLeft((e) => {
-        throw e
-      })(result),
-    ).toThrow(/Failed/)
   })
 
-  xit('should return right with data in case of success', async () => {
-    const mockResult = {
+  it('should return right with ComicSeriesData', async () => {
+    const seriesScrapResult = {
       title: 'Title',
       urls: [
         {
@@ -75,103 +74,85 @@ describe('ScrapeService', () => {
     }
     mockScraper.mockResolvedValueOnce({
       response: { statusCode: 200 },
-      data: mockResult,
+      data: seriesScrapResult,
     })
-    const task = scraper.getComicSeries('/series')
+    const result = await scraper.getComicSeries('/series')()
 
-    const result = await task()
-
-    expect.assertions(3)
-    expect(mockScraper).toHaveBeenCalledWith(
-      `${baseUrl}/series`,
-      comicSeries.cx,
+    expect.assertions(1)
+    pipe(
+      result,
+      map((r) =>
+        expect(r).toMatchObject({
+          title: seriesScrapResult.title,
+          url: `${baseUrl}/series`,
+          collectionsUrl: seriesScrapResult.urls[2].url,
+          singleIssuesUrl: seriesScrapResult.urls[1].url,
+        }),
+      ),
     )
-    expect(isRight(result)).toBe(true)
-    map((d) =>
-      expect(d).toMatchObject({
-        title: mockResult.title,
-        url: `${baseUrl}/series`,
-        collectionsUrl: mockResult.urls[2].url,
-        singleIssuesUrl: mockResult.urls[1].url,
-      }),
-    )(result)
   })
 })
 
-describe('[ScrapeService.getComicSeries]', () => {
-  xit('should return ComicSeries scrape results', async () => {
-    const mockResult = {
-      title: 'Title',
-      urls: [
-        {
-          name: 'Latest Releases',
-          url: '/latest',
-        },
-        {
-          name: 'Issues',
-          url: '/issues',
-        },
-        {
-          name: 'Collected Editions',
-          url: '/collected',
-        },
-      ],
-    }
-    mockScraper.mockResolvedValueOnce({
-      response: { statusCode: 200 },
-      data: mockResult,
-    })
-    const task = scraper.getComicSeries('/series')
+describe('[ComixologyScaper.getComicBookList]', () => {
+  it('should scrap from url', async () => {
+    const task = scraper.getComicBookList('/book-list')
 
-    const result = await task()
+    await task()
 
-    expect.assertions(2)
     expect(mockScraper).toHaveBeenCalledWith(
-      `${baseUrl}/series`,
-      comicSeries.cx,
+      `${baseUrl}/book-list?sort=desc`,
+      expect.any(Object),
     )
-    map((d) =>
-      expect(d).toMatchObject({
-        title: mockResult.title,
-        url: `${baseUrl}/serie`,
-        collectionsUrl: mockResult.urls[2].url,
-        singleIssuesUrl: mockResult.urls[1].url,
-      }),
-    )(result)
   })
-})
 
-describe('[ScrapeService.getComicBookList]', () => {
-  xit('should return ComicBookList scrape results', async () => {
-    const mockResult = {
+  it('should return right with ComicBookListData', async () => {
+    const comicBookListScrapResult = {
+      nextPage: '/next',
       comicBookList: [
         {
           title: 'Title',
           url: '/title-1',
           issueNo: '1',
+          coverImgUrl: '/image.jpg',
         },
       ],
     }
     mockScraper.mockResolvedValueOnce({
       response: { statusCode: 200 },
-      data: mockResult,
+      data: comicBookListScrapResult,
     })
-    const task = scraper.getComicBookList('/book-list')
 
-    const result = await task()
+    const result = await scraper.getComicBookList('/book-list')()
 
-    expect.assertions(2)
-    expect(mockScraper).toHaveBeenCalledWith(
-      `${baseUrl}/book-list`,
-      comicBookList.cx,
+    expect.assertions(1)
+    pipe(
+      result,
+      map((r) =>
+        expect(r).toMatchObject({
+          nextPage: comicBookListScrapResult.nextPage,
+          comicBookList: comicBookListScrapResult.comicBookList,
+        }),
+      ),
     )
-    map((d) => expect(d).toMatchObject(mockResult.comicBookList))(result)
   })
 })
 
-describe('[ScrapeService.getComicBook]', () => {
-  xit('should return ComicBook scrape results', async () => {
-    const mockResult = {
+describe('[ComixologyScaper.getComicBook]', () => {
+  it('should scrap from url', async () => {
+    const task = scraper.getComicBook('/comic-book')
+
+    await task()
+
+    expect(mockScraper).toHaveBeenCalledWith(
+      `${baseUrl}/comic-book`,
+      expect.any(Object),
+    )
+  })
+
+  it('should return right with ComicBookData', async () => {
+    const comicBookScrapResult = {
+      title: 'Title',
+      issueNo: '1',
       meta: [
         { type: 'Page Count', date: new Date(32) },
         { type: 'Release Date', date: new Date('2020-05-30') },
@@ -187,33 +168,48 @@ describe('[ScrapeService.getComicBook]', () => {
         },
       ],
       coverImgUrl: '/image.jpg',
+      description: '<p>Description</p>',
     }
     mockScraper.mockResolvedValueOnce({
       response: { statusCode: 200 },
-      data: mockResult,
+      data: comicBookScrapResult,
     })
-    const task = scraper.getComicBook('/comic-book')
 
-    const result = await task()
+    const result = await scraper.getComicBook('/comic-book')()
 
-    expect.assertions(2)
-    expect(mockScraper).toHaveBeenCalledWith(
-      `${baseUrl}/comic-book`,
-      comicBook.cx,
+    expect.assertions(1)
+    pipe(
+      result,
+      map((r) =>
+        expect(r).toMatchObject({
+          title: comicBookScrapResult.title,
+          issueNo: comicBookScrapResult.issueNo,
+          url: `${baseUrl}/comic-book`,
+          releaseDate: comicBookScrapResult.meta[1].date,
+          creators: [{ name: comicBookScrapResult.creators[1].name }],
+          publisher: { name: comicBookScrapResult.creators[0].name },
+          coverImgUrl: comicBookScrapResult.coverImgUrl,
+          description: comicBookScrapResult.description,
+        }),
+      ),
     )
-    map((d) =>
-      expect(d).toMatchObject({
-        releaseDate: mockResult.meta[1].date,
-        creators: [{ name: mockResult.creators[1].name }],
-        coverImgUrl: mockResult.coverImgUrl,
-      }),
-    )(result)
   })
 })
 
-describe('[ScrapeService.getComicSeriesSearch]', () => {
-  xit('should return ComicSeriesSearch scrape results', async () => {
-    const mockResult = {
+describe('[ComixologyScaper.getComicSeriesSearch]', () => {
+  it('should scrap from url', async () => {
+    const task = scraper.getComicSeriesSearch('query')
+
+    await task()
+
+    expect(mockScraper).toHaveBeenCalledWith(
+      `${baseUrl}/search/series?search=query`,
+      expect.any(Object),
+    )
+  })
+
+  it('should return right with ComicSeriesSearchData', async () => {
+    const comicSeriesSearchScrapResult = {
       searchResults: [
         {
           title: 'Title',
@@ -223,17 +219,19 @@ describe('[ScrapeService.getComicSeriesSearch]', () => {
     }
     mockScraper.mockResolvedValueOnce({
       response: { statusCode: 200 },
-      data: mockResult,
+      data: comicSeriesSearchScrapResult,
     })
+
     const task = scraper.getComicSeriesSearch('title')
 
     const result = await task()
 
-    expect.assertions(2)
-    expect(mockScraper).toHaveBeenCalledWith(
-      `${baseUrl}/search/series?search=title`,
-      comicSeriesSearch.cx,
+    expect.assertions(1)
+    pipe(
+      result,
+      map((r) =>
+        expect(r).toMatchObject(comicSeriesSearchScrapResult.searchResults),
+      ),
     )
-    map((d) => expect(d).toMatchObject(mockResult.searchResults))(result)
   })
 })

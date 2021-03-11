@@ -8,7 +8,7 @@ import type {
   MutationUpdateComicBookArgs,
 } from 'types/graphql-schema'
 import type { Resolver } from 'types/app'
-import type { ComicBookData } from 'services/ScrapeService'
+import type { ComicBookData } from 'services/Scraper/Scraper.interface'
 import type {
   IComicBookRepository,
   IComicBookDetails,

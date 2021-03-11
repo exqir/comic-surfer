@@ -4,7 +4,7 @@ import handler from 'serve-handler'
 import http from 'http'
 import scrapeIt from 'scrape-it'
 
-import { comixology } from 'services/ComixologyScaper'
+import { comixology } from 'services/Scraper/ComixologyScaper'
 import { logger } from '__tests__/_mock'
 
 const PORT = 9000

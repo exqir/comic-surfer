@@ -17,12 +17,7 @@ import {
 } from 'mongodb'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as E from 'fp-ts/lib/Either'
-import {
-  GraphQLContext,
-  DataLayer,
-  DistributiveOmit,
-  DataSources,
-} from 'types/app'
+import { GraphQLContext, DataLayer, DistributiveOmit } from 'types/app'
 import { ILogger } from 'services/LogService'
 
 type Update<T> = UpdateQuery<T> | Partial<T>
@@ -40,7 +35,7 @@ const getDataLayer: (
   RTE.fromEither,
 )
 
-export interface MongoDataSourceOptions {
+export interface IMongoDataSourceOptions {
   collection: string
   dataLayer: DataLayer
   logger: ILogger
@@ -57,7 +52,7 @@ export class MongoDataSource<T extends { _id: ObjectID }> extends DataSource<
     collection,
     dataLayer,
     logger,
-  }: MongoDataSourceOptions) {
+  }: IMongoDataSourceOptions) {
     super()
     this.collection = collection
     this.dataLayer = dataLayer

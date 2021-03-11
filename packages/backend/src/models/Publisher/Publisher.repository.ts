@@ -8,9 +8,9 @@ import type {
 } from './Publisher.interface'
 import {
   MongoDataSource,
-  MongoDataSourceOptions,
+  IMongoDataSourceOptions,
   toObjectId,
-} from '../../datasources/MongoDataSource'
+} from 'datasources/MongoDataSource'
 
 export const publisherCollection = 'publisher'
 export class PublisherRepository extends MongoDataSource<PublisherDbObject>
@@ -19,8 +19,8 @@ export class PublisherRepository extends MongoDataSource<PublisherDbObject>
     dataLayer,
     logger,
   }: {
-    dataLayer: MongoDataSourceOptions['dataLayer']
-    logger: MongoDataSourceOptions['logger']
+    dataLayer: IMongoDataSourceOptions['dataLayer']
+    logger: IMongoDataSourceOptions['logger']
   }) {
     super({ collection: publisherCollection, dataLayer, logger })
   }

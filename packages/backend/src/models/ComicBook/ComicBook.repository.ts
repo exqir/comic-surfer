@@ -10,9 +10,9 @@ import type {
 } from './ComicBook.interface'
 import {
   MongoDataSource,
-  MongoDataSourceOptions,
+  IMongoDataSourceOptions,
   toObjectId,
-} from '../../datasources/MongoDataSource'
+} from 'datasources/MongoDataSource'
 
 export const comicBookCollection = 'comicBook'
 export class ComicBookRepository extends MongoDataSource<ComicBookDbObject>
@@ -21,8 +21,8 @@ export class ComicBookRepository extends MongoDataSource<ComicBookDbObject>
     dataLayer,
     logger,
   }: {
-    dataLayer: MongoDataSourceOptions['dataLayer']
-    logger: MongoDataSourceOptions['logger']
+    dataLayer: IMongoDataSourceOptions['dataLayer']
+    logger: IMongoDataSourceOptions['logger']
   }) {
     super({ collection: comicBookCollection, dataLayer, logger })
   }

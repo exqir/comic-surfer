@@ -9,7 +9,7 @@ import type { GraphQLContext } from 'types/app'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import type { IPullListRepository } from 'models/PullList/PullList.interface'
 import type { IQueueRepository } from 'models/Queue/Queue.interface'
-import type { IScraper } from 'services/ScrapeService'
+import type { IScraperService } from 'services/Scraper/Scraper.interface'
 import { defaultComicSeries } from '__mocks__/ComicSeries.mock'
 import { defaultPullList } from '__mocks__/PullList.mock'
 import {
@@ -71,9 +71,9 @@ describe('[Mutation.addToPullList]', () => {
 const getComicSeries = jest
   .fn()
   .mockReturnValue(TE.right(defaultComicSeriesData))
-const scrape: IScraper = ({
+const scrape: IScraperService = ({
   getComicSeries,
-} as unknown) as IScraper
+} as unknown) as IScraperService
 
 const getOrCreateComicSeries = jest
   .fn()

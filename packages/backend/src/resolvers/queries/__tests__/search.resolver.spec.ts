@@ -7,7 +7,7 @@ import * as O from 'fp-ts/lib/Option'
 import type { GraphQLContext } from 'types/app'
 import type { IPullListRepository } from 'models/PullList/PullList.interface'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
-import type { IScraper } from 'services/ScrapeService'
+import type { IScraperService } from 'services/Scraper/Scraper.interface'
 import { defaultPullList } from '__mocks__/PullList.mock'
 import { defaultComicSeries } from '__mocks__/ComicSeries.mock'
 import { defaultComicSeriesSearchResult } from '__mocks__/ComicSeriesSearchResult.mock'
@@ -77,9 +77,9 @@ const comicSeriesRepository: IComicSeriesRepository<Db, Error | MongoError> = ({
 const getComicSeriesSearch = jest
   .fn()
   .mockReturnValue(TE.right([defaultComicSeriesSearchResult]))
-const scrape: IScraper = ({
+const scrape: IScraperService = ({
   getComicSeriesSearch,
-} as unknown) as IScraper
+} as unknown) as IScraperService
 
 const context = {
   dataSources: {

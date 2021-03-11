@@ -12,7 +12,7 @@ import type {
 } from 'types/graphql-schema'
 import type { Resolver } from 'types/app'
 import type { IWithUrl } from 'types/common'
-import type { ComicBookListData } from 'services/ScrapeService'
+import type { ComicBookListData } from 'services/Scraper/Scraper.interface'
 import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import type {

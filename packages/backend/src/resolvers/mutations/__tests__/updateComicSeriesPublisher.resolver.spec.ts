@@ -7,7 +7,7 @@ import * as O from 'fp-ts/lib/Option'
 import type { GraphQLContext } from 'types/app'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import type { IPublisherRepository } from 'models/Publisher/Publisher.interface'
-import type { IScraper } from 'services/ScrapeService'
+import type { IScraperService } from 'services/Scraper/Scraper.interface'
 import { defaultComicSeries } from '__mocks__/ComicSeries.mock'
 import { defaultPublisher } from '__mocks__/Publisher.mock'
 import { defaultComicBookData } from '__mocks__/ComicBookData.mock'
@@ -111,10 +111,10 @@ const getComicBookList = jest
   .fn()
   .mockReturnValue(TE.right(defaultComicBookListData))
 const getComicBook = jest.fn().mockReturnValue(TE.right(defaultComicBookData))
-const scrape: IScraper = ({
+const scrape: IScraperService = ({
   getComicBookList,
   getComicBook,
-} as unknown) as IScraper
+} as unknown) as IScraperService
 
 const getComicSeriesById = jest
   .fn()

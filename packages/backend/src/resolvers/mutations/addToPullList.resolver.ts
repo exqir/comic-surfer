@@ -10,7 +10,10 @@ import {
   ComicBookType,
 } from 'types/graphql-schema'
 import type { Resolver } from 'types/app'
-import type { ComicSeriesData, IScraper } from 'services/ScrapeService'
+import type {
+  ComicSeriesData,
+  IScraperService,
+} from 'services/Scraper/Scraper.interface'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import type { IPullListRepository } from 'models/PullList/PullList.interface'
 import type { NewTask } from 'models/Queue/Queue.interface'
@@ -43,7 +46,7 @@ export const addToPullList: Resolver<
   )
 
 function getComicSeries(
-  scraper: IScraper,
+  scraper: IScraperService,
 ): (path: string) => RTE.ReaderTaskEither<any, Error, ComicSeriesData> {
   return flow(scraper.getComicSeries, RTE.fromTaskEither)
 }

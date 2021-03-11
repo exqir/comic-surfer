@@ -1,101 +1,17 @@
 import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
-import { MongoError, Db } from 'mongodb'
+import { Db } from 'mongodb'
 import { Response, Request } from 'express'
-import { some, map, Option } from 'fp-ts/lib/Option'
-import { right, left, Either, fold } from 'fp-ts/lib/Either'
-import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import { some } from 'fp-ts/lib/Option'
 import { KeyValueCache } from 'apollo-server-core'
 import { ApolloServer } from 'apollo-server'
-import { DataSources, Services, DataLayer } from 'types/app'
-import typeDefs, { resolvers } from '../schema'
-import {
-  ComicBookAPI,
-  ComicSeriesAPI,
-  PublisherAPI,
-  PullListRepository,
-  QueueRepository,
-} from '../datasources'
-import { IScraper } from 'services/ScrapeService'
-import { ILogger } from 'services/LogService'
+import { Services } from 'types/app'
+import { schema } from 'schema'
+import { resolvers } from 'resolvers'
+import { dataSources } from 'datasources'
+import { IScraperService } from 'services/Scraper/Scraper.interface'
+import { logger, dataLayer } from '__tests__/_mock'
 
-/**
- * Creates a `ReaderTaskEither<Db, MongoError, T>` that returns `value` as right
- * side or a `MongoError` as left side in case of `isFailure`.
- * @param value {T} Value to be returned when the Task is executed.
- * @param isFailure {boolean} Defines if a success or failure should be mocked.
- * @returns reader {ReaderTaskEither<Db, MongoError, T>}
- */
-export function createMockReaderWithReturnValue<T>(
-  value: T,
-  isFailure?: boolean,
-): (db: Db) => () => Promise<Either<MongoError, T>>
-export function createMockReaderWithReturnValue<T>(
-  value: T[],
-  isFailure?: boolean,
-): (db: Db) => () => Promise<Either<MongoError, T[]>>
-export function createMockReaderWithReturnValue<T>(
-  value: T | T[],
-  isFailure?: boolean,
-) {
-  return (db: Db) => () =>
-    new Promise<Either<MongoError, T | T[]>>((resolve, reject) => {
-      const either = isFailure
-        ? left(new MongoError('TestError'))
-        : right(value)
-      resolve(either)
-    })
-}
-
-/**
- * Creates a `TaskEither<Error, T>` that returns `value` as right
- * side or a `Error` as left side in case of `isFailure`.
- * @param value {T} Value to be returned when the Task is executed.
- * @param isFailure {boolean} Defines if a success or failure should be mocked.
- * @returns reader {TaskEither<Error, T>}
- */
-export function createMockTaskWithReturnValue<T>(
-  value: T,
-  isFailure?: boolean,
-): () => Promise<Either<Error, T>>
-export function createMockTaskWithReturnValue<T>(
-  value: T[],
-  isFailure?: boolean,
-): () => Promise<Either<Error, T[]>>
-export function createMockTaskWithReturnValue<T>(
-  value: T | T[],
-  isFailure?: boolean,
-) {
-  return () =>
-    new Promise<Either<Error, T | T[]>>((resolve, reject) => {
-      const either = isFailure ? left(new Error('TestError')) : right(value)
-      resolve(either)
-    })
-}
-
-/**
- * Run ReaderTaskEither with an empty Db mock.
- * @param rte {RTE.ReaderTaskEither} - ReaderTaskEither to be run.
- */
-export const runRTEwithMockDb = <L, R>(rte: RTE.ReaderTaskEither<Db, L, R>) =>
-  RTE.run(rte, {} as Db)
-
-const mockLogger = {
-  error: jest.fn(),
-  info: jest.fn(),
-  log: jest.fn(),
-}
-const mockDataLayer = {
-  findOne: jest.fn(),
-  findMany: jest.fn(),
-  insertOne: jest.fn(),
-  insertMany: jest.fn(),
-  updateOne: jest.fn(),
-  updateMany: jest.fn(),
-  deleteOne: jest.fn(),
-  deleteMany: jest.fn(),
-}
-
-const mockScraper: IScraper = {
+const mockScraper: IScraperService = {
   getComicSeries: jest.fn(),
   getComicBookList: jest.fn(),
   getComicBook: jest.fn(),
@@ -109,11 +25,10 @@ export const createMockConfig = () => ({
   context: {
     req: {} as Request,
     res: {} as Response,
-    dataLayer: (mockDataLayer as unknown) as DataLayer,
-    dataSources: {} as DataSources,
+    dataLayer: dataLayer,
     services: {
       scrape: mockScraper,
-      logger: mockLogger,
+      logger: logger,
     } as Services,
     db: some({} as Db),
     user: some('some-user-id'),
@@ -129,28 +44,20 @@ export const createMockConfig = () => ({
  */
 export const constructTestServer = (context: {} = {}) => {
   const defaultContext = createMockConfig().context
-  delete defaultContext.dataSources
-  const comicBook = new ComicBookAPI()
-  const comicSeries = new ComicSeriesAPI()
-  const publisher = new PublisherAPI()
-  const pullList = new PullListRepository()
-  const queue = new QueueRepository()
+  const sources = dataSources({
+    logger: defaultContext.services.logger,
+    dataLayer: defaultContext.dataLayer,
+  })()
 
   const server = new ApolloServer({
-    typeDefs: [DIRECTIVES, ...typeDefs],
+    typeDefs: [DIRECTIVES, ...schema],
     resolvers,
-    dataSources: () => ({
-      comicBook,
-      comicSeries,
-      publisher,
-      pullList,
-      queue,
-    }),
+    dataSources: () => sources,
     context: () => ({
       ...defaultContext,
       ...context,
     }),
   })
 
-  return { server, comicBook, comicSeries, publisher, pullList }
+  return { server, ...sources }
 }

@@ -3,9 +3,9 @@ import { Db, MongoError, ObjectID } from 'mongodb'
 import { PullListDbObject } from 'types/graphql-schema'
 import {
   MongoDataSource,
-  MongoDataSourceOptions,
+  IMongoDataSourceOptions,
   toObjectId,
-} from '../../datasources/MongoDataSource'
+} from 'datasources/MongoDataSource'
 import { IPullListRepository } from './PullList.interface'
 
 export const pullListCollection = 'pullList'
@@ -15,8 +15,8 @@ export class PullListRepository extends MongoDataSource<PullListDbObject>
     dataLayer,
     logger,
   }: {
-    dataLayer: MongoDataSourceOptions['dataLayer']
-    logger: MongoDataSourceOptions['logger']
+    dataLayer: IMongoDataSourceOptions['dataLayer']
+    logger: IMongoDataSourceOptions['logger']
   }) {
     super({ collection: pullListCollection, dataLayer, logger })
   }

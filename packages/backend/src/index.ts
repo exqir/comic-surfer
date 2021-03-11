@@ -2,17 +2,12 @@ import { ApolloServer } from 'apollo-server'
 import { ApolloServerPluginUsageReporting } from 'apollo-server-core'
 import * as mongad from 'mongad'
 import scrapeIt from 'scrape-it'
+
 import { schema } from 'schema'
 import { resolvers } from 'resolvers'
-import {
-  ComicBookRepository,
-  ComicSeriesRepository,
-  PublisherRepository,
-  PullListRepository,
-  QueueRepository,
-} from './datasources'
-import { GraphQLContext, DataSources } from 'types/app'
-import { comixology } from 'services/ComixologyScaper'
+import { dataSources } from 'datasources'
+import { GraphQLContext } from 'types/app'
+import { comixology } from 'services/Scraper/ComixologyScaper'
 import { createLogger } from 'services/LogService'
 import { Authentication } from 'services/Authentication'
 import { createConnectToDb } from 'lib/connectToDb'
@@ -26,13 +21,7 @@ const connectToDb = createConnectToDb(logger)
 const apolloServer = new ApolloServer({
   typeDefs: schema,
   resolvers,
-  dataSources: () => ({
-    comicBook: new ComicBookRepository({ dataLayer: mongad, logger }),
-    comicSeries: new ComicSeriesRepository({ dataLayer: mongad, logger }),
-    publisher: new PublisherRepository({ dataLayer: mongad, logger }),
-    pullList: new PullListRepository({ dataLayer: mongad, logger }),
-    queue: new QueueRepository({ dataLayer: mongad, logger }),
-  }),
+  dataSources: dataSources({ dataLayer: mongad, logger }),
   context: async ({
     req,
     res,

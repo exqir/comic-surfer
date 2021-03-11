@@ -1,4 +1,4 @@
-import type { ComicSeriesData } from 'services/ScrapeService'
+import type { ComicSeriesData } from 'services/Scraper/Scraper.interface'
 
 export const defaultComicSeriesData: ComicSeriesData = {
   title: 'Comic Series',

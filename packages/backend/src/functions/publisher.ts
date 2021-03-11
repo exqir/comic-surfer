@@ -5,7 +5,7 @@ import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as E from 'fp-ts/lib/Either'
 
 import type { PublisherDbObject } from 'types/graphql-schema'
-import type { ComicBookData } from 'services/ScrapeService'
+import type { ComicBookData } from 'services/Scraper/Scraper.interface'
 import type { IPublisherRepository } from 'models/Publisher/Publisher.interface'
 
 export function getComicBookPublisherByUrl(

@@ -6,10 +6,10 @@ import * as E from 'fp-ts/lib/Either'
 
 import type { Maybe } from 'types/graphql-schema'
 import type {
-  IScraper,
+  IScraperService,
   ComicBookData,
   ComicBookListData,
-} from 'services/ScrapeService'
+} from 'services/Scraper/Scraper.interface'
 import type { IWithUrl } from 'types/common'
 import { getUrl } from 'functions/common'
 
@@ -18,13 +18,13 @@ export interface IMaybeWithUrl {
 }
 
 export function getComicBookByUrl(
-  scraper: IScraper,
+  scraper: IScraperService,
 ): (entity: IWithUrl) => TE.TaskEither<Error, ComicBookData> {
   return flow(getUrl, scraper.getComicBook)
 }
 
 export function getComicBookList<T extends IMaybeWithUrl>(
-  scraper: IScraper,
+  scraper: IScraperService,
 ): (withUrl: T) => RTE.ReaderTaskEither<any, Error, ComicBookListData> {
   return ({ url }) =>
     pipe(

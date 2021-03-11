@@ -9,7 +9,10 @@ import type {
   QuerySearchArgs,
   SearchResult,
 } from 'types/graphql-schema'
-import type { ComicSeriesSearchData, IScraper } from 'services/ScrapeService'
+import type {
+  ComicSeriesSearchData,
+  IScraperService,
+} from 'services/Scraper/Scraper.interface'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import { nullableField } from 'lib'
 import { getByIds } from 'functions/common'
@@ -55,7 +58,7 @@ export const search: Resolver<EnhancedSearchResult[], QuerySearchArgs> = (
   )
 
 function getComicSeriesSearchResults(
-  scraper: IScraper,
+  scraper: IScraperService,
 ): (
   query: string,
 ) => RTE.ReaderTaskEither<any, Error, ComicSeriesSearchData[]> {

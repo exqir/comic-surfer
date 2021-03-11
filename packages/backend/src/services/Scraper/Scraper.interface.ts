@@ -33,7 +33,7 @@ export type ComicSeriesSearchData = {
   url: string
 }
 
-export interface IScraper {
+export interface IScraperService {
   getComicSeries: (path: string) => TaskEither<Error, ComicSeriesData>
   getComicBookList: (path: string) => TaskEither<Error, ComicBookListData>
   getComicBook: (path: string) => TaskEither<Error, ComicBookData>

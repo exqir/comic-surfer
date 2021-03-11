@@ -14,8 +14,8 @@ import type { Resolver } from 'types/app'
 import type {
   ComicBookListData,
   ComicBookData,
-  IScraper,
-} from 'services/ScrapeService'
+  IScraperService,
+} from 'services/Scraper/Scraper.interface'
 import type { IPublisherRepository } from 'models/Publisher/Publisher.interface'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import { nullableField } from 'lib'
@@ -51,7 +51,7 @@ export const updateComicSeriesPublisher: Resolver<
   )
 
 function getFirstComicBookFromList(
-  scraper: IScraper,
+  scraper: IScraperService,
 ): (
   comicBookList: ComicBookListData,
 ) => RTE.ReaderTaskEither<any, Error, ComicBookData> {
