@@ -514,13 +514,12 @@ describe('[MongoDataSource.deleteOne]', () => {
     expect.assertions(2)
   })
 
-  it.skip('should forward options to the dataLayer', async () => {
-    const options = { session: {} }
+  it('should forward options to the dataLayer', async () => {
+    const options = { session: undefined }
     const { deleteOne } = dataLayer
     ;(deleteOne as jest.Mock).mockReturnValueOnce(RTE.right({}))
 
-    // @ts-ignore
-    const res = ds.deleteOne({}, {}, options)
+    const res = ds.deleteOne({}, options)
 
     await pipe(res, (rte) => RTE.run(rte, {} as Db))
     expect(deleteOne).toBeCalledWith(collection, {}, options)
@@ -611,13 +610,12 @@ describe('[MongoDataSource.deleteMany]', () => {
     expect.assertions(2)
   })
 
-  it.skip('should forward options to the dataLayer', async () => {
-    const options = { session: {} }
+  it('should forward options to the dataLayer', async () => {
+    const options = { session: undefined }
     const { deleteMany } = dataLayer
     ;(deleteMany as jest.Mock).mockReturnValueOnce(RTE.right({}))
 
-    // @ts-ignore
-    const res = ds.deleteMany({}, {}, options)
+    const res = ds.deleteMany({}, options)
 
     await pipe(res, (rte) => RTE.run(rte, {} as Db))
     expect(deleteMany).toBeCalledWith(collection, {}, options)

@@ -5,9 +5,10 @@ import addToPullList from './addToPullList.graphql'
 import login from './login.graphql'
 import logout from './logout.graphql'
 import removeFromPullList from './removeFromPullList.graphql'
-import setComicSeriesPublisher from './setComicSeriesPublisher.graphql'
 import updateComicBook from './updateComicBook.graphql'
 import updateComicBookRelease from './updateComicBookRelease.graphql'
+import updateComicSeriesBooks from './updateComicSeriesBooks.graphql'
+import updateComicSeriesPublisher from './updateComicSeriesPublisher.graphql'
 import verifyUpcomingReleases from './verifyUpcomingReleases.graphql'
 
 export const mutations = [
@@ -16,8 +17,9 @@ export const mutations = [
   login,
   logout,
   removeFromPullList,
-  setComicSeriesPublisher,
   updateComicBook,
   updateComicBookRelease,
+  updateComicSeriesBooks,
+  updateComicSeriesPublisher,
   verifyUpcomingReleases,
 ]
