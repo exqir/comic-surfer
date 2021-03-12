@@ -1,6 +1,0 @@
-extend type Query {
-  """
-  Get the ComicSeries matching the provided ID.
-  """
-  comicSeries(id: ID!): ComicSeries
-}

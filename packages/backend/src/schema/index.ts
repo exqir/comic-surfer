@@ -1,9 +1,8 @@
-import 'graphql-import-node'
+import { join } from 'path'
+import { loadFilesSync } from '@graphql-tools/load-files'
+import { mergeTypeDefs } from '@graphql-tools/merge'
 import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
 
-import Root from 'schema/index.graphql'
-import { types } from 'schema/types'
-import { queries } from 'schema/queries'
-import { mutations } from 'schema/mutations'
+const typeDefs = loadFilesSync(join(__dirname, '.'), { recursive: true })
 
-export const schema = [DIRECTIVES, Root, ...types, ...queries, ...mutations]
+export const schema = mergeTypeDefs([DIRECTIVES, ...typeDefs])

@@ -1,4 +1,3 @@
-import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
 import { Db } from 'mongodb'
 import { Response, Request } from 'express'
 import { some } from 'fp-ts/lib/Option'
@@ -50,7 +49,7 @@ export const constructTestServer = (context: {} = {}) => {
   })()
 
   const server = new ApolloServer({
-    typeDefs: [DIRECTIVES, ...schema],
+    typeDefs: schema,
     resolvers,
     dataSources: () => sources,
     context: () => ({

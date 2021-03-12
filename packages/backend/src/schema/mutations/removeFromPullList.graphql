@@ -1,6 +1,0 @@
-extend type Mutation {
-  """
-  Remove a ComicSeries from the users PullList based on its id.
-  """
-  removeFromPullList(comicSeriesId: ID!): PullList
-}

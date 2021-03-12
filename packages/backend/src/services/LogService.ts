@@ -1,4 +1,5 @@
 import * as IO from 'fp-ts/lib/IO'
+import { flow } from 'fp-ts/lib/function'
 
 export interface ILogger {
   log: (...args: any[]) => IO.IO<void>
@@ -8,20 +9,32 @@ export interface ILogger {
 }
 
 export function createLogger(context: string, locale: string): ILogger {
-  const logging = (method: (...args: any[]) => void) => (...args: any[]) => {
-    const date = new Date()
-    method(
+  const addMeta = (...args: string[]) => () => {
+    const date = new Date(Date.now())
+    return [
       date.toLocaleDateString(locale),
       date.toLocaleTimeString(locale),
       context,
       ...args,
-    )
+    ]
   }
 
   return {
-    log: IO.of(logging(console.log)),
-    info: IO.of(logging(console.info)),
-    error: IO.of(logging(console.error)),
-    warn: IO.of(logging(console.warn)),
+    log: flow(
+      addMeta,
+      IO.map((a) => console.log(...a)),
+    ),
+    info: flow(
+      addMeta,
+      IO.map((a) => console.info(...a)),
+    ),
+    error: flow(
+      addMeta,
+      IO.map((a) => console.error(...a)),
+    ),
+    warn: flow(
+      addMeta,
+      IO.map((a) => console.warn(...a)),
+    ),
   }
 }

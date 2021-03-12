@@ -1,6 +1,0 @@
-extend type Mutation {
-  """
-  Internal: Set the Publisher of a ComicSeries.
-  """
-  updateComicSeriesPublisher(comicSeriesId: ID!): ComicSeries
-}

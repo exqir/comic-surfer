@@ -92,7 +92,6 @@ export type Creator = {
 
 export type Mutation = {
    __typename?: 'Mutation';
-  _empty: Maybe<Scalars['String']>;
   /**
    * Internal: Add new colletions and single issue releases of ComicSeries.
    * Enqueues looking for new releases of ComicSeries which releases have not been updated for the longest time.
@@ -184,7 +183,6 @@ export type PullList = {
 
 export type Query = {
    __typename?: 'Query';
-  _empty: Maybe<Scalars['String']>;
   /** Get the ComicBook matching the provided ID. */
   comicBook: Maybe<ComicBook>;
   /** Get the ComicSeries matching the provided ID. */

@@ -58,4 +58,4 @@ const apolloServer = new ApolloServer({
 
 apolloServer
   .listen(5000)
-  .then(({ url }) => logger.log(`GraphQL Server started at: ${url}`))
+  .then(({ url }) => logger.log(`GraphQL Server started at: ${url}`)())

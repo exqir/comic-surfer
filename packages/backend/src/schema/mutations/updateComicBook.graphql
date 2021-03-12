@@ -1,6 +1,0 @@
-extend type Mutation {
-  """
-  Internal: Update ComicBook data.
-  """
-  updateComicBook(comicBookId: ID!): ComicBook
-}

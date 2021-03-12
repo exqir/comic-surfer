@@ -5,6 +5,7 @@ config:
   avoidOptionals: true
   namingConvention:
     enumValues: upper-case#upperCase
+schema: 'packages/backend/src/schema/**/*.graphql.ts'
 generates:
   # packages/app/src/types/graphql-client-schema.ts:
   #   schema: 'packages/backend/src/schema/**/*.graphql'
@@ -16,7 +17,6 @@ generates:
   #     scalars:
   #       Date: string
   packages/backend/src/types/graphql-schema.ts:
-    schema: 'packages/backend/src/schema/**/*.graphql'
     plugins:
       - 'typescript'
       - 'typescript-mongodb'

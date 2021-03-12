@@ -1,6 +1,0 @@
-extend type Mutation {
-  """
-  Logout the current user.
-  """
-  logout: Boolean!
-}
