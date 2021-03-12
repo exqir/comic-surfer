@@ -1,31 +1,25 @@
 exports = function onQueueInsert(changeEvent) {
   const { _id, type, data } = changeEvent.fullDocument
-  const singleIssuesMutation = `mutation scrapSingleIssuesList($comicSeriesId: ID!, $comicBookListUrl: String!) {
-      scrapSingleIssuesList(comicSeriesId: $comicSeriesId, comicBookListUrl: $comicBookListUrl) {
+  const updateComicSeriesBooks = `mutation updateComicSeriesBooks($comicSeriesId: ID!, $comicBookType: ComicBookType!, $comicBookListPath: String) {
+      updateComicSeriesBooks(comicSeriesId: $comicSeriesId, comicBookType: $comicBookType, comicBookListPath: $comicBookListPath) {
         _id
       }
     }
     `
-  const collectionsMutation = `mutation scrapCollectionsList($comicSeriesId: ID!, $comicBookListUrl: String!) {
-      scrapCollectionsList(comicSeriesId: $comicSeriesId, comicBookListUrl: $comicBookListUrl) {
-          _id
-      }
-    }
-    `
-  const comicBookMutation = `mutation updateComicBookRelease($comicBookId: ID!) {
+  const updateComicBookRelease = `mutation updateComicBookRelease($comicBookId: ID!) {
       updateComicBookRelease(comicBookId: $comicBookId) {
           _id
       }
     }
     `
-  const publisherMutation = `mutation updateComicSeriesPublisher($comicSeriesId: ID!) {
+  const updateComicSeriesPublisher = `mutation updateComicSeriesPublisher($comicSeriesId: ID!) {
       updateComicSeriesPublisher(comicSeriesId: $comicSeriesId) {
         _id
       }
     }
     `
-  const scrapComicBookMutation = `mutation scrapComicBook($comicBookUrl: String!) {
-      scrapComicBook(comicBookUrl: $comicBookUrl) {
+  const updateComicBook = `mutation updateComicBook($comicBookUrl: String!) {
+      updateComicBook(comicBookUrl: $comicBookUrl) {
         _id
       }
     }
@@ -34,24 +28,14 @@ exports = function onQueueInsert(changeEvent) {
   let body
 
   switch (type) {
-    case 'SCRAP_SINGLE_ISSUE_LIST': {
+    case 'SCRAP_COMIC_BOOK_LIST': {
       body = {
-        operationName: 'scrapSingleIssuesList',
-        query: singleIssuesMutation,
+        operationName: 'updateComicSeriesBooks',
+        query: updateComicSeriesBooks,
         variables: {
           comicSeriesId: data.comicSeriesId,
-          comicBookListUrl: data.url,
-        },
-      }
-      break
-    }
-    case 'SCRAP_COLLECTION_LIST': {
-      body = {
-        operationName: 'scrapCollectionsList',
-        query: collectionsMutation,
-        variables: {
-          comicSeriesId: data.comicSeriesId,
-          comicBookListUrl: data.url,
+          comicBookType: data.type,
+          comicBookListPath: data.url,
         },
       }
       break
@@ -59,7 +43,7 @@ exports = function onQueueInsert(changeEvent) {
     case 'UPDATE_COMIC_BOOK_RELEASE': {
       body = {
         operationName: 'updateComicBookRelease',
-        query: comicBookMutation,
+        query: updateComicBookRelease,
         variables: {
           comicBookId: data.comicBookId,
         },
@@ -69,7 +53,7 @@ exports = function onQueueInsert(changeEvent) {
     case 'UPDATE_COMIC_SERIES_PUBLISHER': {
       body = {
         operationName: 'updateComicSeriesPublisher',
-        query: publisherMutation,
+        query: updateComicSeriesPublisher,
         variables: { comicSeriesId: data.comicSeriesId },
       }
       break
@@ -77,7 +61,7 @@ exports = function onQueueInsert(changeEvent) {
     case 'SCRAP_COMIC_BOOK': {
       body = {
         operationName: 'scrapComicBook',
-        query: scrapComicBookMutation,
+        query: updateComicBook,
         variables: { comicBookUrl: data.comicBookUrl },
       }
       break
