@@ -212,7 +212,7 @@ export type QueryComicSeriesArgs = {
 export type QueryReleasesArgs = {
   month: Maybe<Scalars['Int']>;
   year: Maybe<Scalars['Int']>;
-  type: Maybe<ComicBookType>;
+  type?: Maybe<ComicBookType>;
 };
 
 

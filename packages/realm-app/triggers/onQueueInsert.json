@@ -1,0 +1,19 @@
+{
+    "name": "onQueueInsert",
+    "type": "DATABASE",
+    "config": {
+        "operation_types": [
+            "INSERT"
+        ],
+        "database": "riddler",
+        "collection": "queue",
+        "service_name": "mongodb-atlas",
+        "match": {},
+        "project": {},
+        "full_document": true,
+        "full_document_before_change": false,
+        "unordered": false
+    },
+    "function_name": "onQueueInsert",
+    "disabled": false
+}
