@@ -2,20 +2,22 @@
   "name": "@comic-surfer/backend",
   "version": "0.1.0",
   "scripts": {
-    "dev": "ts-node -r tsconfig-paths/register src/index.ts",
-    "start": "ts-node -r tsconfig-paths/register -r dotenv/config src/index.ts",
+    "build": "ttsc",
+    "start": "node -r dotenv/config dist/index.js",
+    "start:dev": "nodemon",
     "test": "jest"
   },
   "dependencies": {
     "@graphql-codegen/typescript-mongodb": "^1.13.1",
+    "@graphql-tools/load-files": "^6.3.1",
+    "@graphql-tools/merge": "^6.2.10",
     "@hapi/iron": "^6.0.0",
     "@magic-sdk/admin": "^1.2.2",
     "apollo-server": "^2.18.1",
     "cookie": "^0.4.1",
     "dotenv": "^8.2.0",
-    "fp-ts": "^2.8.5",
+    "fp-ts": "^2.9.5",
     "graphql": "^14.5.8",
-    "graphql-import-node": "^0.0.4",
     "graphql-iso-date": "^3.6.1",
     "mongad": "^0.2.2",
     "mongodb": "^3.5.5",
@@ -25,17 +27,20 @@
   "devDependencies": {
     "@types/cookie": "^0.4.0",
     "@types/graphql-iso-date": "^3.3.3",
-    "@types/jest": "^24.0.20",
+    "@types/jest": "^26.0.20",
     "@types/mongodb": "^3.3.7",
     "@types/sanitize-html": "^1.27.0",
     "@types/serve-handler": "^6.1.0",
+    "@zerollup/ts-transform-paths": "^1.7.18",
     "apollo-server-testing": "^2.9.7",
-    "jest": "^24.9.0",
+    "jest": "^26.6.3",
     "jest-transform-graphql": "^2.1.0",
+    "nodemon": "^2.0.7",
     "serve-handler": "^6.1.2",
-    "ts-jest": "^24.1.0",
+    "ts-jest": "^26.5.0",
     "ts-node": "^8.4.1",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.8.3"
+    "ttypescript": "^1.5.12",
+    "typescript": "^4.2.3"
   }
 }

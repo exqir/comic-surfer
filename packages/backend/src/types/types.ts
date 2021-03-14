@@ -1,16 +1,17 @@
-import { GraphQLFieldResolver, GraphQLResolveInfo } from 'graphql'
-import { Db } from 'mongodb'
-import { Response, Request } from 'express'
-import { Option } from 'fp-ts/lib/Option'
-import {
-  ComicBookAPI,
-  ComicSeriesAPI,
-  PublisherAPI,
-  PullListAPI,
-  QueueRepository,
-} from '../datasources'
-import { IScraper } from 'services/ScrapeService'
-import mongad from 'mongad'
+import type { GraphQLResolveInfo } from 'graphql'
+import type { Db, MongoError, ObjectID } from 'mongodb'
+import type { Response, Request } from 'express'
+import type { Option } from 'fp-ts/lib/Option'
+import type mongad from 'mongad'
+
+import type { IScraperService } from 'services/Scraper/Scraper.interface'
+import type { ILogger } from 'services/LogService'
+import type { IAuthentication } from 'services/Authentication'
+import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
+import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
+import type { IPublisherRepository } from 'models/Publisher/Publisher.interface'
+import type { IPullListRepository } from 'models/PullList/PullList.interface'
+import type { IQueueRepository } from 'models/Queue/Queue.interface'
 
 export interface Logger {
   log: (...args: any[]) => void
@@ -20,17 +21,19 @@ export interface Logger {
 
 export type DataLayer = typeof mongad
 
-export interface DataSources {
-  comicBook: ComicBookAPI
-  comicSeries: ComicSeriesAPI
-  publisher: PublisherAPI
-  pullList: PullListAPI
-  queue: QueueRepository
+export interface IDataSources {
+  comicBook: IComicBookRepository<Db, Error | MongoError>
+  comicSeries: IComicSeriesRepository<Db, Error | MongoError>
+  publisher: IPublisherRepository<Db, Error | MongoError>
+  pullList: IPullListRepository<Db, Error | MongoError>
+  queue: IQueueRepository<Db, Error | MongoError>
+  [index: string]: any
 }
 
 export interface Services {
-  scrape: IScraper
-  logger: Logger
+  scrape: IScraperService
+  logger: ILogger
+  authentication: IAuthentication
 }
 
 /**
@@ -40,20 +43,11 @@ export interface GraphQLContext {
   req: Request
   res: Response
   dataLayer: DataLayer
-  dataSources: DataSources
+  dataSources: IDataSources
   services: Services
   db: Option<Db>
   user: Option<string>
 }
-
-/**
- *
- */
-export type GraphQLResolver<Source, Argument> = GraphQLFieldResolver<
-  Source,
-  GraphQLContext,
-  Argument
->
 
 export type Resolver<
   Result,
@@ -81,4 +75,12 @@ export type NonNullableResolver<
   info: Info,
 ) => Result | Promise<Result>
 
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+// https://stackoverflow.com/questions/57103834/typescript-omit-a-property-from-all-interfaces-in-a-union-but-keep-the-union-s
+export type DistributiveOmit<T, K extends PropertyKey> = T extends unknown
+  ? Omit<T, K>
+  : never
+
+// Use this instead of mongodb's WithId because its use of Omit
+// removes type information from union types for which we use
+// DistributiveOmit in order to preserve them.
+export type WithId<T> = T & { _id: ObjectID }

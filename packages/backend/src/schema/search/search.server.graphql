@@ -1,9 +1,0 @@
-extend type Query {
-  search(q: String!): [Search!]
-}
-
-type Search {
-  title: String!
-  url: String!
-  inPullList: Boolean!
-}

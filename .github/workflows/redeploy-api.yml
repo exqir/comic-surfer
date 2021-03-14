@@ -18,5 +18,6 @@ jobs:
             cd services/comic-surfer
             git pull
             yarn
+            yarn workspace @comic-surfer/backend build
             supervisorctl restart comic-surfer
             supervisorctl tail comic-surfer

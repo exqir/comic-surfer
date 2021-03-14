@@ -1,0 +1,6 @@
+export { ComicBook } from './ComicBook.resolver'
+export { ComicSeries } from './ComicSeries.resolver'
+export { Date } from './Date.resolver'
+export { Publisher } from './Publisher.resolver'
+export { PullList } from './PullList.resolver'
+export { SearchResult } from './SearchResult.resolver'

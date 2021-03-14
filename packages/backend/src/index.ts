@@ -1,18 +1,13 @@
 import { ApolloServer } from 'apollo-server'
 import { ApolloServerPluginUsageReporting } from 'apollo-server-core'
-import { DIRECTIVES } from '@graphql-codegen/typescript-mongodb'
 import * as mongad from 'mongad'
 import scrapeIt from 'scrape-it'
-import typeDefs, { resolvers } from './schema'
-import {
-  ComicBookAPI,
-  ComicSeriesAPI,
-  PublisherAPI,
-  PullListAPI,
-  QueueRepository,
-} from './datasources'
-import { GraphQLContext, DataSources } from 'types/app'
-import { comixology } from 'services/ComixologyScaper'
+
+import { schema } from 'schema'
+import { resolvers } from 'resolvers'
+import { dataSources } from 'datasources'
+import { GraphQLContext } from 'types/app'
+import { comixology } from 'services/Scraper/ComixologyScaper'
 import { createLogger } from 'services/LogService'
 import { Authentication } from 'services/Authentication'
 import { createConnectToDb } from 'lib/connectToDb'
@@ -24,15 +19,9 @@ const logger = createLogger('Comic-Surfer', 'de-DE')
 const connectToDb = createConnectToDb(logger)
 
 const apolloServer = new ApolloServer({
-  typeDefs: [DIRECTIVES, ...typeDefs],
+  typeDefs: schema,
   resolvers,
-  dataSources: () => ({
-    comicBook: new ComicBookAPI(),
-    comicSeries: new ComicSeriesAPI(),
-    publisher: new PublisherAPI(),
-    pullList: new PullListAPI(),
-    queue: new QueueRepository(),
-  }),
+  dataSources: dataSources({ dataLayer: mongad, logger }),
   context: async ({
     req,
     res,
@@ -44,6 +33,7 @@ const apolloServer = new ApolloServer({
     services: {
       scrape: comixology(scrapeIt, logger, baseUrl),
       logger,
+      authentication: Authentication,
     },
     user: await Authentication.getUserFromSession(req)(),
   }),
@@ -68,4 +58,4 @@ const apolloServer = new ApolloServer({
 
 apolloServer
   .listen(5000)
-  .then(({ url }) => logger.log(`GraphQL Server started at: ${url}`))
+  .then(({ url }) => logger.log(`GraphQL Server started at: ${url}`)())

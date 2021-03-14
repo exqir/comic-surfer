@@ -19,7 +19,7 @@ const MAGIC_APY_KEY =
 
 const magic = new Magic(MAGIC_APY_KEY)
 
-type Session = {
+export type Session = {
   issuer: string
 }
 
@@ -147,3 +147,6 @@ export const Authentication = {
   removeSessionCookie: removeTokenCookie,
   logoutUser,
 }
+
+// TODO: Create interface for Authentication service
+export type IAuthentication = typeof Authentication

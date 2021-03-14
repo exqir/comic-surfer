@@ -1,12 +1,10 @@
 import { createTestClient } from 'apollo-server-testing'
 import { gql } from 'apollo-server'
-import {
-  constructTestServer,
-  createMockReaderWithReturnValue,
-} from 'tests/_utils'
 import { ObjectID } from 'mongodb'
-import { ComicBook, ComicBookType } from 'types/server-schema'
-// import comicBook from 'schema/comicBook';
+import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+
+import { constructTestServer } from '__tests__/_utils'
+import { ComicBook, ComicBookType } from 'types/graphql-schema'
 
 const GET_COMICBOOK = gql`
   query comicBook($id: String!) {
@@ -34,14 +32,12 @@ describe('Queries', () => {
       publisher: null,
       type: ComicBookType.SINGLEISSUE,
       lastModified: new Date(),
+      description: 'Description',
     }
     const { server, comicBook } = constructTestServer()
-    comicBook.getById = jest
-      .fn()
-      .mockReturnValueOnce(
-        createMockReaderWithReturnValue<ComicBook>(mockComicBook),
-      )
+    comicBook.getById = jest.fn().mockReturnValueOnce(RTE.right(mockComicBook))
 
+    // @ts-ignore
     const { query } = createTestClient(server)
     const res = await query({
       query: GET_COMICBOOK,

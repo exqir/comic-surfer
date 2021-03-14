@@ -3,16 +3,13 @@ import { pipe } from 'fp-ts/lib/pipeable'
 import handler from 'serve-handler'
 import http from 'http'
 import scrapeIt from 'scrape-it'
-import { comixology } from '../services/ComixologyScaper'
-import { createMockConfig } from 'tests/_utils'
+
+import { comixology } from 'services/Scraper/ComixologyScaper'
+import { logger } from '__tests__/_mock'
 
 const PORT = 9000
 const URL = `http://localhost:${PORT}`
-const scraper = comixology(
-  scrapeIt,
-  createMockConfig().context.services.logger,
-  URL,
-)
+const scraper = comixology(scrapeIt, logger, URL)
 let server: http.Server
 
 beforeAll((done) => {
