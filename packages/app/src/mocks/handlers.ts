@@ -3,8 +3,8 @@ import {
   GetCurrentComicBookReleasesQuery,
   GetComicBookQuery,
   GetSearchQuery,
-  SubscribeToComicSeriesMutation,
-  UnsubscribeFromComicSeriesMutation,
+  AddToPullListMutation,
+  RemoveFromPullListMutation,
   LoginUserMutation,
   LogoutUserMutation,
   GetPullListQuery,
@@ -52,8 +52,8 @@ export const handlers = [
   }),
   graphql.mutation('subscribeToComicSeries', (req, res, ctx) => {
     const url = req.variables.comicSeriesUrl
-    const data: SubscribeToComicSeriesMutation = {
-      subscribeComicSeries: {
+    const data: AddToPullListMutation = {
+      addToPullList: {
         _id: '1',
         owner: '1',
         list: [
@@ -67,8 +67,8 @@ export const handlers = [
   }),
   graphql.mutation('unsubscribeFromComicSeries', (req, res, ctx) => {
     const id = req.variables.comicSeriesId
-    const data: UnsubscribeFromComicSeriesMutation = {
-      unsubscribeComicSeries: {
+    const data: RemoveFromPullListMutation = {
+      removeFromPullList: {
         _id: '1',
         owner: '1',
         list: [

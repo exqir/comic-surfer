@@ -7,15 +7,14 @@ config:
     enumValues: upper-case#upperCase
 schema: 'packages/backend/src/schema/**/*.graphql.ts'
 generates:
-  # packages/app/src/types/graphql-client-schema.ts:
-  #   schema: 'packages/backend/src/schema/**/*.graphql'
-  #   documents: 'packages/app/src/data/**/!(*.d).{ts,tsx}'
-  #   plugins:
-  #     - 'typescript'
-  #     - 'typescript-operations'
-  #   config:
-  #     scalars:
-  #       Date: string
+  packages/app/src/types/graphql-client-schema.ts:
+    documents: 'packages/app/src/data/**/!(*.d).{ts,tsx}'
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+    config:
+      scalars:
+        Date: string
   packages/backend/src/types/graphql-schema.ts:
     plugins:
       - 'typescript'

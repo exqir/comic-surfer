@@ -11,18 +11,29 @@ export type Scalars = {
 
 export type ComicBook = {
    __typename?: 'ComicBook';
+  /** ID of the ComicBook. */
   _id: Scalars['ID'];
+  /** Title of the ComicBook. */
   title: Scalars['String'];
+  /** Issue Number of the ComicBook. */
   issueNo: Maybe<Scalars['String']>;
+  /** Release Date of the ComicBook. */
   releaseDate: Maybe<Scalars['Date']>;
+  /** List of Creators of the ComicBook. */
   creators: Array<Creator>;
+  /** ComicSeries the ComicBook belongs to. */
   comicSeries: Maybe<ComicSeries>;
+  /** Publisher of the ComicBook. */
   publisher: Maybe<Publisher>;
+  /** URL of the Cover Image of the ComicBook. */
   coverImgUrl: Maybe<Scalars['String']>;
+  /** URL of the ComicBook on Comixology. */
   url: Scalars['String'];
   /** Description for the ComicBook. HTML containing Tags for basic text styling. */
   description: Maybe<Scalars['String']>;
+  /** Type of ComicBook */
   type: ComicBookType;
+  /** Date the ComicBook was last modified. */
   lastModified: Scalars['Date'];
 };
 
@@ -49,7 +60,7 @@ export type ComicSeries = {
   collections: Array<ComicBook>;
   /** The list of single issue ComicBooks belonging to the ComicSeries. */
   singleIssues: Array<ComicBook>;
-  /** The last time the ComicSeries of modified. */
+  /** The last time the ComicSeries was modified. */
   lastModified: Scalars['Date'];
   /** The url for the cover of the latest single issue or collection of the ComicSeries. */
   coverImgUrl: Maybe<Scalars['String']>;
@@ -61,72 +72,69 @@ export type ComicSeries = {
 
 export type Creator = {
    __typename?: 'Creator';
+  /** Name of the Creator. */
   name: Scalars['String'];
 };
 
 
 export type Mutation = {
    __typename?: 'Mutation';
-  _empty: Maybe<Scalars['String']>;
-  /** Login a user based on the token given in the Authorization header. */
+  /**
+   * Internal: Add new colletions and single issue releases of ComicSeries.
+   * Enqueues looking for new releases of ComicSeries which releases have not been updated for the longest time.
+   */
+  addNewReleases: Maybe<Array<ComicSeries>>;
+  /** Add a ComicSeries to the users PullList based on its url. */
+  addToPullList: Maybe<PullList>;
+  /**
+   * Login a user based on the token given in the Authorization header.
+   * If the user does not exist yet, a new one will be created.
+   */
   login: PullList;
   /** Logout the current user. */
   logout: Scalars['Boolean'];
-  scrapCollectionsList: Array<ComicBook>;
-  scrapComicBook: ComicBook;
-  scrapSingleIssuesList: Array<ComicBook>;
-  /** Add a ComicSeries to the users PullList based on its url. */
-  subscribeComicSeries: PullList;
-  /** Add a ComicSeries to the users PullList based on its id. */
-  subscribeExistingComicSeries: PullList;
   /** Remove a ComicSeries from the users PullList based on its id. */
-  unsubscribeComicSeries: PullList;
-  updateComicBookRelease: ComicBook;
-  updateComicBooks: Array<ComicBook>;
+  removeFromPullList: Maybe<PullList>;
+  /** Internal: Update ComicBook data. */
+  updateComicBook: Maybe<ComicBook>;
+  /** Internal: Update the release date of the ComicBook. */
+  updateComicBookRelease: Maybe<ComicBook>;
+  /** Internal: Update List of ComicBooks belonging to the ComicSeres. */
+  updateComicSeriesBooks: Maybe<Array<ComicBook>>;
+  /** Internal: Set the Publisher of a ComicSeries. */
+  updateComicSeriesPublisher: Maybe<ComicSeries>;
   /**
-   * Internal: Enqueue updating the colletions and single issues of ComicSeries
-   * that have not been updated for more than a month.
+   * Internal: Verfies release dates of upcoming ComicBook releases.
+   * Enqueues looking for updates to ComicBooks that are released soon but have not been updated.
    */
-  updateComicSeries: Array<ComicSeries>;
-  /** Internal: Update the Publisher of the ComicSeries. */
-  updateComicSeriesPublisher: ComicSeries;
+  verifyUpcomingReleases: Maybe<Array<ComicBook>>;
 };
 
 
-export type MutationScrapCollectionsListArgs = {
-  comicSeriesId: Scalars['ID'];
-  comicBookListUrl: Scalars['String'];
-};
-
-
-export type MutationScrapComicBookArgs = {
-  comicBookUrl: Scalars['String'];
-};
-
-
-export type MutationScrapSingleIssuesListArgs = {
-  comicSeriesId: Scalars['ID'];
-  comicBookListUrl: Scalars['String'];
-};
-
-
-export type MutationSubscribeComicSeriesArgs = {
+export type MutationAddToPullListArgs = {
   comicSeriesUrl: Scalars['String'];
 };
 
 
-export type MutationSubscribeExistingComicSeriesArgs = {
+export type MutationRemoveFromPullListArgs = {
   comicSeriesId: Scalars['ID'];
 };
 
 
-export type MutationUnsubscribeComicSeriesArgs = {
-  comicSeriesId: Scalars['ID'];
+export type MutationUpdateComicBookArgs = {
+  comicBookId: Scalars['ID'];
 };
 
 
 export type MutationUpdateComicBookReleaseArgs = {
   comicBookId: Scalars['ID'];
+};
+
+
+export type MutationUpdateComicSeriesBooksArgs = {
+  comicSeriesId: Scalars['ID'];
+  comicBookType: ComicBookType;
+  comicBookListPath: Maybe<Scalars['String']>;
 };
 
 
@@ -136,11 +144,17 @@ export type MutationUpdateComicSeriesPublisherArgs = {
 
 export type Publisher = {
    __typename?: 'Publisher';
+  /** ID of the Publisher. */
   _id: Scalars['String'];
+  /** Name of the Publisher. */
   name: Scalars['String'];
+  /** URL of the Icon of the Publisher. */
   iconUrl: Maybe<Scalars['String']>;
+  /** URL of the Publisher. */
   url: Maybe<Scalars['String']>;
+  /** URL of the Publisher on Comixology. */
   cxUrl: Maybe<Scalars['String']>;
+  /** List of ComicSeries published by the Publisher. */
   comicSeries: Array<ComicSeries>;
 };
 
@@ -156,20 +170,19 @@ export type PullList = {
 
 export type Query = {
    __typename?: 'Query';
-  _empty: Maybe<Scalars['String']>;
+  /** Get the ComicBook matching the provided ID. */
   comicBook: Maybe<ComicBook>;
   /** Get the ComicSeries matching the provided ID. */
   comicSeries: Maybe<ComicSeries>;
-  publisher: Maybe<Publisher>;
-  publishers: Maybe<Array<Publisher>>;
-  /** The PullList of the current user. */
+  /** The PullList of the currently loggedin user. */
   pullList: PullList;
   /**
-   * The ComicBooks released within the month matching the arguments.
+   * The ComicBooks released within the given month and year.
    * In case of a logged-in user only ComicBooks from ComicSeries of the users PullList are included.
    */
   releases: Maybe<Array<ComicBook>>;
-  search: Maybe<Array<Search>>;
+  /** Searchs for ComicSeries containing the given query. */
+  search: Maybe<Array<SearchResult>>;
 };
 
 
@@ -183,31 +196,27 @@ export type QueryComicSeriesArgs = {
 };
 
 
-export type QueryPublisherArgs = {
-  name: Scalars['String'];
-};
-
-
-export type QueryPublishersArgs = {
-  names: Maybe<Array<Scalars['String']>>;
-};
-
-
 export type QueryReleasesArgs = {
   month: Maybe<Scalars['Int']>;
   year: Maybe<Scalars['Int']>;
-  type: Maybe<ComicBookType>;
+  type?: Maybe<ComicBookType>;
 };
 
 
 export type QuerySearchArgs = {
-  q: Scalars['String'];
+  query: Scalars['String'];
 };
 
-export type Search = {
-   __typename?: 'Search';
+export type SearchResult = {
+   __typename?: 'SearchResult';
+  /** The title of the ComicSeries. */
   title: Scalars['String'];
+  /** The url from which the data for the ComicSeries is retrieved from. */
   url: Scalars['String'];
+  /**
+   * Indicating if the ComicSeries is on the PullList of the current user.
+   * Will always be false when there is no current user.
+   */
   inPullList: Scalars['Boolean'];
 };
 
@@ -289,8 +298,8 @@ export type GetSearchQueryVariables = {
 export type GetSearchQuery = (
   { __typename?: 'Query' }
   & { search: Maybe<Array<(
-    { __typename?: 'Search' }
-    & Pick<Search, 'title' | 'url' | 'inPullList'>
+    { __typename?: 'SearchResult' }
+    & Pick<SearchResult, 'title' | 'url' | 'inPullList'>
   )>> }
 );
 
@@ -317,36 +326,36 @@ export type LogoutUserMutation = (
   & Pick<Mutation, 'logout'>
 );
 
-export type SubscribeToComicSeriesMutationVariables = {
+export type AddToPullListMutationVariables = {
   comicSeriesUrl: Scalars['String'];
 };
 
 
-export type SubscribeToComicSeriesMutation = (
+export type AddToPullListMutation = (
   { __typename?: 'Mutation' }
-  & { subscribeComicSeries: (
+  & { addToPullList: Maybe<(
     { __typename?: 'PullList' }
     & Pick<PullList, '_id' | 'owner'>
     & { list: Array<(
       { __typename?: 'ComicSeries' }
       & Pick<ComicSeries, '_id' | 'url'>
     )> }
-  ) }
+  )> }
 );
 
-export type UnsubscribeFromComicSeriesMutationVariables = {
+export type RemoveFromPullListMutationVariables = {
   comicSeriesId: Scalars['ID'];
 };
 
 
-export type UnsubscribeFromComicSeriesMutation = (
+export type RemoveFromPullListMutation = (
   { __typename?: 'Mutation' }
-  & { unsubscribeComicSeries: (
+  & { removeFromPullList: Maybe<(
     { __typename?: 'PullList' }
     & Pick<PullList, '_id' | 'owner'>
     & { list: Array<(
       { __typename?: 'ComicSeries' }
       & Pick<ComicSeries, '_id' | 'url'>
     )> }
-  ) }
+  )> }
 );

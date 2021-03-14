@@ -8,7 +8,7 @@ import { request } from 'lib/request'
 
 export const query = gql`
   query getSearch($searchQuery: String!) {
-    search(q: $searchQuery) {
+    search(query: $searchQuery) {
       title
       url
       inPullList

@@ -2,12 +2,12 @@ import React, { useState } from 'react'
 
 import { useSearch } from 'hooks/useSearch'
 import { token } from 'lib/tokens'
-import { query, fetcher } from 'data/subscribeToComicSeries'
+import { query, fetcher } from 'data/addToPullList'
 import { Stack } from 'components/Stack'
 import { Button } from 'components/Button'
 import { Search as SearchIcon } from 'components/icons/Search'
 
-const subscribeToComicSeries = (url: string) => async () => {
+const addToPullList = (url: string) => async () => {
   try {
     await fetcher(query, url)
   } catch (error) {}
@@ -50,7 +50,7 @@ export const Search: React.FC = () => {
               <div key={url} className="search-item">
                 <span>{title}</span>
                 {inPullList ? null : (
-                  <Button onClick={subscribeToComicSeries(url)}>Add</Button>
+                  <Button onClick={addToPullList(url)}>Add</Button>
                 )}
               </div>
             ))}

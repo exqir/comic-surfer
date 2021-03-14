@@ -24,13 +24,13 @@ import { TopWave } from 'components/Waves'
 import {
   query as subscribeQuery,
   fetcher as subscribeFetcher,
-} from 'data/subscribeToComicSeries'
+} from 'data/addToPullList'
 import {
   query as unsubscribeQuery,
   fetcher as unsubscribeFetcher,
-} from 'data/unsubscribeFromComicSeries'
+} from 'data/removeFromPullList'
 
-const subscribeToComicSeries = (
+const addToPullList = (
   url: string,
   mutate: responseInterface<GetPullListQuery, Error>['mutate'],
 ) => async () => {
@@ -43,7 +43,7 @@ const subscribeToComicSeries = (
   } catch (error) {}
 }
 
-const unsubscribeFromComicSeries = (
+const removeFromPullList = (
   id: string,
   mutate: responseInterface<GetPullListQuery, Error>['mutate'],
 ) => async () => {
@@ -115,13 +115,11 @@ const ComicSeries: React.FC<ComicSeriesProps> = ({
             <Button isDisabled>Loading</Button>
           ) : pullList &&
             pullList.list.some(({ _id }) => _id === comicSeries._id) ? (
-            <Button
-              onClick={unsubscribeFromComicSeries(comicSeries._id, mutate)}
-            >
+            <Button onClick={removeFromPullList(comicSeries._id, mutate)}>
               Unsubscribe
             </Button>
           ) : (
-            <Button onClick={subscribeToComicSeries(comicSeries.url, mutate)}>
+            <Button onClick={addToPullList(comicSeries.url, mutate)}>
               Subscribe
             </Button>
           )}
