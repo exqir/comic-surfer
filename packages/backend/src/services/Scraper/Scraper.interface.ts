@@ -1,4 +1,5 @@
 import { TaskEither } from 'fp-ts/lib/TaskEither'
+import { Option } from 'fp-ts/lib/Option'
 
 export type ComicSeriesData = {
   title: string
@@ -8,7 +9,7 @@ export type ComicSeriesData = {
 }
 
 export type ComicBookListData = {
-  nextPage: string
+  nextPage: Option<string>
   comicBookList: {
     title: string
     url: string

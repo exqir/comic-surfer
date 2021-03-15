@@ -4,6 +4,7 @@ import sanitizeHtml from 'sanitize-html'
 import { pipe } from 'fp-ts/lib/pipeable'
 import { left, right } from 'fp-ts/lib/Either'
 import { map } from 'fp-ts/lib/TaskEither'
+import * as O from 'fp-ts/lib/Option'
 import { IScraperService } from './Scraper.interface'
 import { ILogger } from 'services/LogService'
 
@@ -60,8 +61,16 @@ export function comixology(
     getComicBookList: (path: string) => {
       const url = getUrl(path)
       url.searchParams.set('sort', 'desc')
+
       return pipe(
         scrape<ComicBookListScrapData>(url, comicBookListConfig(_convertUrl)),
+        map(({ nextPage, comicBookList }) => ({
+          nextPage: pipe(
+            nextPage,
+            O.fromPredicate((p) => p !== '' && p !== '#'),
+          ),
+          comicBookList,
+        })),
       )
     },
     getComicBook: (path: string) => {

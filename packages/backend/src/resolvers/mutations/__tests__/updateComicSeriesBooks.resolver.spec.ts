@@ -184,7 +184,7 @@ describe('[Mutation.updateComicSeriesBooks]', () => {
         data: {
           comicSeriesId: args.comicSeriesId,
           type: args.comicBookType,
-          url: defaultComicBookListData.nextPage,
+          url: (defaultComicBookListData.nextPage as O.Some<string>).value,
         },
       },
     ])
@@ -192,7 +192,7 @@ describe('[Mutation.updateComicSeriesBooks]', () => {
 
   it('should not enqueue next ComicBooks List page to be scraped when no next page was found', async () => {
     getComicBookList.mockReturnValueOnce(
-      TE.right({ ...defaultComicBookListData, nextPage: '#' }),
+      TE.right({ ...defaultComicBookListData, nextPage: O.none }),
     )
 
     await updateComicSeriesBooks(parent, args, context, info)

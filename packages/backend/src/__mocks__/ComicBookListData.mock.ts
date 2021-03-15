@@ -1,7 +1,9 @@
+import * as O from 'fp-ts/lib/Option'
+
 import type { ComicBookListData } from 'services/Scraper/Scraper.interface'
 
 export const defaultComicBookListData: ComicBookListData = {
-  nextPage: '/next',
+  nextPage: O.some('/next'),
   comicBookList: [
     {
       title: 'Comic Book',

@@ -1,5 +1,6 @@
 import { map } from 'fp-ts/lib/TaskEither'
 import { pipe } from 'fp-ts/lib/pipeable'
+import * as O from 'fp-ts/lib/Option'
 import handler from 'serve-handler'
 import http from 'http'
 import scrapeIt from 'scrape-it'
@@ -56,7 +57,7 @@ describe('[Scraper.getComicBookList]', () => {
       scraper.getComicBookList('/cx-comic-book-list.html'),
       map((res) => {
         expect(res).toMatchObject({
-          nextPage: '/next-page',
+          nextPage: O.some('/next-page'),
           comicBookList: [
             {
               title: 'Comic Book 2',

@@ -1,3 +1,4 @@
+import * as O from 'fp-ts/lib/Option'
 import { mapLeft, map, Either } from 'fp-ts/lib/Either'
 import { pipe } from 'fp-ts/lib/function'
 
@@ -129,7 +130,38 @@ describe('[ComixologyScaper.getComicBookList]', () => {
       result,
       map((r) =>
         expect(r).toMatchObject({
-          nextPage: comicBookListScrapResult.nextPage,
+          nextPage: O.some(comicBookListScrapResult.nextPage),
+          comicBookList: comicBookListScrapResult.comicBookList,
+        }),
+      ),
+    )
+  })
+
+  it('should return none as nextPage when value is not a next page', async () => {
+    const comicBookListScrapResult = {
+      nextPage: '#',
+      comicBookList: [
+        {
+          title: 'Title',
+          url: '/title-1',
+          issueNo: '1',
+          coverImgUrl: '/image.jpg',
+        },
+      ],
+    }
+    mockScraper.mockResolvedValueOnce({
+      response: { statusCode: 200 },
+      data: comicBookListScrapResult,
+    })
+
+    const result = await scraper.getComicBookList('/book-list')()
+
+    expect.assertions(1)
+    pipe(
+      result,
+      map((r) =>
+        expect(r).toMatchObject({
+          nextPage: O.none,
           comicBookList: comicBookListScrapResult.comicBookList,
         }),
       ),

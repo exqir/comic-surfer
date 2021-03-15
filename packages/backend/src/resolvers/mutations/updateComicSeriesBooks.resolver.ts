@@ -92,7 +92,7 @@ function removeExistingComicBooks(
           // When the page contains books that are already saved we don't need to
           // go further back to look for new books.
           comicBookList.comicBookList.length > list.length
-            ? ''
+            ? O.none
             : comicBookList.nextPage,
         comicBookList: list,
       })),
@@ -117,17 +117,20 @@ function addNextPageTaskToQueue(
   comicBookList: ComicBookListData,
 ) => RTE.ReaderTaskEither<Db, Error | MongoError, Task[] | null> {
   return ([comicSeriesId, comicBookType]) => ({ nextPage }) =>
-    // TODO: Already check this in scraper service and set or remove it there
-    // because only the service should need to know about this meaning there
-    // is no next page
-    nextPage === '' || nextPage === '#'
-      ? RTE.right(null)
-      : pipe(
-          nextPage,
+    pipe(
+      nextPage,
+      O.fold<
+        string,
+        RTE.ReaderTaskEither<Db, Error | MongoError, Task[] | null>
+      >(
+        () => RTE.right(null),
+        flow(
           getScrapComicBookListTask(comicSeriesId, comicBookType),
           A.of,
           enqueueTasks(repo),
-        )
+        ),
+      ),
+    )
 }
 
 function addToComicBookData([comicSeriesId, comicBookType]: [
