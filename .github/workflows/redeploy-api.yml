@@ -2,9 +2,27 @@ name: Re-deploy API
 on:
   push:
     branches: [master]
+    paths:
+      - 'packages/backend/**'
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install deps
+        run: yarn --frozen-lockfile --silent
+
+      - name: Test package
+        run: yarn workspace @comic-surfer/backend run test
+
   build:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - name: fetch updates and restart
