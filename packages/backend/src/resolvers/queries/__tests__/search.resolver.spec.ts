@@ -45,6 +45,7 @@ describe('[Query.search]', () => {
     expect(res).toMatchObject([
       {
         ...defaultComicSeriesSearchResult,
+        url: (defaultComicSeriesSearchResult.url as O.Some<string>).value,
         comicSeriesUrlsInPullList: [defaultComicSeries.url],
       },
     ])
@@ -56,6 +57,7 @@ describe('[Query.search]', () => {
     expect(res).toMatchObject([
       {
         ...defaultComicSeriesSearchResult,
+        url: (defaultComicSeriesSearchResult.url as O.Some<string>).value,
         comicSeriesUrlsInPullList: [],
       },
     ])

@@ -2,6 +2,8 @@ import type { Db, MongoError } from 'mongodb'
 import { AuthenticationError } from 'apollo-server'
 import { flow, pipe } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import * as A from 'fp-ts/lib/Array'
+import * as O from 'fp-ts/lib/Option'
 
 import type { Resolver } from 'types/app'
 import type {
@@ -15,7 +17,7 @@ import type {
 } from 'services/Scraper/Scraper.interface'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import { nullableField } from 'lib'
-import { getByIds } from 'functions/common'
+import { getByIds, getUrl } from 'functions/common'
 import { getUser } from 'functions/user'
 import { getByOwner } from 'functions/pullList'
 
@@ -74,7 +76,7 @@ function getComicSeriesUrlsFromPullList(
     pipe(
       list,
       getByIds(repo),
-      RTE.map((comicSeries) => comicSeries.map(({ url }) => url)),
+      RTE.map((comicSeries) => comicSeries.map(getUrl)),
     )
 }
 
@@ -87,10 +89,19 @@ function mergeSearchResultsWithUrls(
     pipe(
       urls,
       RTE.map((comicSeriesUrlsInPullList) =>
-        comicSeriesSearchResult.map((searchResult) => ({
-          ...searchResult,
-          comicSeriesUrlsInPullList,
-        })),
+        pipe(
+          comicSeriesSearchResult,
+          A.filter(({ url }) => O.isSome(url)),
+          A.map((searchResult) => ({
+            ...searchResult,
+            // none should have been filterd out already
+            url: pipe(
+              searchResult.url,
+              O.getOrElse(() => ''),
+            ),
+            comicSeriesUrlsInPullList,
+          })),
+        ),
       ),
     )
 }

@@ -31,7 +31,7 @@ describe('[Mutation.updateComicBookRelease]', () => {
 
   it('should return null in case of a missing releaseDate from scraped ComicBook', async () => {
     getComicBook.mockReturnValueOnce(
-      TE.right({ ...defaultComicBookData, releaseDate: null }),
+      TE.right({ ...defaultComicBookData, releaseDate: O.none }),
     )
 
     const res = await updateComicBookRelease(parent, args, context, info)

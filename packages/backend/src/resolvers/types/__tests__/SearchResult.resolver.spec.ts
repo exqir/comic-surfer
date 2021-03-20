@@ -1,4 +1,5 @@
 import type { GraphQLResolveInfo } from 'graphql'
+import * as O from 'fp-ts/lib/Option'
 
 import type { GraphQLContext } from 'types/app'
 import { defaultComicSeriesSearchResult } from '__mocks__/ComicSeriesSearchResult.mock'
@@ -8,7 +9,11 @@ import { SearchResult } from '../SearchResult.resolver'
 describe('[SearchResult.inPullList]', () => {
   it('should return false when SearchResult url is NOT in urls from PullList', async () => {
     const res = await SearchResult.inPullList(
-      { ...defaultComicSeriesSearchResult, comicSeriesUrlsInPullList: [] },
+      {
+        ...defaultComicSeriesSearchResult,
+        url: (defaultComicSeriesSearchResult.url as O.Some<string>).value,
+        comicSeriesUrlsInPullList: [],
+      },
       args,
       context,
       info,
@@ -21,7 +26,10 @@ describe('[SearchResult.inPullList]', () => {
     const res = await SearchResult.inPullList(
       {
         ...defaultComicSeriesSearchResult,
-        comicSeriesUrlsInPullList: [defaultComicSeriesSearchResult.url],
+        url: (defaultComicSeriesSearchResult.url as O.Some<string>).value,
+        comicSeriesUrlsInPullList: [
+          (defaultComicSeriesSearchResult.url as O.Some<string>).value,
+        ],
       },
       args,
       context,

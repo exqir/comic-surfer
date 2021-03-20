@@ -2,6 +2,7 @@ import type { Db, MongoError } from 'mongodb'
 import { AuthenticationError } from 'apollo-server'
 import { flow, pipe } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import * as O from 'fp-ts/lib/Option'
 
 import {
   ComicSeriesDbObject,
@@ -56,7 +57,13 @@ function getOrCreateComicSeries(
 ): (
   partialComicSeries: ComicSeriesData,
 ) => RTE.ReaderTaskEither<Db, Error | MongoError, ComicSeriesDbObject> {
-  return repo.getOrCreate
+  return (comicSeries) =>
+    repo.getOrCreate({
+      title: comicSeries.title,
+      url: comicSeries.url,
+      collectionsUrl: O.toNullable(comicSeries.collectionsUrl),
+      singleIssuesUrl: O.toNullable(comicSeries.singleIssuesUrl),
+    })
 }
 
 function addComicSeriesToPullList(
@@ -90,6 +97,7 @@ function getNewComicSeriesTasks({
       type: TaskType.SCRAPCOMICBOOKLIST,
       data: {
         comicSeriesId,
+        // TODO: Handle maybe
         url: singleIssuesUrl!,
         type: ComicBookType.SINGLEISSUE,
       },
@@ -98,6 +106,7 @@ function getNewComicSeriesTasks({
       type: TaskType.SCRAPCOMICBOOKLIST,
       data: {
         comicSeriesId,
+        // TODO: Handle maybe
         url: collectionsUrl!,
         type: ComicBookType.COLLECTION,
       },

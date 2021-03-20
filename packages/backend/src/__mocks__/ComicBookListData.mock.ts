@@ -7,8 +7,8 @@ export const defaultComicBookListData: ComicBookListData = {
   comicBookList: [
     {
       title: 'Comic Book',
-      url: '/path',
-      issueNo: '1',
+      url: O.some('/path'),
+      issueNo: O.some(1),
       coverImgUrl: '/image.jpg',
     },
   ],

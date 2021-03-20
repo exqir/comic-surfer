@@ -16,7 +16,7 @@ export type ComicBook = {
   /** Title of the ComicBook. */
   title: Scalars['String'];
   /** Issue Number of the ComicBook. */
-  issueNo: Maybe<Scalars['String']>;
+  issueNo: Maybe<Scalars['Int']>;
   /** Release Date of the ComicBook. */
   releaseDate: Maybe<Scalars['Date']>;
   /** List of Creators of the ComicBook. */
@@ -220,6 +220,23 @@ export type SearchResult = {
   inPullList: Scalars['Boolean'];
 };
 
+export type AddToPullListMutationVariables = {
+  comicSeriesUrl: Scalars['String'];
+};
+
+
+export type AddToPullListMutation = (
+  { __typename?: 'Mutation' }
+  & { addToPullList: Maybe<(
+    { __typename?: 'PullList' }
+    & Pick<PullList, '_id' | 'owner'>
+    & { list: Array<(
+      { __typename?: 'ComicSeries' }
+      & Pick<ComicSeries, '_id' | 'url'>
+    )> }
+  )> }
+);
+
 export type GetComicBookQueryVariables = {
   comicBookId: Scalars['ID'];
 };
@@ -324,23 +341,6 @@ export type LogoutUserMutationVariables = {};
 export type LogoutUserMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'logout'>
-);
-
-export type AddToPullListMutationVariables = {
-  comicSeriesUrl: Scalars['String'];
-};
-
-
-export type AddToPullListMutation = (
-  { __typename?: 'Mutation' }
-  & { addToPullList: Maybe<(
-    { __typename?: 'PullList' }
-    & Pick<PullList, '_id' | 'owner'>
-    & { list: Array<(
-      { __typename?: 'ComicSeries' }
-      & Pick<ComicSeries, '_id' | 'url'>
-    )> }
-  )> }
 );
 
 export type RemoveFromPullListMutationVariables = {

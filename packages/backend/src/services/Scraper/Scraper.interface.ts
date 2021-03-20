@@ -4,16 +4,16 @@ import { Option } from 'fp-ts/lib/Option'
 export type ComicSeriesData = {
   title: string
   url: string
-  collectionsUrl: string
-  singleIssuesUrl: string
+  collectionsUrl: Option<string>
+  singleIssuesUrl: Option<string>
 }
 
 export type ComicBookListData = {
   nextPage: Option<string>
   comicBookList: {
     title: string
-    url: string
-    issueNo: string
+    url: Option<string>
+    issueNo: Option<number>
     coverImgUrl: string
   }[]
 }
@@ -21,17 +21,17 @@ export type ComicBookListData = {
 export type ComicBookData = {
   title: string
   url: string
-  issueNo: string
+  issueNo: Option<number>
   coverImgUrl: string
   creators: { name: string }[]
-  publisher: { name: string; url: string } | null
-  releaseDate: Date | null
-  description: string | null
+  publisher: Option<{ name: string; url: string }>
+  releaseDate: Option<Date>
+  description: Option<string>
 }
 
 export type ComicSeriesSearchData = {
   title: string
-  url: string
+  url: Option<string>
 }
 
 export interface IScraperService {

@@ -48,33 +48,30 @@ describe('[EnvironmentService.getDbName]', () => {
   })
 })
 
-describe('[EnvironmentService.getSourceBaseUrl]', () => {
+describe('[EnvironmentService.getSourceOrigin]', () => {
   beforeEach(() => {
     process.env = { COMIXOLOGY_BASE_URL: undefined }
   })
 
-  it('should return none when Source Base Url is not defined', () => {
-    expect(pipe(EnvironmentService.getSourceBaseUrl(), O.isNone)).toBe(true)
+  it('should return none when Source Origin is not defined', () => {
+    expect(pipe(EnvironmentService.getSourceOrigin(), O.isNone)).toBe(true)
   })
 
-  it('should return none when Source Base Url is not a valid URL', () => {
+  it('should return none when Source Origin is not a valid URL', () => {
     process.env.COMIXOLOGY_BASE_URL = 'url'
 
-    expect(pipe(EnvironmentService.getSourceBaseUrl(), O.isNone)).toBe(true)
+    expect(pipe(EnvironmentService.getSourceOrigin(), O.isNone)).toBe(true)
   })
 
-  it('should return some with Source Base Url when defined', () => {
-    const url = 'http://url'
+  it('should return some with Source Origin when defined', () => {
+    const url = 'http://www.host.com'
 
     process.env.COMIXOLOGY_BASE_URL = url
 
-    expect.assertions(2)
+    expect.assertions(1)
     pipe(
-      EnvironmentService.getSourceBaseUrl(),
-      O.map((u) => {
-        expect(u).toBeInstanceOf(URL)
-        expect(u.href).toEqual(`${url}/`)
-      }),
+      EnvironmentService.getSourceOrigin(),
+      O.map((o) => expect(o).toEqual(url)),
     )
   })
 })

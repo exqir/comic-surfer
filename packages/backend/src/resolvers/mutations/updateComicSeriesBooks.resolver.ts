@@ -11,7 +11,6 @@ import type {
   MutationUpdateComicSeriesBooksArgs,
 } from 'types/graphql-schema'
 import type { Resolver } from 'types/app'
-import type { IWithUrl } from 'types/common'
 import type { ComicBookListData } from 'services/Scraper/Scraper.interface'
 import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
 import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
@@ -24,7 +23,7 @@ import { toObjectId } from 'datasources/MongoDataSource'
 import { TaskType } from 'models/Queue/Queue.interface'
 import { ComicBookType } from 'types/graphql-schema'
 import { nullableField } from 'lib'
-import { getById, getUrl } from 'functions/common'
+import { getById } from 'functions/common'
 import { enqueueTasks } from 'functions/queue'
 import { getComicBookList, IMaybeWithUrl } from 'functions/scraper'
 
@@ -58,7 +57,7 @@ export const updateComicSeriesBooks: Resolver<
         RTE.chainFirst(({ comicBookList }) =>
           pipe(
             comicBookList,
-            A.map(flow(getUrl, getScrapComicBookTask)),
+            A.map(flow(getOptionalUrl, getScrapComicBookTask)),
             enqueueTasks(dataSources.queue),
           ),
         ),
@@ -84,7 +83,9 @@ function removeExistingComicBooks(
   return (comicBookList) =>
     pipe(
       comicBookList.comicBookList,
-      A.map(getUrl),
+      A.map(({ url }) => url),
+      A.filter(O.isSome),
+      A.map((u) => u.value),
       repo.getByUrls,
       RTE.map(uniqueUrl(comicBookList.comicBookList)),
       RTE.map((list) => ({
@@ -99,15 +100,21 @@ function removeExistingComicBooks(
     )
 }
 
-function uniqueUrl<T extends IWithUrl, F extends IWithUrl>(
+interface IWithOptionalUrl {
+  url: O.Option<string> | string
+}
+
+function uniqueUrl<T extends IWithOptionalUrl, F extends IWithOptionalUrl>(
   a: T[],
 ): (b: F[]) => T[] {
   return (b) =>
     pipe(a, A.difference(Eq.fromEquals<T>(equalUrl))((b as unknown) as T[]))
 }
 
-const equalUrl = <T extends IWithUrl, F extends IWithUrl>(a: T, b: F) =>
-  a.url === b.url
+const equalUrl = <T extends IWithOptionalUrl, F extends IWithOptionalUrl>(
+  a: T,
+  b: F,
+) => getOptionalUrl(a) === getOptionalUrl(b)
 
 function addNextPageTaskToQueue(
   repo: IQueueRepository<Db, Error | MongoError>,
@@ -144,6 +151,14 @@ function addToComicBookData([comicSeriesId, comicBookType]: [
     ...comicBookData,
     comicSeries: toObjectId(comicSeriesId),
     type: comicBookType,
+    url: pipe(
+      comicBookData.url,
+      O.getOrElse(() => ''),
+    ),
+    issueNo: pipe(
+      comicBookData.issueNo,
+      O.getOrElse(() => 0),
+    ),
     creators: [],
     publisher: null,
     coverImgUrl: null,
@@ -209,4 +224,13 @@ function getScrapComicBookTask(url: string): NewTask {
     type: TaskType.SCRAPCOMICBOOK,
     data: { comicBookUrl: url },
   }
+}
+
+function getOptionalUrl(o: IWithOptionalUrl) {
+  return typeof o.url === 'string'
+    ? o.url
+    : pipe(
+        o.url,
+        O.getOrElse(() => ''),
+      )
 }

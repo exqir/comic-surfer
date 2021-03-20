@@ -107,11 +107,11 @@ describe('[Mutation.updateComicSeriesBooks]', () => {
         comicBookList: [
           {
             ...defaultComicBookListData.comicBookList[0],
-            url: '/comic-book1',
+            url: O.some('/comic-book1'),
           },
           {
             ...defaultComicBookListData.comicBookList[0],
-            url: '/comic-book2',
+            url: O.some('/comic-book2'),
           },
         ],
       }),
@@ -137,6 +137,9 @@ describe('[Mutation.updateComicSeriesBooks]', () => {
         comicSeries: args.comicSeriesId,
         type: args.comicBookType,
         url: '/comic-book1',
+        issueNo: (defaultComicBookListData.comicBookList[0].issueNo as O.Some<
+          number
+        >).value,
         // TODO: Remove the null values once the repo accepts partials
         creators: [],
         publisher: null,

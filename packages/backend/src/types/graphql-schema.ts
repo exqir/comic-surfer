@@ -29,7 +29,7 @@ export type ComicBook = {
   /** Title of the ComicBook. */
   title: Scalars['String'];
   /** Issue Number of the ComicBook. */
-  issueNo: Maybe<Scalars['String']>;
+  issueNo: Maybe<Scalars['Int']>;
   /** Release Date of the ComicBook. */
   releaseDate: Maybe<Scalars['Date']>;
   /** List of Creators of the ComicBook. */
@@ -237,7 +237,7 @@ import { ObjectID } from 'mongodb';
 export type ComicBookDbObject = {
   _id: ObjectID,
   title: string,
-  issueNo: Maybe<string>,
+  issueNo: Maybe<number>,
   releaseDate: Maybe<Date>,
   creators: Array<CreatorDbObject>,
   comicSeries: Maybe<ComicSeriesDbObject['_id']>,

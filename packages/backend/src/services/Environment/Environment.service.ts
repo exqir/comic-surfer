@@ -8,7 +8,7 @@ import type { IEnvironmentService } from './Environment.interface'
 export const EnvironmentService: IEnvironmentService = {
   getMongoUrl,
   getDbName,
-  getSourceBaseUrl,
+  getSourceOrigin,
   getEncryptionToken,
   getMagicApiKey,
 }
@@ -21,7 +21,7 @@ function getDbName(): O.Option<string> {
   return O.fromNullable(process.env.DB_NAME)
 }
 
-function getSourceBaseUrl(): O.Option<URL> {
+function getSourceOrigin(): O.Option<string> {
   return pipe(
     process.env.COMIXOLOGY_BASE_URL,
     O.fromNullable,
@@ -31,6 +31,7 @@ function getSourceBaseUrl(): O.Option<URL> {
         O.fromEither,
       ),
     ),
+    O.map((u) => u.origin),
   )
 }
 
