@@ -3,12 +3,12 @@ import { gql } from 'apollo-server'
 export default gql`
   type Mutation {
     """
-    Internal: Update List of ComicBooks belonging to the ComicSeres.
+    Internal: Add a new ComicBook.
     """
-    updateComicSeriesBooks(
+    addComicBook(
+      comicBookUrl: String!
       comicSeriesId: ID!
       comicBookType: ComicBookType!
-      comicBookListPath: String
-    ): [Task!]
+    ): ComicBook
   }
 `

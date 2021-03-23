@@ -17,7 +17,7 @@ import type {
   ComicBookData,
   ComicSeriesSearchData,
 } from './Scraper.interface'
-import { getUrl as extractUrl } from 'functions/common'
+import { getUrl } from 'functions/common'
 
 interface IComixologyOptions {
   scraper: scrapeIt
@@ -96,7 +96,7 @@ export function comixology({
           pipe(
             urls,
             A.findFirst((u) => u.name.toLowerCase().includes(name)),
-            O.map(extractUrl),
+            O.map(getUrl),
             O.chain((p) => O.fromEither(normalizeUrl(p))),
             O.map(getHref),
           )

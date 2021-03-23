@@ -5,7 +5,7 @@ import { ComicBookType } from 'types/graphql-schema'
 
 export const defaultScrapComicBookTask: Task = {
   _id: new ObjectID(),
-  type: TaskType.SCRAPCOMICBOOK,
+  type: TaskType.UPDATECOMICBOOK,
   data: { comicBookUrl: '/url' },
 }
 

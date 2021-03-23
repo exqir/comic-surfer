@@ -1,26 +1,24 @@
 import type { Db, MongoError, ObjectID } from 'mongodb'
-import { constant, flow, pipe } from 'fp-ts/lib/function'
+import { flow, pipe, identity } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
 import * as A from 'fp-ts/lib/Array'
 import * as O from 'fp-ts/lib/Option'
 import * as Eq from 'fp-ts/lib/Eq'
 
 import type {
-  ComicBookDbObject,
   ComicSeriesDbObject,
+  TaskDbInterface,
   MutationUpdateComicSeriesBooksArgs,
 } from 'types/graphql-schema'
 import type { Resolver } from 'types/app'
 import type { ComicBookListData } from 'services/Scraper/Scraper.interface'
 import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
-import type { IComicSeriesRepository } from 'models/ComicSeries/ComicSeries.interface'
 import type {
   IQueueRepository,
   NewTask,
   Task,
 } from 'models/Queue/Queue.interface'
-import { toObjectId } from 'datasources/MongoDataSource'
-import { TaskType } from 'models/Queue/Queue.interface'
+import { TaskType } from 'types/graphql-schema'
 import { ComicBookType } from 'types/graphql-schema'
 import { nullableField } from 'lib'
 import { getById } from 'functions/common'
@@ -28,7 +26,9 @@ import { enqueueTasks } from 'functions/queue'
 import { getComicBookList, IMaybeWithUrl } from 'functions/scraper'
 
 export const updateComicSeriesBooks: Resolver<
-  ComicBookDbObject[],
+  // TODO: Use AddComicBookTaskDbObject type instead generic one
+  // Right now the return value of enqueueTasks is the gerneric Task object
+  TaskDbInterface[],
   MutationUpdateComicSeriesBooksArgs
 > = (
   _,
@@ -54,22 +54,17 @@ export const updateComicSeriesBooks: Resolver<
             addNextPageTaskToQueue(dataSources.queue),
           ),
         ),
-        RTE.chainFirst(({ comicBookList }) =>
+        RTE.chain(({ comicBookList }) =>
           pipe(
             comicBookList,
-            A.map(flow(getOptionalUrl, getScrapComicBookTask)),
+            A.map(
+              flow(
+                getOptionalUrl,
+                getScrapComicBookTask([comicSeriesId, comicBookType]),
+              ),
+            ),
             enqueueTasks(dataSources.queue),
           ),
-        ),
-        RTE.map(({ comicBookList }) =>
-          pipe(
-            comicBookList,
-            A.map(addToComicBookData([comicSeriesId, comicBookType])),
-          ),
-        ),
-        RTE.chain(insertComicBooks(dataSources.comicBook)),
-        RTE.chainFirst(
-          pipe(comicSeriesId, addComicBooksToSeries(dataSources.comicSeries)),
         ),
       ),
     ),
@@ -84,8 +79,7 @@ function removeExistingComicBooks(
     pipe(
       comicBookList.comicBookList,
       A.map(({ url }) => url),
-      A.filter(O.isSome),
-      A.map((u) => u.value),
+      A.filterMap(identity),
       repo.getByUrls,
       RTE.map(uniqueUrl(comicBookList.comicBookList)),
       RTE.map((list) => ({
@@ -140,66 +134,6 @@ function addNextPageTaskToQueue(
     )
 }
 
-function addToComicBookData([comicSeriesId, comicBookType]: [
-  ObjectID,
-  ComicBookType,
-]): (
-  comicBookData: ComicBookListData['comicBookList'][0],
-) => Omit<ComicBookDbObject, '_id' | 'lastModified'> {
-  // TODO: Remove the null values once the repo accepts partials
-  return (comicBookData) => ({
-    ...comicBookData,
-    comicSeries: toObjectId(comicSeriesId),
-    type: comicBookType,
-    url: pipe(
-      comicBookData.url,
-      O.getOrElse(() => ''),
-    ),
-    issueNo: pipe(
-      comicBookData.issueNo,
-      O.getOrElse(() => 0),
-    ),
-    creators: [],
-    publisher: null,
-    coverImgUrl: null,
-    releaseDate: null,
-    description: null,
-  })
-}
-
-function insertComicBooks(
-  repo: IComicBookRepository<Db, Error | MongoError>,
-): (
-  comicBooks: Omit<ComicBookDbObject, '_id' | 'lastModified'>[],
-) => RTE.ReaderTaskEither<Db, Error | MongoError, ComicBookDbObject[]> {
-  // TODO: Allow to add partial ComicBooks, as given by the scrapping + series and type.
-  // This should be allowed from the repo, and the undefined values should be set there.
-  return repo.addComicBooks
-}
-
-function addComicBooksToSeries(
-  repo: IComicSeriesRepository<Db, Error | MongoError>,
-): (
-  comicSeriesId: ObjectID,
-) => (
-  comicBooks: ComicBookDbObject[],
-) => RTE.ReaderTaskEither<Db, Error | MongoError, ComicSeriesDbObject> {
-  return (comicSeriesId) => (comicBooks) =>
-    repo.addComicBooks(
-      comicSeriesId,
-      pipe(
-        comicBooks,
-        A.map(({ _id }) => _id),
-      ),
-      pipe(
-        comicBooks,
-        A.head,
-        O.map(({ type }) => type as ComicBookType),
-        O.getOrElse(constant<ComicBookType>(ComicBookType.SINGLEISSUE)),
-      ),
-    )
-}
-
 function getUrlByType(
   comicBookType: ComicBookType,
 ): (comicSeries: ComicSeriesDbObject) => IMaybeWithUrl {
@@ -219,11 +153,14 @@ function getScrapComicBookListTask(
   })
 }
 
-function getScrapComicBookTask(url: string): NewTask {
-  return {
-    type: TaskType.SCRAPCOMICBOOK,
-    data: { comicBookUrl: url },
-  }
+function getScrapComicBookTask([comicSeries, type]: [
+  ObjectID,
+  ComicBookType,
+]): (url: string) => NewTask {
+  return (url) => ({
+    type: TaskType.ADDCOMICBOOK,
+    data: { url, comicSeriesId: comicSeries, type },
+  })
 }
 
 function getOptionalUrl(o: IWithOptionalUrl) {

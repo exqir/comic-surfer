@@ -394,6 +394,50 @@ describe('[ComicBookRepository.getByReleaseBetweenAndLastUpdatedBefore]', () => 
   })
 })
 
+describe('[ComicBookRepository.addComicBook]', () => {
+  it('should return RTE.left in case of Error', async () => {
+    const { _id, lastModified, ...mockComicBook } = defaultComicBook
+    const { insertOne } = dataLayer
+    ;(insertOne as jest.Mock).mockReturnValueOnce(
+      RTE.left(new MongoError('Failed to find ComicBook')),
+    )
+
+    const res = repo.addComicBook(mockComicBook)
+    await pipe(
+      res,
+      RTE.mapLeft((err) => expect(err).toBeInstanceOf(MongoError)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(insertOne).toBeCalledWith(
+      collection,
+      { ...mockComicBook, lastModified: expect.any(Date) },
+      undefined,
+    )
+    expect(logger.error).toBeCalledWith('Failed to find ComicBook')
+    expect.assertions(3)
+  })
+
+  it('should add ComicBook using dataLayer and return right with result', async () => {
+    const { _id, lastModified, ...mockComicBookWithoutId } = defaultComicBook
+    const mockComicBook = { ...mockComicBookWithoutId, _id, lastModified }
+    const { insertOne } = dataLayer
+    ;(insertOne as jest.Mock).mockReturnValueOnce(RTE.right(mockComicBook))
+
+    const res = repo.addComicBook(mockComicBookWithoutId)
+    await pipe(
+      res,
+      RTE.map((d) => expect(d).toMatchObject(mockComicBook)),
+      (rte) => RTE.run(rte, {} as Db),
+    )
+    expect(insertOne).toBeCalledWith(
+      collection,
+      { ...mockComicBookWithoutId, lastModified: expect.any(Date) },
+      undefined,
+    )
+    expect.assertions(2)
+  })
+})
+
 describe('[ComicBookRepository.addComicBooks]', () => {
   it('should return RTE.left in case of Error', async () => {
     const { _id, lastModified, ...mockComicBook } = defaultComicBook
