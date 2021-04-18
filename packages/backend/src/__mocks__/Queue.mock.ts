@@ -3,7 +3,7 @@ import { ObjectID } from 'mongodb'
 import { Task, TaskType } from 'models/Queue/Queue.interface'
 import { ComicBookType } from 'types/graphql-schema'
 
-export const defaultScrapComicBookTask: Task = {
+export const defaultUpdateComicBookTask: Task = {
   _id: new ObjectID(),
   type: TaskType.UPDATECOMICBOOK,
   data: { comicBookUrl: '/url' },
@@ -35,8 +35,18 @@ export const defaultUpdatePublisherTask: Task = {
   data: { comicSeriesId: new ObjectID() },
 }
 
-export const defaultUpdateComicBookTask: Task = {
+export const defaultUpdateComicBookReleaseTask: Task = {
   _id: new ObjectID(),
   type: TaskType.UPDATECOMICBOOKRELEASE,
   data: { comicBookId: new ObjectID() },
+}
+
+export const defaultAddComicBookTask: Task = {
+  _id: new ObjectID(),
+  type: TaskType.ADDCOMICBOOK,
+  data: {
+    comicSeriesId: new ObjectID(),
+    type: ComicBookType.SINGLEISSUE,
+    url: '/url',
+  },
 }

@@ -297,22 +297,6 @@ export enum TaskType {
   UPDATECOMICSERIESPUBLISHER = 'UPDATECOMICSERIESPUBLISHER'
 }
 
-export type UpdateComicBookPublisherTask = Task & {
-   __typename?: 'UpdateComicBookPublisherTask';
-  /** ID of the Task. */
-  _id: Scalars['ID'];
-  /** Type of the Task. */
-  type: TaskType;
-  /** The data for the scrap ComicBook List Task. */
-  data: Maybe<UpdateComicBookPublisherTaskData>;
-};
-
-export type UpdateComicBookPublisherTaskData = {
-   __typename?: 'UpdateComicBookPublisherTaskData';
-  /** Id of the ComicSeries to update the publisher for. */
-  comicSeriesId: Maybe<Scalars['ID']>;
-};
-
 export type UpdateComicBookReleaseTask = Task & {
    __typename?: 'UpdateComicBookReleaseTask';
   /** ID of the Task. */
@@ -341,6 +325,22 @@ export type UpdateComicBookTask = Task & {
 
 export type UpdateComicBookTaskData = {
    __typename?: 'UpdateComicBookTaskData';
+  /** Id of the ComicSeries to update the publisher for. */
+  comicSeriesId: Maybe<Scalars['ID']>;
+};
+
+export type UpdateComicSeriesPublisherTask = Task & {
+   __typename?: 'UpdateComicSeriesPublisherTask';
+  /** ID of the Task. */
+  _id: Scalars['ID'];
+  /** Type of the Task. */
+  type: TaskType;
+  /** The data for the scrap ComicBook List Task. */
+  data: Maybe<UpdateComicSeriesPublisherTaskData>;
+};
+
+export type UpdateComicSeriesPublisherTaskData = {
+   __typename?: 'UpdateComicSeriesPublisherTaskData';
   /** Id of the ComicSeries to update the publisher for. */
   comicSeriesId: Maybe<Scalars['ID']>;
 };
@@ -425,11 +425,11 @@ export type UpdateComicBookReleaseTaskDataDbObject = {
   comicBookId: Maybe<ObjectID>,
 };
 
-export type UpdateComicBookPublisherTaskDbObject = TaskDbInterface & {
-  data: Maybe<UpdateComicBookPublisherTaskDataDbObject>,
+export type UpdateComicSeriesPublisherTaskDbObject = TaskDbInterface & {
+  data: Maybe<UpdateComicSeriesPublisherTaskDataDbObject>,
 };
 
-export type UpdateComicBookPublisherTaskDataDbObject = {
+export type UpdateComicSeriesPublisherTaskDataDbObject = {
   comicSeriesId: Maybe<ObjectID>,
 };
 

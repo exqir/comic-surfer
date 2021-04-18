@@ -17,7 +17,6 @@ import { defaultComicBookListData } from '__mocks__/ComicBookListData.mock'
 import { defaultScrapSingleIssuesTask } from '__mocks__/Queue.mock'
 
 import { updateComicSeriesBooks } from '../updateComicSeriesBooks.resolver'
-import { enqueueTasks } from 'functions/queue'
 
 describe('[Mutation.updateComicSeriesBooks]', () => {
   it('should return null in case of an Error while getting ComicSeries', async () => {

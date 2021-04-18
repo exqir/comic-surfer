@@ -11,7 +11,7 @@ import { defaultPullList } from '__mocks__/PullList.mock'
 import { PullList } from '../PullList.resolver'
 
 describe('[Publisher.list]', () => {
-  it('should PullList Error in case of an Error', async () => {
+  it('should throw Error in case of an Error while getting ComicSeries', async () => {
     getByIds.mockReturnValueOnce(RTE.left(new Error()))
 
     const execute = () => PullList.list(parent, args, context, info)

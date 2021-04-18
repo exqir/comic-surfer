@@ -10,6 +10,7 @@ import { GraphQLContext } from 'types/app'
 import { comixology } from 'services/Scraper/ComixologyScaper'
 import { createLogger } from 'services/LogService'
 import { Authentication } from 'services/Authentication'
+import { EnvironmentService } from 'services/Environment/Environment.service'
 import { createConnectToDb } from 'lib/connectToDb'
 
 const baseUrl = process.env.COMIXOLOGY_BASE_URL || 'https://m.comixology.eu'
@@ -31,7 +32,11 @@ const apolloServer = new ApolloServer({
     db: await connectToDb(),
     dataLayer: mongad,
     services: {
-      scrape: comixology(scrapeIt, logger, baseUrl),
+      scrape: comixology({
+        scraper: scrapeIt,
+        logger,
+        env: EnvironmentService,
+      }),
       logger,
       authentication: Authentication,
     },

@@ -102,7 +102,7 @@ export default gql`
     comicBookId: ID @column
   }
 
-  type UpdateComicBookPublisherTask implements Task @entity {
+  type UpdateComicSeriesPublisherTask implements Task @entity {
     """
     ID of the Task.
     """
@@ -114,10 +114,10 @@ export default gql`
     """
     The data for the scrap ComicBook List Task.
     """
-    data: UpdateComicBookPublisherTaskData @embedded
+    data: UpdateComicSeriesPublisherTaskData @embedded
   }
 
-  type UpdateComicBookPublisherTaskData @entity(embedded: true) {
+  type UpdateComicSeriesPublisherTaskData @entity(embedded: true) {
     """
     Id of the ComicSeries to update the publisher for.
     """
