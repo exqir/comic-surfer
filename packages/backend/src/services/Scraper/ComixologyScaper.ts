@@ -1,110 +1,280 @@
+import scrapeIt, { ScrapeOptions, ScrapeResult } from 'scrape-it'
 import { URL } from 'url'
-import { ScrapeOptions, ScrapeResult } from 'scrape-it'
 import sanitizeHtml from 'sanitize-html'
-import { pipe } from 'fp-ts/lib/pipeable'
-import { left, right } from 'fp-ts/lib/Either'
-import { map } from 'fp-ts/lib/TaskEither'
-import { IScraperService } from './Scraper.interface'
-import { ILogger } from 'services/LogService'
+import { constant, pipe, unsafeCoerce } from 'fp-ts/lib/function'
+import * as TE from 'fp-ts/lib/TaskEither'
+import * as E from 'fp-ts/lib/Either'
+import * as O from 'fp-ts/lib/Option'
+import * as A from 'fp-ts/lib/Array'
+import * as Eq from 'fp-ts/lib/Eq'
 
-export function comixology(
-  scraper: scrapeIt,
-  logger: ILogger,
-  baseUrl: string,
-): IScraperService {
-  const _convertUrl = convertUrl(baseUrl, logger)
+import type { ILogger } from 'services/LogService'
+import type { IEnvironmentService } from 'services/Environment/Environment.interface'
+import type {
+  IScraperService,
+  ComicSeriesData,
+  ComicBookListData,
+  ComicBookData,
+  ComicSeriesSearchData,
+} from './Scraper.interface'
+import { getUrl } from 'functions/common'
 
-  function getUrl(path: string) {
-    return new URL(path, baseUrl)
+interface IComixologyOptions {
+  scraper: scrapeIt
+  logger: ILogger
+  env: IEnvironmentService
+}
+
+function getHref(url: URL): string {
+  return url.href
+}
+
+function removeSearchParams(url: URL): URL {
+  // This should not be able to fail, since it takes only a valid URL
+  const u = new URL(url.toString())
+  u.search = ''
+  return u
+}
+
+function setSearchParams(name: string, value: string): (url: URL) => URL {
+  return (url) => {
+    // This should not be able to fail, since it takes only a valid URL
+    const u = new URL(url.toString())
+    u.searchParams.set(name, value)
+    return u
   }
+}
 
-  function scrape<T>(url: URL, config: ScrapeOptions) {
-    return async () => {
-      try {
-        const { data, response } = await scraper<T>(url.href, config)
-        if (response.statusCode !== 200) {
-          throw new Error(
-            `Failed to scrap ${url.href}: Responded with ${response.statusCode}`,
-          )
-        }
-        return right<Error, T>(data)
-      } catch (e) {
-        logger.error(e)()
-        return left<Error, T>(e)
-      }
-    }
+function prependOrigin(path: string): (origin: string) => E.Either<Error, URL> {
+  return (origin) =>
+    E.tryCatch(
+      () => new URL(path, origin),
+      (reason) => unsafeCoerce<unknown, Error>(reason),
+    )
+}
+
+export function comixology({
+  scraper,
+  logger,
+  env,
+}: IComixologyOptions): IScraperService {
+  function scrape<T>(
+    config: ScrapeOptions,
+  ): (url: URL) => TE.TaskEither<Error, T> {
+    return (url) =>
+      TE.tryCatch(
+        async () => {
+          const { data, response } = await scraper<T>(url.href, config)
+          if (response.statusCode !== 200) {
+            throw new Error(
+              `Failed to scrap ${url.href}: ${response.statusCode}`,
+            )
+          }
+          return data
+        },
+        (reason) => unsafeCoerce<unknown, Error>(reason),
+      )
   }
 
   return {
-    getComicSeries: (path: string) => {
-      const url = getUrl(path)
+    getComicSeries: (path: string): TE.TaskEither<Error, ComicSeriesData> => {
+      function normalizeUrl(path: string): E.Either<Error, URL> {
+        return pipe(
+          env.getSourceOrigin(),
+          E.fromOption(
+            constant(new Error('Origin for ScraperService is not defined.')),
+          ),
+          E.chain(prependOrigin(path)),
+          E.map(removeSearchParams),
+        )
+      }
+
+      function getUrlByName(
+        name: string,
+      ): (urls: ComicSeriesScrapData['urls']) => O.Option<string> {
+        return (urls) =>
+          pipe(
+            urls,
+            A.findFirst((u) => u.name.toLowerCase().includes(name)),
+            O.map(getUrl),
+            O.chain((p) => O.fromEither(normalizeUrl(p))),
+            O.map(getHref),
+          )
+      }
+
+      const url = normalizeUrl(path)
 
       return pipe(
-        scrape<ComicSeriesScrapData>(url, comicSeriesConfig(_convertUrl)),
-        map(({ title, urls }) => ({
+        url,
+        TE.fromEither,
+        TE.chain(scrape<ComicSeriesScrapData>(comicSeriesConfig)),
+        TE.map(({ title, urls }) => ({
           title,
-          url: url.href,
-          collectionsUrl: urls.reduce(
-            (_, { name, url }) =>
-              name.toLowerCase().includes('collected') ? url : _,
-            '',
+          // TODO: Avoid type cast.
+          // Should be save as in case of Left map will not be called.
+          url: (url as E.Right<URL>).right.href,
+          collectionsUrl: pipe(urls, getUrlByName('collected')),
+          singleIssuesUrl: pipe(urls, getUrlByName('issues')),
+        })),
+      )
+    },
+
+    getComicBookList: (
+      path: string,
+    ): TE.TaskEither<Error, ComicBookListData> => {
+      function normalizeUrl(path: string): E.Either<Error, URL> {
+        return pipe(
+          env.getSourceOrigin(),
+          E.fromOption(
+            constant(new Error('Origin for ScraperService is not defined.')),
           ),
-          singleIssuesUrl: urls.reduce(
-            (_, { name, url }) =>
-              name.toLowerCase().includes('issues') ? url : _,
-            '',
+          // Keep searchParams to keep pagination values
+          E.chain(prependOrigin(path)),
+        )
+      }
+
+      const url = normalizeUrl(path)
+
+      return pipe(
+        url,
+        E.map(setSearchParams('sort', 'desc')),
+        TE.fromEither,
+        TE.chain(scrape<ComicBookListScrapData>(comicBookListConfig)),
+        TE.map(({ nextPage, comicBookList }) => ({
+          nextPage: pipe(
+            nextPage,
+            O.fromPredicate((p) => p !== '' && p !== '#'),
+          ),
+          comicBookList: pipe(
+            comicBookList,
+            A.map((comicBook) => ({
+              coverImgUrl: comicBook.coverImgUrl,
+              // TODO: Is removing the year from title necessary Batman (2011) -> Batman
+              // or was this done for another reason?
+              title: comicBook.title.replace(/\([\w-]*\)$/, '').trim(),
+              // TODO: The searchParams could be removed here
+              url: pipe(
+                normalizeUrl(comicBook.url),
+                E.map(getHref),
+                O.fromEither,
+              ),
+              issueNo: pipe(
+                comicBook.issueNo,
+                (str: string): RegExpMatchArray => str.match(/[0-9]+/) ?? [],
+                A.head,
+                O.map(Number),
+              ),
+            })),
           ),
         })),
       )
     },
-    getComicBookList: (path: string) => {
-      const url = getUrl(path)
-      url.searchParams.set('sort', 'desc')
-      return pipe(
-        scrape<ComicBookListScrapData>(url, comicBookListConfig(_convertUrl)),
-      )
-    },
-    getComicBook: (path: string) => {
-      const url = getUrl(path)
+    getComicBook: (path: string): TE.TaskEither<Error, ComicBookData> => {
+      function normalizeUrl(path: string): E.Either<Error, URL> {
+        return pipe(
+          env.getSourceOrigin(),
+          E.fromOption(
+            constant(new Error('Origin for ScraperService is not defined.')),
+          ),
+          E.chain(prependOrigin(path)),
+          E.map(removeSearchParams),
+        )
+      }
+
+      const url = normalizeUrl(path)
 
       return pipe(
-        scrape<ComicBookScrapData>(url, comicBookConfig(_convertUrl)),
-        map(({ meta, creators, ...rest }) => ({
-          ...rest,
-          url: url.href,
-          releaseDate:
-            meta.find(({ type }) => type.includes('Release Date'))?.date ??
-            null,
-          creators: [
-            ...new Set<string>(
-              creators
-                .filter(
-                  ({ type }) =>
-                    type.includes('Written by') ||
-                    type.includes('Art by') ||
-                    type.includes('Cover by') ||
-                    type.includes('Pencils') ||
-                    type.includes('Inks') ||
-                    type.includes('Colored by'),
-                )
-                .map(({ name }) => name),
+        url,
+        TE.fromEither,
+        TE.chain(scrape<ComicBookScrapData>(comicBookConfig)),
+        TE.map(
+          ({ title, meta, creators, issueNo, coverImgUrl, description }) => ({
+            coverImgUrl,
+            // TODO: Is removing the year from title necessary Batman (2011) -> Batman
+            // or was this done for another reason?
+            title: title.replace(/\([\w-]*\)$/, '').trim(),
+            // TODO: Avoid type cast.
+            // Should be save as in case of Left map will not be called.
+            url: (url as E.Right<URL>).right.href,
+            releaseDate: pipe(
+              meta,
+              A.findFirst(({ type }) =>
+                type.toLowerCase().includes('release date'),
+              ),
+              // TODO: This could fail if date is not a valid date string
+              O.map(({ date }) => new Date(date)),
             ),
-          ].map((name) => ({ name })),
-          publisher:
-            // TODO remove type
-            creators.find(({ type }) => type.includes('Publish')) ?? null,
-        })),
+            creators: pipe(
+              creators,
+              A.filter(
+                ({ type }) =>
+                  type.includes('Written by') ||
+                  type.includes('Art by') ||
+                  type.includes('Cover by') ||
+                  type.includes('Pencils') ||
+                  type.includes('Inks') ||
+                  type.includes('Colored by'),
+              ),
+              A.uniq(Eq.getStructEq({ name: Eq.eqString })),
+              A.map(({ name }) => ({ name })),
+            ),
+            publisher: pipe(
+              creators,
+              A.findFirst(({ type }) => type.toLowerCase().includes('publish')),
+              O.map(({ name, url }) => ({
+                name,
+                url: pipe(
+                  normalizeUrl(url),
+                  E.map(getHref),
+                  // TODO: Handle error case
+                  E.getOrElse(() => ''),
+                ),
+              })),
+            ),
+            issueNo: pipe(
+              issueNo,
+              (str: string): RegExpMatchArray => str.match(/[0-9]+/) ?? [],
+              A.head,
+              O.map(Number),
+            ),
+            description: O.tryCatch(() =>
+              sanitizeHtml(description, {
+                // Only allow basic text tags and br for general text styling
+                allowedTags: ['br', 'b', 'i', 'em', 'strong'],
+                selfClosing: ['br'],
+              }),
+            ),
+          }),
+        ),
       )
     },
-    getComicSeriesSearch: (query: string) => {
-      const url = getUrl(`/search/series?search=${query}`)
+    getComicSeriesSearch: (
+      query: string,
+    ): TE.TaskEither<Error, ComicSeriesSearchData[]> => {
+      function normalizeUrl(path: string): E.Either<Error, URL> {
+        return pipe(
+          env.getSourceOrigin(),
+          E.fromOption(
+            constant(new Error('Origin for ScraperService is not defined.')),
+          ),
+          E.chain(prependOrigin(path)),
+        )
+      }
+
+      const url = normalizeUrl('/search/series')
 
       return pipe(
-        scrape<ComicSeriesSearchScrapData>(
-          url,
-          comicSeriesSearchConfig(_convertUrl),
+        url,
+        E.map(setSearchParams('search', query)),
+        TE.fromEither,
+        TE.chain(scrape<ComicSeriesSearchScrapData>(comicSeriesSearchConfig)),
+        TE.map(({ searchResults }) => searchResults),
+        TE.map(
+          A.map(({ title, url }) => ({
+            title,
+            url: pipe(url, normalizeUrl, E.map(getHref), O.fromEither),
+          })),
         ),
-        map(({ searchResults }) => searchResults),
       )
     },
   }
@@ -123,22 +293,7 @@ interface ComicSeriesScrapData {
   }[]
 }
 
-const convertUrl = (baseUrl: string, logger: ILogger): convertFn => (
-  href: string,
-) => {
-  try {
-    const url = new URL(href, baseUrl)
-    url.search = ''
-    return url.href
-  } catch (e) {
-    logger.error(e)()
-    return ''
-  }
-}
-
-type convertFn = (href: string) => string
-
-const comicSeriesConfig = (convertFn: convertFn) => ({
+const comicSeriesConfig = {
   title: '.item-title',
   urls: {
     listItem: '.header-row-title-link',
@@ -146,16 +301,14 @@ const comicSeriesConfig = (convertFn: convertFn) => ({
       name: '.list-title-header',
       url: {
         attr: 'href',
-        convert: convertFn,
       },
     },
   },
-})
-
+}
 interface ComicBookListScrapData {
   // TODO: nextPage will be an empty string if not available on the page
   // Comixology has `#` as href if their is pagination but no next page
-  nextPage: string
+  nextPage: '' | '#' | string
   comicBookList: {
     title: string
     url: string
@@ -164,7 +317,7 @@ interface ComicBookListScrapData {
   }[]
 }
 
-const comicBookListConfig = (convertFn: convertFn) => ({
+const comicBookListConfig = {
   nextPage: {
     selector: '.pagination-page.next .pagination-link',
     attr: 'href',
@@ -181,7 +334,6 @@ const comicBookListConfig = (convertFn: convertFn) => ({
       url: {
         selector: '.content-details',
         attr: 'href',
-        convert: convertFn,
       },
       issueNo: {
         selector: '.content-subtitle',
@@ -193,14 +345,14 @@ const comicBookListConfig = (convertFn: convertFn) => ({
       },
     },
   },
-})
+}
 
 interface ComicBookScrapData {
   title: string
   issueNo: string
   meta: {
     type: string
-    date: Date
+    date: string
   }[]
   creators: {
     type: string
@@ -211,14 +363,12 @@ interface ComicBookScrapData {
   description: string
 }
 
-const comicBookConfig = (convertFn: convertFn) => ({
+const comicBookConfig = {
   title: {
     selector: '.item-title',
-    convert: (title: string) => title.replace(/\([\w-]*\)$/, '').trim(),
   },
   issueNo: {
     selector: '.item-subtitle',
-    convert: (issue: string) => (issue.match(/[0-9]+/) || [''])[0],
   },
   meta: {
     listItem: '.secondary-credits',
@@ -226,7 +376,6 @@ const comicBookConfig = (convertFn: convertFn) => ({
       type: '.tag-label',
       date: {
         selector: '.credit-value',
-        convert: (date: string) => new Date(date),
       },
     },
   },
@@ -238,7 +387,6 @@ const comicBookConfig = (convertFn: convertFn) => ({
       url: {
         selector: '.tag-element',
         attr: 'href',
-        convert: convertFn,
       },
     },
   },
@@ -249,14 +397,8 @@ const comicBookConfig = (convertFn: convertFn) => ({
   description: {
     selector: '.item-description',
     how: 'html',
-    convert: (html: string) =>
-      sanitizeHtml(html, {
-        // Only allow basic text tags and br for general text styling
-        allowedTags: ['br', 'b', 'i', 'em', 'strong'],
-        selfClosing: ['br'],
-      }),
   },
-})
+}
 
 interface ComicSeriesSearchScrapData {
   searchResults: {
@@ -265,15 +407,14 @@ interface ComicSeriesSearchScrapData {
   }[]
 }
 
-const comicSeriesSearchConfig = (convertFn: convertFn) => ({
+const comicSeriesSearchConfig = {
   searchResults: {
     listItem: '.item-series-link',
     data: {
       title: '.small-title',
       url: {
         attr: 'href',
-        convert: convertFn,
       },
     },
   },
-})
+}

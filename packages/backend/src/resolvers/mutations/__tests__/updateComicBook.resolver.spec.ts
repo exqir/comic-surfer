@@ -63,7 +63,7 @@ describe('[Mutation.updateComicBook]', () => {
     await updateComicBook(parent, args, context, info)
 
     expect(getPublisherByUrl).toHaveBeenCalledWith(
-      defaultComicBookData.publisher?.url,
+      (defaultComicBookData.publisher as O.Some<{ url: string }>).value.url,
     )
   })
 
@@ -72,6 +72,8 @@ describe('[Mutation.updateComicBook]', () => {
 
     expect(updateComicBookDetails).toHaveBeenCalledWith(defaultComicBook._id, {
       ...defaultComicBookData,
+      description: (defaultComicBookData.description as O.Some<string>).value,
+      releaseDate: (defaultComicBookData.releaseDate as O.Some<Date>).value,
       publisher: defaultPublisher._id,
     })
   })

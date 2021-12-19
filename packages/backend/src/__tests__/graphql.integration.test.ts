@@ -25,7 +25,7 @@ describe('Queries', () => {
       title: 'Comic',
       url: '/path',
       releaseDate: null,
-      issueNo: '#12',
+      issueNo: 12,
       coverImgUrl: '/',
       creators: [],
       comicSeries: null,

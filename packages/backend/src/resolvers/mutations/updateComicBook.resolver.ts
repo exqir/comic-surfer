@@ -1,6 +1,7 @@
 import type { Db, MongoError, ObjectID } from 'mongodb'
 import { flow, pipe } from 'fp-ts/lib/function'
 import * as RTE from 'fp-ts/lib/ReaderTaskEither'
+import * as O from 'fp-ts/lib/Option'
 
 import type {
   ComicBookDbObject,
@@ -67,6 +68,8 @@ function replacePublisherWithId(
       getPublisherByUrl,
       RTE.map((publisher) => ({
         ...comicBook,
+        releaseDate: O.toNullable(comicBook.releaseDate),
+        description: O.toNullable(comicBook.description),
         publisher: publisher._id,
       })),
     )

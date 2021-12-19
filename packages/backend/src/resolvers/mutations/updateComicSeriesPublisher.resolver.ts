@@ -65,6 +65,19 @@ function getFirstComicBookFromList(
             'COMIC_SERIES_EMPTY_COMIC_BOOK_LIST',
           ),
       ),
+      TE.chain((cb) =>
+        pipe(
+          cb.url,
+          TE.fromOption(
+            () =>
+              new ApolloError(
+                'ComicBook is missing an URL.',
+                'COMIC_BOOK_MISSING_URL',
+              ),
+          ),
+          TE.map((url) => ({ ...cb, url })),
+        ),
+      ),
       TE.chain(getComicBookByUrl(scraper)),
       RTE.fromTaskEither,
     )

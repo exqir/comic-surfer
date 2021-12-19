@@ -71,6 +71,7 @@ export class MongoDataSource<T extends { _id: ObjectID }> extends DataSource<
   }
 
   protected error<A extends Error>(err: A): A {
+    // TODO: Add collection to logger as context
     this.logger.error(err.message)()
 
     return err

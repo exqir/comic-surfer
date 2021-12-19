@@ -51,22 +51,6 @@ describe('[Mutation.updateComicSeriesBooks]', () => {
     expect(res).toBeNull()
   })
 
-  it('should return null in case of an Error during saving new ComicBooks', async () => {
-    insertComicBooks.mockReturnValueOnce(RTE.left(new Error()))
-
-    const res = await updateComicSeriesBooks(parent, args, context, info)
-
-    expect(res).toBeNull()
-  })
-
-  it('should return null in case of an Error during adding ComicBooks to ComicSeries', async () => {
-    addComicBooksToSeries.mockReturnValueOnce(RTE.left(new Error()))
-
-    const res = await updateComicSeriesBooks(parent, args, context, info)
-
-    expect(res).toBeNull()
-  })
-
   it('should scrap ComicBook List from ComicSeries singleIssuesUrl when type is SINGLEISSUE and path was not defined', async () => {
     await updateComicSeriesBooks(parent, args, context, info)
 
@@ -100,18 +84,18 @@ describe('[Mutation.updateComicSeriesBooks]', () => {
     expect(getComicBookList).toHaveBeenCalledWith(path)
   })
 
-  it('should only insert new ComicBooks based on the exisitence of their url', async () => {
+  it('should only enqueue new ComicBooks based on the exisitence of their url', async () => {
     getComicBookList.mockReturnValueOnce(
       TE.right({
         ...defaultComicBookListData,
         comicBookList: [
           {
             ...defaultComicBookListData.comicBookList[0],
-            url: '/comic-book1',
+            url: O.some('/comic-book1'),
           },
           {
             ...defaultComicBookListData.comicBookList[0],
-            url: '/comic-book2',
+            url: O.some('/comic-book2'),
           },
         ],
       }),
@@ -131,23 +115,19 @@ describe('[Mutation.updateComicSeriesBooks]', () => {
 
     await updateComicSeriesBooks(parent, args, context, info)
 
-    expect(insertComicBooks).toHaveBeenCalledWith([
+    expect(addTasksToQueue).toHaveBeenCalledWith([
       {
-        ...defaultComicBookListData.comicBookList[0],
-        comicSeries: args.comicSeriesId,
-        type: args.comicBookType,
-        url: '/comic-book1',
-        // TODO: Remove the null values once the repo accepts partials
-        creators: [],
-        publisher: null,
-        coverImgUrl: null,
-        releaseDate: null,
-        description: null,
+        type: TaskType.ADDCOMICBOOK,
+        data: {
+          url: '/comic-book1',
+          comicSeriesId: args.comicSeriesId,
+          type: args.comicBookType,
+        },
       },
     ])
   })
 
-  it('should insert ComicBook with comicSeriesId and ComicBookType from arguments', async () => {
+  it('should enqueue ComicBook with comicSeriesId and ComicBookType from arguments', async () => {
     const comicSeriesId = new ObjectID()
 
     await updateComicSeriesBooks(
@@ -157,22 +137,14 @@ describe('[Mutation.updateComicSeriesBooks]', () => {
       info,
     )
 
-    expect(insertComicBooks).toHaveBeenCalledWith([
+    expect(addTasksToQueue).toHaveBeenCalledWith([
       expect.objectContaining({
-        comicSeries: comicSeriesId,
-        type: ComicBookType.COLLECTION,
+        data: expect.objectContaining({
+          comicSeriesId: comicSeriesId,
+          type: ComicBookType.COLLECTION,
+        }),
       }),
     ])
-  })
-
-  it('should add new ComicBooks to ComicSeries', async () => {
-    await updateComicSeriesBooks(parent, args, context, info)
-
-    expect(addComicBooksToSeries).toHaveBeenCalledWith(
-      defaultComicSeries._id,
-      [defaultComicBook._id],
-      args.comicBookType,
-    )
   })
 
   it('should enqueue next ComicBooks List page to be scraped', async () => {
@@ -184,7 +156,7 @@ describe('[Mutation.updateComicSeriesBooks]', () => {
         data: {
           comicSeriesId: args.comicSeriesId,
           type: args.comicBookType,
-          url: defaultComicBookListData.nextPage,
+          url: (defaultComicBookListData.nextPage as O.Some<string>).value,
         },
       },
     ])
@@ -192,7 +164,7 @@ describe('[Mutation.updateComicSeriesBooks]', () => {
 
   it('should not enqueue next ComicBooks List page to be scraped when no next page was found', async () => {
     getComicBookList.mockReturnValueOnce(
-      TE.right({ ...defaultComicBookListData, nextPage: '#' }),
+      TE.right({ ...defaultComicBookListData, nextPage: O.none }),
     )
 
     await updateComicSeriesBooks(parent, args, context, info)
@@ -238,23 +210,11 @@ describe('[Mutation.updateComicSeriesBooks]', () => {
     )
   })
 
-  it('should enqueue new ComicBooks from List to be scraped', async () => {
-    await updateComicSeriesBooks(parent, args, context, info)
-
-    expect(addTasksToQueue).toHaveBeenCalledWith([
-      {
-        type: TaskType.SCRAPCOMICBOOK,
-        data: {
-          comicBookUrl: '/new-path',
-        },
-      },
-    ])
-  })
-
   it('should return new ComicBooks', async () => {
     const res = await updateComicSeriesBooks(parent, args, context, info)
 
-    expect(res).toMatchObject([defaultComicBook])
+    // TODO: Should return addComicBookTask but addTasksToQueue would need to return different mocks for this
+    expect(res).toMatchObject([defaultScrapSingleIssuesTask])
   })
 })
 

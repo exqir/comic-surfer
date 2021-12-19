@@ -15,6 +15,8 @@ export interface IComicBookDetails {
   description: string | null
 }
 
+export type NewComicBook = Omit<ComicBookDbObject, '_id' | 'lastModified'>
+
 export interface IComicBookRepository<R, E extends Error = Error> {
   getById: (id: ComicBookId) => RTE.ReaderTaskEither<R, E, ComicBookDbObject>
 
@@ -43,8 +45,12 @@ export interface IComicBookRepository<R, E extends Error = Error> {
     updatedBefore: Date,
   ) => RTE.ReaderTaskEither<R, E, ComicBookDbObject[]>
 
+  addComicBook: (
+    comicBook: NewComicBook,
+  ) => RTE.ReaderTaskEither<R, E, ComicBookDbObject>
+
   addComicBooks: (
-    comicBooks: Omit<ComicBookDbObject, '_id' | 'lastModified'>[],
+    comicBooks: NewComicBook[],
   ) => RTE.ReaderTaskEither<R, E, ComicBookDbObject[]>
 
   updateReleaseDate: (

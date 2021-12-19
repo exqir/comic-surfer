@@ -18,7 +18,7 @@ export default gql`
     """
     Issue Number of the ComicBook.
     """
-    issueNo: String @column
+    issueNo: Int @column
     """
     Release Date of the ComicBook.
     """

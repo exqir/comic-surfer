@@ -17,6 +17,26 @@ export type Scalars = {
 
 
 
+export type AddComicBookTask = Task & {
+   __typename?: 'AddComicBookTask';
+  /** ID of the Task. */
+  _id: Scalars['ID'];
+  /** Type of the Task. */
+  type: TaskType;
+  /** The data for the add ComicBook Task. */
+  data: Maybe<AddComicBookTaskData>;
+};
+
+export type AddComicBookTaskData = {
+   __typename?: 'AddComicBookTaskData';
+  /** Url of the ComciBook to add. */
+  url: Maybe<Scalars['String']>;
+  /** ComicSeries the ComicBook should be added to. */
+  comicSeriesId: Maybe<Scalars['ID']>;
+  /** Type of the ComicBook to be added. */
+  type: Maybe<ComicBookType>;
+};
+
 export type AdditionalEntityFields = {
   path: Maybe<Scalars['String']>;
   type: Maybe<Scalars['String']>;
@@ -29,7 +49,7 @@ export type ComicBook = {
   /** Title of the ComicBook. */
   title: Scalars['String'];
   /** Issue Number of the ComicBook. */
-  issueNo: Maybe<Scalars['String']>;
+  issueNo: Maybe<Scalars['Int']>;
   /** Release Date of the ComicBook. */
   releaseDate: Maybe<Scalars['Date']>;
   /** List of Creators of the ComicBook. */
@@ -92,6 +112,8 @@ export type Creator = {
 
 export type Mutation = {
    __typename?: 'Mutation';
+  /** Internal: Add a new ComicBook. */
+  addComicBook: Maybe<ComicBook>;
   /**
    * Internal: Add new colletions and single issue releases of ComicSeries.
    * Enqueues looking for new releases of ComicSeries which releases have not been updated for the longest time.
@@ -113,7 +135,7 @@ export type Mutation = {
   /** Internal: Update the release date of the ComicBook. */
   updateComicBookRelease: Maybe<ComicBook>;
   /** Internal: Update List of ComicBooks belonging to the ComicSeres. */
-  updateComicSeriesBooks: Maybe<Array<ComicBook>>;
+  updateComicSeriesBooks: Maybe<Array<Task>>;
   /** Internal: Set the Publisher of a ComicSeries. */
   updateComicSeriesPublisher: Maybe<ComicSeries>;
   /**
@@ -121,6 +143,13 @@ export type Mutation = {
    * Enqueues looking for updates to ComicBooks that are released soon but have not been updated.
    */
   verifyUpcomingReleases: Maybe<Array<ComicBook>>;
+};
+
+
+export type MutationAddComicBookArgs = {
+  comicBookUrl: Scalars['String'];
+  comicSeriesId: Scalars['ID'];
+  comicBookType: ComicBookType;
 };
 
 
@@ -220,6 +249,26 @@ export type QuerySearchArgs = {
   query: Scalars['String'];
 };
 
+export type ScrapComicBookListTask = Task & {
+   __typename?: 'ScrapComicBookListTask';
+  /** ID of the Task. */
+  _id: Scalars['ID'];
+  /** Type of the Task. */
+  type: TaskType;
+  /** The data for the scrap ComicBook List Task. */
+  data: Maybe<ScrapComicBookListTaskData>;
+};
+
+export type ScrapComicBookListTaskData = {
+   __typename?: 'ScrapComicBookListTaskData';
+  /** Url of the ComicBook List to scrap. */
+  url: Maybe<Scalars['String']>;
+  /** ComicSeries the ComicBook List belongs to. */
+  comicSeriesId: Maybe<Scalars['ID']>;
+  /** Type of ComicBooks on the List. */
+  type: Maybe<ComicBookType>;
+};
+
 export type SearchResult = {
    __typename?: 'SearchResult';
   /** The title of the ComicSeries. */
@@ -233,11 +282,74 @@ export type SearchResult = {
   inPullList: Scalars['Boolean'];
 };
 
+export type Task = {
+  /** ID of the Task. */
+  _id: Scalars['ID'];
+  /** Type of the Task. */
+  type: TaskType;
+};
+
+export enum TaskType {
+  SCRAPCOMICBOOKLIST = 'SCRAPCOMICBOOKLIST',
+  ADDCOMICBOOK = 'ADDCOMICBOOK',
+  UPDATECOMICBOOK = 'UPDATECOMICBOOK',
+  UPDATECOMICBOOKRELEASE = 'UPDATECOMICBOOKRELEASE',
+  UPDATECOMICSERIESPUBLISHER = 'UPDATECOMICSERIESPUBLISHER'
+}
+
+export type UpdateComicBookReleaseTask = Task & {
+   __typename?: 'UpdateComicBookReleaseTask';
+  /** ID of the Task. */
+  _id: Scalars['ID'];
+  /** Type of the Task. */
+  type: TaskType;
+  /** The data for the scrap ComicBook List Task. */
+  data: Maybe<UpdateComicBookReleaseTaskData>;
+};
+
+export type UpdateComicBookReleaseTaskData = {
+   __typename?: 'UpdateComicBookReleaseTaskData';
+  /** Id of the ComicBook to update release date for. */
+  comicBookId: Maybe<Scalars['ID']>;
+};
+
+export type UpdateComicBookTask = Task & {
+   __typename?: 'UpdateComicBookTask';
+  /** ID of the Task. */
+  _id: Scalars['ID'];
+  /** Type of the Task. */
+  type: TaskType;
+  /** The data for the scrap ComicBook List Task. */
+  data: Maybe<UpdateComicBookTaskData>;
+};
+
+export type UpdateComicBookTaskData = {
+   __typename?: 'UpdateComicBookTaskData';
+  /** Id of the ComicSeries to update the publisher for. */
+  comicSeriesId: Maybe<Scalars['ID']>;
+};
+
+export type UpdateComicSeriesPublisherTask = Task & {
+   __typename?: 'UpdateComicSeriesPublisherTask';
+  /** ID of the Task. */
+  _id: Scalars['ID'];
+  /** Type of the Task. */
+  type: TaskType;
+  /** The data for the scrap ComicBook List Task. */
+  data: Maybe<UpdateComicSeriesPublisherTaskData>;
+};
+
+export type UpdateComicSeriesPublisherTaskData = {
+   __typename?: 'UpdateComicSeriesPublisherTaskData';
+  /** Id of the ComicSeries to update the publisher for. */
+  comicSeriesId: Maybe<Scalars['ID']>;
+};
+
 import { ObjectID } from 'mongodb';
 export type ComicBookDbObject = {
   _id: ObjectID,
   title: string,
-  issueNo: Maybe<string>,
+  issueNo: Maybe<number>,
   releaseDate: Maybe<Date>,
   creators: Array<CreatorDbObject>,
   comicSeries: Maybe<ComicSeriesDbObject['_id']>,
@@ -278,4 +390,53 @@ export type PullListDbObject = {
   _id: ObjectID,
   owner: string,
   list: Array<ComicSeriesDbObject['_id']>,
+};
+
+export type TaskDbInterface = {
+  _id: ObjectID,
+  type: string,
+};
+
+export type AddComicBookTaskDbObject = TaskDbInterface & {
+  data: Maybe<AddComicBookTaskDataDbObject>,
+};
+
+export type AddComicBookTaskDataDbObject = {
+  url: Maybe<string>,
+  comicSeriesId: Maybe<ObjectID>,
+  type: Maybe<string>,
+};
+
+export type ScrapComicBookListTaskDbObject = TaskDbInterface & {
+  data: Maybe<ScrapComicBookListTaskDataDbObject>,
+};
+
+export type ScrapComicBookListTaskDataDbObject = {
+  url: Maybe<string>,
+  comicSeriesId: Maybe<ObjectID>,
+  type: Maybe<string>,
+};
+
+export type UpdateComicBookReleaseTaskDbObject = TaskDbInterface & {
+  data: Maybe<UpdateComicBookReleaseTaskDataDbObject>,
+};
+
+export type UpdateComicBookReleaseTaskDataDbObject = {
+  comicBookId: Maybe<ObjectID>,
+};
+
+export type UpdateComicSeriesPublisherTaskDbObject = TaskDbInterface & {
+  data: Maybe<UpdateComicSeriesPublisherTaskDataDbObject>,
+};
+
+export type UpdateComicSeriesPublisherTaskDataDbObject = {
+  comicSeriesId: Maybe<ObjectID>,
+};
+
+export type UpdateComicBookTaskDbObject = TaskDbInterface & {
+  data: Maybe<UpdateComicBookTaskDataDbObject>,
+};
+
+export type UpdateComicBookTaskDataDbObject = {
+  comicSeriesId: Maybe<ObjectID>,
 };

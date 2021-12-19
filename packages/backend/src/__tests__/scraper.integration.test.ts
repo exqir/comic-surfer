@@ -1,15 +1,20 @@
 import { map } from 'fp-ts/lib/TaskEither'
 import { pipe } from 'fp-ts/lib/pipeable'
+import * as O from 'fp-ts/lib/Option'
 import handler from 'serve-handler'
 import http from 'http'
 import scrapeIt from 'scrape-it'
 
+import type { IEnvironmentService } from 'services/Environment/Environment.interface'
 import { comixology } from 'services/Scraper/ComixologyScaper'
 import { logger } from '__tests__/_mock'
 
 const PORT = 9000
 const URL = `http://localhost:${PORT}`
-const scraper = comixology(scrapeIt, logger, URL)
+const env = ({
+  getSourceOrigin: jest.fn().mockReturnValue(O.some(URL)),
+} as unknown) as IEnvironmentService
+const scraper = comixology({ scraper: scrapeIt, logger, env })
 let server: http.Server
 
 beforeAll((done) => {
@@ -41,8 +46,8 @@ describe('[Scraper.getComicSeries]', () => {
         expect(res).toMatchObject({
           url: `${URL}/cx-comic-series.html`,
           title: 'Title',
-          collectionsUrl: `${URL}/collections.html`,
-          singleIssuesUrl: `${URL}/issues.html`,
+          collectionsUrl: O.some(`${URL}/collections.html`),
+          singleIssuesUrl: O.some(`${URL}/issues.html`),
         })
       }),
     )()
@@ -56,18 +61,18 @@ describe('[Scraper.getComicBookList]', () => {
       scraper.getComicBookList('/cx-comic-book-list.html'),
       map((res) => {
         expect(res).toMatchObject({
-          nextPage: '/next-page',
+          nextPage: O.some('/next-page'),
           comicBookList: [
             {
               title: 'Comic Book 2',
-              url: `${URL}/issue-2.html`,
-              issueNo: '2',
+              url: O.some(`${URL}/issue-2.html`),
+              issueNo: O.some(2),
               coverImgUrl: '/issue-2-cover.jpg',
             },
             {
               title: 'Comic Book 1',
-              url: `${URL}/issue-1.html`,
-              issueNo: '1',
+              url: O.some(`${URL}/issue-1.html`),
+              issueNo: O.some(1),
               coverImgUrl: '/issue-1-cover.jpg',
             },
           ],
@@ -86,12 +91,12 @@ describe('[Scraper.getComicBook]', () => {
         expect(res).toMatchObject({
           title: 'Batman',
           url: `${URL}/cx-comic-book.html`,
-          issueNo: '78',
-          publisher: { name: 'DC', url: `${URL}/dc` },
-          releaseDate: new Date('November 2, 2016'),
+          issueNo: O.some(78),
+          publisher: O.some({ name: 'DC', url: `${URL}/dc` }),
+          releaseDate: O.some(new Date('November 2, 2016')),
           creators: [{ name: 'Joshua Williamson' }, { name: 'Mike Henderson' }],
           coverImgUrl: '/cover.png',
-          description: `"THE DIGITAL MAGE" <br />
+          description: O.some(`"THE DIGITAL MAGE" <br />
       The hit fantasy series from powerhouse creative team
       <strong>JEFF LEMIRE</strong> and
       DUSTIN NGUYEN continues! <br />
@@ -104,7 +109,7 @@ describe('[Scraper.getComicBook]', () => {
       Meanwhile, Andy struggles to resurrect his lost love Effie from the
       relentless grasp of the vampire undead. <br />
       <br />
-      Collects ASCENDER #11-14`,
+      Collects ASCENDER #11-14`),
         })
       }),
     )()
@@ -120,11 +125,11 @@ describe('[Scraper.getComicSeriesSearch]', () => {
         expect(res).toMatchObject([
           {
             title: 'Series 1',
-            url: `${URL}/series-1.html`,
+            url: O.some(`${URL}/series-1.html`),
           },
           {
             title: 'Series 2',
-            url: `${URL}/series-2.html`,
+            url: O.some(`${URL}/series-2.html`),
           },
         ])
       }),

@@ -7,7 +7,7 @@ import type { GraphQLContext } from 'types/app'
 import type { IComicBookRepository } from 'models/ComicBook/ComicBook.interface'
 import type { IQueueRepository } from 'models/Queue/Queue.interface'
 import { defaultComicBook } from '__mocks__/ComicBook.mock'
-import { defaultUpdateComicBookTask } from '__mocks__/Queue.mock'
+import { defaultUpdateComicBookReleaseTask } from '__mocks__/Queue.mock'
 
 import { verifyUpcomingReleases } from '../verifyUpcomingReleases.resolver'
 
@@ -61,7 +61,7 @@ const comicBookRepository: IComicBookRepository<Db, Error | MongoError> = ({
 
 const addTasksToQueue = jest
   .fn()
-  .mockReturnValue(RTE.right([defaultUpdateComicBookTask]))
+  .mockReturnValue(RTE.right([defaultUpdateComicBookReleaseTask]))
 const queueRepository: IQueueRepository<Db, Error | MongoError> = ({
   addTasksToQueue: addTasksToQueue,
 } as unknown) as IQueueRepository<Db, Error | MongoError>

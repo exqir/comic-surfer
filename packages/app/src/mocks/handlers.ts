@@ -88,7 +88,7 @@ export const handlers = [
       data.comicBook = {
         _id: '1',
         title: 'Descender',
-        issueNo: '11',
+        issueNo: 11,
         coverImgUrl:
           'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
         releaseDate: new Date(2019, 10, 1).toString(),
@@ -113,7 +113,7 @@ export const handlers = [
             {
               _id: '1',
               title: 'Descender',
-              issueNo: '1',
+              issueNo: 1,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 10, 1).toString(),
@@ -121,7 +121,7 @@ export const handlers = [
             {
               _id: '2',
               title: 'Descender',
-              issueNo: '2',
+              issueNo: 2,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 11, 1).toString(),
@@ -129,7 +129,7 @@ export const handlers = [
             {
               _id: '3',
               title: 'Descender',
-              issueNo: '3',
+              issueNo: 3,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2020, 1, 1).toString(),
@@ -137,7 +137,7 @@ export const handlers = [
             {
               _id: '4',
               title: 'Descender',
-              issueNo: '4',
+              issueNo: 4,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2020, 2, 1).toString(),
@@ -150,7 +150,7 @@ export const handlers = [
       data.comicBook = {
         _id: '2',
         title: 'Southern Bastards',
-        issueNo: '20',
+        issueNo: 20,
         coverImgUrl:
           'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
         releaseDate: new Date(2019, 11, 1).toString(),
@@ -175,7 +175,7 @@ export const handlers = [
             {
               _id: '1',
               title: 'Descender',
-              issueNo: '1',
+              issueNo: 1,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 10, 1).toString(),
@@ -183,7 +183,7 @@ export const handlers = [
             {
               _id: '2',
               title: 'Descender',
-              issueNo: '2',
+              issueNo: 2,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 11, 1).toString(),
@@ -191,7 +191,7 @@ export const handlers = [
             {
               _id: '3',
               title: 'Descender',
-              issueNo: '3',
+              issueNo: 3,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2020, 1, 1).toString(),
@@ -199,7 +199,7 @@ export const handlers = [
             {
               _id: '4',
               title: 'Descender',
-              issueNo: '4',
+              issueNo: 4,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2020, 2, 1).toString(),
@@ -217,7 +217,7 @@ export const handlers = [
         {
           _id: '1',
           title: 'Descender',
-          issueNo: '11',
+          issueNo: 11,
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
           url: '/descender',
@@ -226,7 +226,7 @@ export const handlers = [
         {
           _id: '2',
           title: 'Southern Bastards',
-          issueNo: '20',
+          issueNo: 20,
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/493985/493985._SX312_QL80_TTD_.jpg',
           url: '/southern-bastards',
@@ -235,7 +235,7 @@ export const handlers = [
         {
           _id: '3',
           title: 'Low',
-          issueNo: '24',
+          issueNo: 24,
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/845911/845911._SX312_QL80_TTD_.jpg',
           url: '/low',
@@ -244,7 +244,7 @@ export const handlers = [
         {
           _id: '4',
           title: 'Seven to Eternity',
-          issueNo: '9',
+          issueNo: 9,
           coverImgUrl:
             'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/528975/528975._SX312_QL80_TTD_.jpg',
           url: '/seven-to-eternity',
@@ -314,7 +314,7 @@ export const handlers = [
             {
               _id: '1',
               title: 'Descender',
-              issueNo: '1',
+              issueNo: 1,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 10, 1).toString(),
@@ -322,7 +322,7 @@ export const handlers = [
             {
               _id: '2',
               title: 'Descender',
-              issueNo: '2',
+              issueNo: 2,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 11, 1).toString(),
@@ -330,7 +330,7 @@ export const handlers = [
             {
               _id: '3',
               title: 'Descender',
-              issueNo: '3',
+              issueNo: 3,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2020, 1, 1).toString(),
@@ -338,7 +338,7 @@ export const handlers = [
             {
               _id: '4',
               title: 'Descender',
-              issueNo: '4',
+              issueNo: 4,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2020, 2, 1).toString(),
@@ -364,7 +364,7 @@ export const handlers = [
             {
               _id: '1',
               title: 'Ascender',
-              issueNo: '11',
+              issueNo: 11,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 10, 1).toString(),
@@ -372,7 +372,7 @@ export const handlers = [
             {
               _id: '2',
               title: 'Ascender',
-              issueNo: '12',
+              issueNo: 12,
               coverImgUrl:
                 'https://images-na.ssl-images-amazon.com/images/S/cmx-images-prod/Item/343285/343285._SX270_QL80_TTD_.jpg',
               releaseDate: new Date(2019, 11, 1).toString(),

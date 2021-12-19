@@ -84,7 +84,7 @@ const comicBook = css`
 type ComicBookProps = {
   _id: string
   title: string
-  issueNo: Maybe<string>
+  issueNo: Maybe<number>
   coverImgUrl: Maybe<string>
   releaseDate: Maybe<string>
   href?: string

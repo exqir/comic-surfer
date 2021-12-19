@@ -43,11 +43,12 @@ function updateRelease(
   return (comicBookId) => ({ releaseDate }) =>
     pipe(
       releaseDate,
-      E.fromNullable(
-        new ApolloError(
-          'ComicBook is missing a release date.',
-          'COMIC_BOOK_MISSING_RELEASE_DATE',
-        ),
+      E.fromOption(
+        () =>
+          new ApolloError(
+            'ComicBook is missing a release date.',
+            'COMIC_BOOK_MISSING_RELEASE_DATE',
+          ),
       ),
       RTE.fromEither,
       RTE.chain((rd) => repo.updateReleaseDate(comicBookId, rd)),

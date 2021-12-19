@@ -12,7 +12,7 @@ import {
 
 const defaultTask: Task = {
   _id: new ObjectID(),
-  type: TaskType.SCRAPCOMICBOOK,
+  type: TaskType.UPDATECOMICBOOK,
   data: { comicBookUrl: '/url' },
 }
 

@@ -7,6 +7,7 @@ import type {
   ComicSeriesId,
   Month,
   IComicBookDetails,
+  NewComicBook,
 } from './ComicBook.interface'
 import {
   MongoDataSource,
@@ -27,9 +28,13 @@ export class ComicBookRepository extends MongoDataSource<ComicBookDbObject>
     super({ collection: comicBookCollection, dataLayer, logger })
   }
 
-  public addComicBooks = (
-    comicBooks: Omit<ComicBookDbObject, '_id' | 'lastModified'>[],
-  ) =>
+  public addComicBook = (comicBook: NewComicBook) =>
+    this.insertOne({
+      ...comicBook,
+      lastModified: new Date(),
+    })
+
+  public addComicBooks = (comicBooks: NewComicBook[]) =>
     this.insertMany(
       comicBooks.map((comicBook) => ({
         ...comicBook,

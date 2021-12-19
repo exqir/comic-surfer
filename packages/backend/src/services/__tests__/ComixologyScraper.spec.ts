@@ -1,13 +1,22 @@
+import * as O from 'fp-ts/lib/Option'
 import { mapLeft, map, Either } from 'fp-ts/lib/Either'
 import { pipe } from 'fp-ts/lib/function'
 
+import type { IEnvironmentService } from 'services/Environment/Environment.interface'
 import { logger } from '__tests__/_mock'
 
 import { comixology } from '../Scraper/ComixologyScaper'
 
 const mockScraper = jest.fn()
 const baseUrl = 'https://base.com'
-const scraper = comixology(mockScraper, logger, baseUrl)
+const env = ({
+  getSourceOrigin: jest.fn().mockReturnValue(O.some(baseUrl)),
+} as unknown) as IEnvironmentService
+const scraper = comixology({
+  scraper: mockScraper,
+  logger,
+  env,
+})
 
 describe.each([
   'getComicSeries',
@@ -85,8 +94,8 @@ describe('[ComixologyScaper.getComicSeries]', () => {
         expect(r).toMatchObject({
           title: seriesScrapResult.title,
           url: `${baseUrl}/series`,
-          collectionsUrl: seriesScrapResult.urls[2].url,
-          singleIssuesUrl: seriesScrapResult.urls[1].url,
+          collectionsUrl: O.some(`${baseUrl}/collected`),
+          singleIssuesUrl: O.some(`${baseUrl}/issues`),
         }),
       ),
     )
@@ -107,7 +116,7 @@ describe('[ComixologyScaper.getComicBookList]', () => {
 
   it('should return right with ComicBookListData', async () => {
     const comicBookListScrapResult = {
-      nextPage: '/next',
+      nextPage: '/next?page=1',
       comicBookList: [
         {
           title: 'Title',
@@ -129,8 +138,47 @@ describe('[ComixologyScaper.getComicBookList]', () => {
       result,
       map((r) =>
         expect(r).toMatchObject({
-          nextPage: comicBookListScrapResult.nextPage,
-          comicBookList: comicBookListScrapResult.comicBookList,
+          nextPage: O.some('/next?page=1'),
+          comicBookList: [
+            {
+              title: comicBookListScrapResult.comicBookList[0].title,
+              url: O.some(`${baseUrl}/title-1`),
+              issueNo: O.some(1),
+              coverImgUrl:
+                comicBookListScrapResult.comicBookList[0].coverImgUrl,
+            },
+          ],
+        }),
+      ),
+    )
+  })
+
+  it('should return none as nextPage when value is not a next page', async () => {
+    const comicBookListScrapResult = {
+      nextPage: '#',
+      comicBookList: [
+        {
+          title: 'Title',
+          url: '/title-1',
+          issueNo: '1',
+          coverImgUrl: '/image.jpg',
+        },
+      ],
+    }
+    mockScraper.mockResolvedValueOnce({
+      response: { statusCode: 200 },
+      data: comicBookListScrapResult,
+    })
+
+    const result = await scraper.getComicBookList('/book-list')()
+
+    expect.assertions(1)
+    pipe(
+      result,
+      map((r) =>
+        expect(r).toMatchObject({
+          nextPage: O.none,
+          comicBookList: expect.any(Array),
         }),
       ),
     )
@@ -154,8 +202,8 @@ describe('[ComixologyScaper.getComicBook]', () => {
       title: 'Title',
       issueNo: '1',
       meta: [
-        { type: 'Page Count', date: new Date(32) },
-        { type: 'Release Date', date: new Date('2020-05-30') },
+        { type: 'Page Count', date: '32' },
+        { type: 'Release Date', date: 'May 30, 2020' },
       ],
       creators: [
         {
@@ -183,13 +231,13 @@ describe('[ComixologyScaper.getComicBook]', () => {
       map((r) =>
         expect(r).toMatchObject({
           title: comicBookScrapResult.title,
-          issueNo: comicBookScrapResult.issueNo,
+          issueNo: O.some(1),
           url: `${baseUrl}/comic-book`,
-          releaseDate: comicBookScrapResult.meta[1].date,
+          releaseDate: O.some(new Date(2020, 4, 30)),
           creators: [{ name: comicBookScrapResult.creators[1].name }],
-          publisher: { name: comicBookScrapResult.creators[0].name },
+          publisher: O.some({ name: comicBookScrapResult.creators[0].name }),
           coverImgUrl: comicBookScrapResult.coverImgUrl,
-          description: comicBookScrapResult.description,
+          description: O.some('Description'),
         }),
       ),
     )
@@ -230,7 +278,12 @@ describe('[ComixologyScaper.getComicSeriesSearch]', () => {
     pipe(
       result,
       map((r) =>
-        expect(r).toMatchObject(comicSeriesSearchScrapResult.searchResults),
+        expect(r).toMatchObject([
+          {
+            title: comicSeriesSearchScrapResult.searchResults[0].title,
+            url: O.some(`${baseUrl}/title`),
+          },
+        ]),
       ),
     )
   })

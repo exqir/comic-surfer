@@ -2,23 +2,26 @@ import type { ObjectID } from 'mongodb'
 import type * as RTE from 'fp-ts/lib/ReaderTaskEither'
 
 import type { WithId, DistributiveOmit } from 'types/app'
-import type { ComicBookType, ComicSeriesDbObject } from 'types/graphql-schema'
+import type {
+  ComicBookType,
+  ComicSeriesDbObject,
+  TaskType,
+} from 'types/graphql-schema'
 
 export type Url = string
 export type ComicSeriesId = ObjectID
 export type ComicSeries = ComicSeriesDbObject
 
-export enum TaskType {
-  SCRAPCOMICBOOKLIST = 'SCRAP_COMIC_BOOK_LIST',
-  SCRAPCOMICBOOK = 'SCRAP_COMIC_BOOK',
-  UPDATECOMICBOOKRELEASE = 'UPDATE_COMIC_BOOK_RELEASE',
-  UPDATECOMICSERIESPUBLISHER = 'UPDATE_COMIC_SERIES_PUBLISHER',
-}
+export { TaskType } from 'types/graphql-schema'
 
 // TODO: Add a status to the Task type: 'Queued' | 'Error' | 'Done'
 export type Task = WithId<
   | {
       type: TaskType.SCRAPCOMICBOOKLIST
+      data: { url: Url; comicSeriesId: ComicSeriesId; type: ComicBookType }
+    }
+  | {
+      type: TaskType.ADDCOMICBOOK
       data: { url: Url; comicSeriesId: ComicSeriesId; type: ComicBookType }
     }
   | {
@@ -30,7 +33,7 @@ export type Task = WithId<
       data: { comicSeriesId: ComicSeriesId }
     }
   | {
-      type: TaskType.SCRAPCOMICBOOK
+      type: TaskType.UPDATECOMICBOOK
       data: { comicBookUrl: Url }
     }
 >
