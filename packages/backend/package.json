@@ -21,7 +21,7 @@
     "graphql-iso-date": "^3.6.1",
     "mongad": "^0.2.2",
     "mongodb": "^3.5.5",
-    "sanitize-html": "^2.1.2",
+    "sanitize-html": "^2.6.1",
     "scrape-it": "^5.2.0"
   },
   "devDependencies": {
@@ -32,7 +32,7 @@
     "@types/sanitize-html": "^1.27.0",
     "@types/serve-handler": "^6.1.0",
     "@zerollup/ts-transform-paths": "^1.7.18",
-    "apollo-server-testing": "^2.9.7",
+    "apollo-server-testing": "^2.25.3",
     "jest": "^26.6.3",
     "jest-transform-graphql": "^2.1.0",
     "nodemon": "^2.0.7",
