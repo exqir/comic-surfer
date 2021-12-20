@@ -13,8 +13,6 @@ import { Authentication } from 'services/Authentication'
 import { EnvironmentService } from 'services/Environment/Environment.service'
 import { createConnectToDb } from 'lib/connectToDb'
 
-const baseUrl = process.env.COMIXOLOGY_BASE_URL || 'https://m.comixology.eu'
-
 const logger = createLogger('Comic-Surfer', 'de-DE')
 
 const connectToDb = createConnectToDb(logger)
@@ -46,9 +44,9 @@ const apolloServer = new ApolloServer({
     credentials: true,
     origin: [
       process.env.NODE_ENV !== 'production' && 'http://localhost:3000',
-      /comic-surfer.now.sh/,
-      /exqir.now.sh/,
-      /exqir.vercel.app/,
+      /^comic-surfer.vercel.app$/,
+      /^comic-surfer-exqir.vercel.app$/,
+      /^comic-surfer-[a-z0-9]+-exqir.vercel.app$/,
     ].filter((val): val is string | RegExp => Boolean(val)),
   },
   plugins:
