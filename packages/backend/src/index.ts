@@ -44,9 +44,9 @@ const apolloServer = new ApolloServer({
     credentials: true,
     origin: [
       process.env.NODE_ENV !== 'production' && 'http://localhost:3000',
-      /^comic-surfer.vercel.app$/,
-      /^comic-surfer-exqir.vercel.app$/,
-      /^comic-surfer-[a-z0-9]+-exqir.vercel.app$/,
+      'https://comic-surfer.vercel.app',
+      'https://comic-surfer-exqir.vercel.app',
+      /^https:\/\/comic-surfer-[a-z0-9]+-exqir.vercel.app$/,
     ].filter((val): val is string | RegExp => Boolean(val)),
   },
   plugins:
