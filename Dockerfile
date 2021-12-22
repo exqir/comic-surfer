@@ -15,11 +15,12 @@ WORKDIR /workspace/
 ADD package.json yarn.lock ./
 # Add package.json for API service and install dependencies
 ADD packages/backend/package.json ./packages/backend
+ADD patches/ ./patches/
 RUN yarn install --frozen-lockfile --production=false --silent
 
 # setup production node_modules by pruning dev dependencies
 FROM base as production-deps
-RUN yarn workspace @comic-surfer/backend install --frozen-lockfile --production=true --silent
+RUN yarn install --frozen-lockfile --production=true --silent
 
 # build app
 FROM base as build
