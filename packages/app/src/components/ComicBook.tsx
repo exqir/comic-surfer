@@ -94,6 +94,7 @@ type ComicBookProps = {
 export const ComicBook: React.FC<ComicBookProps> = styled<
   React.FC<ComicBookProps>
 >(
+  // eslint-disable-next-line react/display-name
   forwardRef<HTMLAnchorElement, ComicBookProps>(
     (
       { _id, title, issueNo, coverImgUrl, releaseDate, href, className },
@@ -138,3 +139,5 @@ export const ComicBook: React.FC<ComicBookProps> = styled<
     ${comicBook}
   `,
 )
+
+ComicBook.displayName = 'ComicBook'

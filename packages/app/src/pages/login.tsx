@@ -51,7 +51,9 @@ const Login = () => {
       }
     } catch (error) {
       console.error('An unexpected error occurred:', error)
-      setErrorMsg(error.message)
+      if (error instanceof Error) {
+        setErrorMsg(error.message)
+      }
     }
   }
 

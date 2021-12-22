@@ -54,12 +54,14 @@ const { className, styles: staticStyles } = css.resolve`
 const A = forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonProps>(
   (props, ref) => <a ref={ref as React.Ref<HTMLAnchorElement>} {...props} />,
 )
+A.displayName = 'ButtonAnchor'
 
 const _Button = forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonProps>(
   (props, ref) => (
     <button ref={ref as React.Ref<HTMLButtonElement>} {...props} />
   ),
 )
+_Button.displayName = 'ButtonNativeButton'
 
 export type ButtonProps = {
   /**
@@ -112,7 +114,7 @@ export type ButtonProps = {
   [prop: string]: any
 }
 
-export const Button = forwardRef<
+export const Button: React.ForwardRefExoticComponent<ButtonProps> = forwardRef<
   HTMLButtonElement | HTMLAnchorElement,
   ButtonProps
 >(
@@ -195,3 +197,5 @@ export const Button = forwardRef<
     )
   },
 )
+
+Button.displayName = 'Button'
