@@ -1,74 +1,13 @@
 import React, { forwardRef } from 'react'
-import clsx from 'clsx'
-import css from 'styled-jsx/css'
 
-import { token } from 'lib/tokens'
-
-const { className, styles: staticStyles } = css.resolve`
-  .button {
-    /* base */
-    display: inline-block;
-    appearance: none;
-    cursor: pointer;
-
-    /* color */
-    color: var(--button-color);
-    background: var(--button-bg);
-
-    /* spacing */
-    margin: 0;
-    padding: ${token('spaceS')} ${token('spaceL')};
-
-    /* typography */
-    font-size: ${token('fontMedium')};
-    line-height: ${token('lineMedium')};
-    text-decoration: none;
-    text-align: center;
-
-    /* border */
-    border: none;
-    border-radius: ${token('borderRadius')};
-  }
-  .button:hover:not(.disabled),
-  .button:active:not(.disabled),
-  .button:focus:not(.disabled) {
-    box-shadow: inset 0px 0px 0 1px var(--color-primary);
-  }
-  .button:hover:not(.disabled) .text,
-  .button:active:not(.disabled) .text,
-  .button:focus:not(.disabled) .text {
-    background-image: var(--button-text-gradient);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .button.full-width {
-    width: 100%;
-  }
-  .button.disabled {
-    --button-bg: #ccc;
-    --button-color: rgb(117, 117, 117);
-  }
-`
-
-const A = forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonProps>(
-  (props, ref) => <a ref={ref as React.Ref<HTMLAnchorElement>} {...props} />,
-)
-A.displayName = 'ButtonAnchor'
-
-const _Button = forwardRef<HTMLAnchorElement | HTMLButtonElement, ButtonProps>(
-  (props, ref) => (
-    <button ref={ref as React.Ref<HTMLButtonElement>} {...props} />
-  ),
-)
-_Button.displayName = 'ButtonNativeButton'
+import { styled } from 'stitches.config'
 
 export type ButtonProps = {
   /**
    * Visual style of the Button. One of `primary` and `secondary`.
    * @default "primary"
    */
-  variant?: 'primary' | 'secondary'
+  variant?: 'primary'
   /**
    * Size of the Button. One of `small`, `medium` and `large`.
    * @default "medium"
@@ -134,68 +73,110 @@ export const Button: React.ForwardRefExoticComponent<ButtonProps> = forwardRef<
     ref,
   ) => {
     const isLink = href !== undefined
-    const Tag = isLink ? A : _Button
 
-    let linkAttributes = {}
-    if (isLink && isDisabled) {
-      linkAttributes = {
-        ...linkAttributes,
-        tabIndex: -1,
+    let disabledAttributes = {}
+    if (isDisabled) {
+      disabledAttributes = {
         onClick: (e: React.MouseEvent) => {
           e.preventDefault()
         },
         onKeyDown: (e: React.MouseEvent) => {
-          e.preventDefault()
+          // Overwrite with a noop function and not preventDefault
+          // to keep keyboard navigation working.
         },
-        disabled: undefined,
         'aria-disabled': 'true',
       }
     }
 
     return (
-      <Tag
-        ref={ref}
+      <StyledButton
         {...htmlAttributes}
-        type={type}
+        as={isLink ? 'a' : undefined}
+        type={!isLink ? type : undefined}
+        // @ts-expect-error Ref tyoe is only Button and is not including Anchor
+        ref={ref}
         onClick={onClick}
         href={href}
-        disabled={isDisabled}
-        {...linkAttributes}
-        className={clsx(
-          'button',
-          className,
-          isFullWidth && 'full-width',
-          isDisabled && 'disabled',
-        )}
+        {...disabledAttributes}
+        variant={variant}
+        isDisabled={isDisabled}
+        isFullWidth={isFullWidth}
       >
-        <span className={clsx('text', className)}>{children}</span>
-        <style jsx>
-          {`
-            .button {
-              --button-color: #fff;
-              --button-bg: linear-gradient(
-                60deg,
-                #f0952d,
-                ${token('colorPrimary')}
-              );
-              --button-text-gradient: linear-gradient(
-                90deg,
-                #f0952d,
-                ${token('colorPrimary')}
-              );
-            }
-            .button:hover,
-            .button:active,
-            .button:focus {
-              --button-color: var(--color-primary);
-              --button-bg: transparent;
-            }
-          `}
-        </style>
-        {staticStyles}
-      </Tag>
+        <span className={'text'}>{children}</span>
+      </StyledButton>
     )
   },
 )
+
+const StyledButton = styled('button', {
+  /* base */
+  display: 'inline-block',
+  appearance: 'none',
+  cursor: 'pointer',
+  /* color */
+  color: '$$color',
+  background: '$$background',
+  /* spacing */
+  margin: 0,
+  padding: '$s $l',
+  /* typography */
+  fontSize: '$m',
+  lineHeight: '$m',
+  textDecoration: 'none',
+  textAlign: 'center',
+  /* border */
+  border: 'none',
+  borderRadius: '$m',
+  '&:hover:not([aria-disabled=true]), &:active:not([aria-disabled=true]), &:focus:not([aria-disabled=true])': {
+    boxShadow: 'inset 0px 0px 0 1px $$shadowColor',
+  },
+  '&:hover:not([aria-disabled=true]) .text, &:active:not([aria-disabled=true]) .text, &:focus:not([aria-disabled=true]) .text': {
+    backgroundImage: '$$textGradient',
+    backgroundClip: 'text',
+    '-webkit-background-clip': 'text',
+    '-webkit-text-fill-color': 'transparent',
+  },
+  variants: {
+    variant: {
+      primary: {
+        $$color: '#fff',
+        $$background: 'linear-gradient(60deg,#f0952d,$colors$primary)',
+        $$textGradient: 'linear-gradient(90deg,#f0952d,$colors$primary)',
+        $$shadowColor: '$colors$primary',
+        '&:hover:not([aria-disabled=true]), &:active:not([aria-disabled=true]), &:focus:not([aria-disabled=true])': {
+          $$color: '$colors$primary',
+          $$background: 'transparent',
+        },
+      },
+    },
+    isFullWidth: {
+      true: { width: '100%' },
+    },
+    isDisabled: {
+      true: {
+        cursor: 'default',
+      },
+    },
+  },
+
+  compoundVariants: [
+    {
+      variant: 'primary',
+      isDisabled: true,
+      css: {
+        $$background: '#ccc',
+        $$color: 'rgb(117, 117, 117)',
+      },
+    },
+    {
+      variant: 'primary',
+      isDisabled: true,
+      css: {
+        $$background: '#ccc',
+        $$color: 'rgb(117, 117, 117)',
+      },
+    },
+  ],
+})
 
 Button.displayName = 'Button'

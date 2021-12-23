@@ -1,82 +1,32 @@
-import React from 'react'
-import clsx from 'clsx'
-import css from 'styled-jsx/css'
+import { styled } from 'stitches.config'
 
-import { token } from 'lib/tokens'
+export const Heading = styled('h2', {
+  /* reset */
+  margin: 0,
+  /* typography */
+  lineHeight: '$m',
+  /* color */
+  color: '$text',
 
-type Variant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
-type Component = Variant | 'p' | 'span'
-type TextAlignment = 'left' | 'center' | 'right'
-
-type HeadingProps = {
-  /**
-   * HTML Tag used to render the Heading.
-   */
-  component: Component
-  /**
-   * Visual style of the Heading.
-   * @default "component"
-   */
-  variant?: Variant
-  /**
-   * Horizontally align the Heading.
-   * One of `left`, `center` and `right`.
-   * @default undefined
-   */
-  align?: TextAlignment
-  /**
-   * Additional classes
-   * @default undefined
-   */
-  className?: string
-  /**
-   * Content
-   * @default undefined
-   */
-  children: React.ReactNode
-  [htmlAttributes: string]: any
-}
-
-export const Heading: React.FC<HeadingProps> = ({
-  component: Component,
-  variant = Component,
-  align,
-  className,
-  children,
-  ...htmlAttributes
-}) => {
-  return (
-    <Component
-      {...htmlAttributes}
-      className={clsx('heading', className, variant, align)}
-    >
-      {children}
-      <style jsx>{staticStyles}</style>
-    </Component>
-  )
-}
-
-const staticStyles = css`
-  .heading {
-    /* reset */
-    margin: 0;
-
-    /* typography */
-    line-height: ${token('lineMedium')};
-
-    /* color */
-    color: ${token('colorText')};
-  }
-  .heading.h1 {
-    font-size: 3rem;
-  }
-  .heading.left {
-    text-align: left;
-  }
-  .heading.center {
-    text-align: center;
-  }
-  .heading.right {
-    text-align: right;
-  }
-`
+  variants: {
+    /**
+     * Horizontally align the Heading.
+     * One of `left`, `center` and `right`.
+     * @default undefined
+     */
+    align: {
+      left: { textAlign: 'left' },
+      right: { textAlign: 'right' },
+      center: { textAlign: 'center' },
+    },
+    /**
+     * Visual style of the Heading.
+     * @default undefined
+     */
+    variant: {
+      h1: {
+        fontSize: '3rem',
+      },
+    },
+  },
+})

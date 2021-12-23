@@ -104,7 +104,9 @@ const ComicSeries: React.FC<ComicSeriesProps> = ({
       <Head title={`${comicSeries.title}`} />
       <TopWave />
       <Stack space="large">
-        <Heading component="h1">{comicSeries.title}</Heading>
+        <Heading as="h1" variant="h1">
+          {comicSeries.title}
+        </Heading>
         <Stack align="center" space="large">
           {comicSeries.coverImgUrl ? (
             <Card>
@@ -124,7 +126,7 @@ const ComicSeries: React.FC<ComicSeriesProps> = ({
             </Button>
           )}
         </Stack>
-        <Heading component="h2">Single Issues</Heading>
+        <Heading>Single Issues</Heading>
         <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
           {comicSeries.singleIssues.map((comicBook) => (
             <Link
@@ -137,7 +139,7 @@ const ComicSeries: React.FC<ComicSeriesProps> = ({
             </Link>
           ))}
         </Tiles>
-        <Heading component="h2">Collections</Heading>
+        <Heading>Collections</Heading>
         <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
           {comicSeries.collections.map((comicBook) => (
             <Link

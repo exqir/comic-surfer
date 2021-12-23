@@ -69,7 +69,7 @@ const ComicBook = ({
     <div>
       <Head title={`${comicBook.title} - ${comicBook.issueNo}`} />
       <Stack space="large">
-        <Heading component="h1">
+        <Heading as="h1" variant="h1">
           {comicBook.title} #{comicBook.issueNo}
         </Heading>
         <Stack align="center" space="large">
@@ -100,14 +100,14 @@ const ComicBook = ({
         </Stack>
         {comicBook.description ? (
           <Stack space="medium">
-            <Heading component="h2">Description</Heading>
+            <Heading>Description</Heading>
             <p
               dangerouslySetInnerHTML={{ __html: comicBook.description }}
               style={{ margin: 0 }}
             />
           </Stack>
         ) : null}
-        <Heading component="h2">Other Issues</Heading>
+        <Heading>Other Issues</Heading>
         <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
           {comicBook.comicSeries
             ? comicBook.comicSeries.singleIssues.map((comicBook) => (

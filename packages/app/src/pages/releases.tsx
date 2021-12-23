@@ -21,7 +21,7 @@ const Home = () => {
       <Head title={`Releases ${currentMonth}`} />
 
       <Stack space="large">
-        <Heading component="h1">
+        <Heading as="h1" variant="h1">
           Releases <span className="month">{currentMonth}</span>
         </Heading>
         <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">

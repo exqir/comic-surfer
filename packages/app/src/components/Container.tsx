@@ -1,21 +1,10 @@
 import React from 'react'
 
-import { token } from 'lib/tokens'
+import { styled } from 'stitches.config'
 
-export const Container: React.FC<{}> = ({ children }) => {
-  return (
-    <div className="container">
-      {children}
-      <style jsx>
-        {`
-          .container {
-            position: relative;
-            margin: 0 auto;
-            max-width: ${token('maxWidth')};
-            padding: ${token('spaceL')};
-          }
-        `}
-      </style>
-    </div>
-  )
-}
+export const Container = styled('div', {
+  position: 'relative',
+  margin: '0 auto',
+  maxWidth: '880px',
+  padding: '$l',
+})

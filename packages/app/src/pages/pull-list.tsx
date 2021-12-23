@@ -16,7 +16,9 @@ const Home = () => {
       <Head title="PullList" />
 
       <Stack space="large">
-        <Heading component="h1">PullList </Heading>
+        <Heading as="h1" variant="h1">
+          PullList{' '}
+        </Heading>
         <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
           {pullList ? (
             pullList.list.map((comicSeries) => (

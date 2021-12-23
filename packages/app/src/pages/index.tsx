@@ -1,6 +1,7 @@
 import React from 'react'
 import NextHead from 'next/head'
 
+import { styled } from 'stitches.config'
 import { redirectKey } from 'lib/redirect'
 import { Head } from 'components/Head'
 import { Heading } from 'components/Heading'
@@ -20,17 +21,18 @@ const Home = () => {
         />
       </NextHead>
 
-      <div className="hero">
-        <Heading component="h1">Home</Heading>
-      </div>
-      <style jsx>{`
-        .hero {
-          width: 100%;
-          color: #333;
-        }
-      `}</style>
+      <Hero>
+        <Heading as="h1" variant="h1">
+          Home
+        </Heading>
+      </Hero>
     </div>
   )
 }
 
 export default Home
+
+const Hero = styled('div', {
+  width: '100%',
+  color: '#333',
+})

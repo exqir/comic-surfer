@@ -4,7 +4,7 @@ import { AuthenticationError } from 'apollo-server'
 import { SWRConfig, ConfigInterface, mutate } from 'swr'
 import Router from 'next/router'
 
-import { printVars } from 'lib/tokens'
+import { globalCss } from 'stitches.config'
 import { Navigation } from 'components/Nav'
 import { Container } from 'components/Container'
 import { Waves } from 'components/Waves'
@@ -54,37 +54,33 @@ const swrConfig: ConfigInterface<
   },
 }
 
-const cssVars = printVars()
+const globalStyles = globalCss({
+  body: {
+    margin: 0,
+    fontFamily:
+      '-apple-system, BlinkMacSystemFont, Avenir Next, Avenir, Helvetica, sans-serif',
+    position: 'relative',
+    minHeight: '100vh',
+    overflowX: 'hidden',
+  },
+  '.sr-only': {
+    position: 'absolute',
+    width: '1px',
+    height: '1px',
+    padding: 0,
+    margin: '-1px',
+    overflow: 'hidden',
+    clip: 'rect(0, 0, 0, 0)',
+    whiteSpace: 'nowrap',
+    borderWidth: 0,
+  },
+})
 
 export default function App({ Component, pageProps }: AppProps) {
+  globalStyles()
+
   return (
     <SWRConfig value={swrConfig}>
-      <style jsx global>
-        {`
-          :root {
-            ${cssVars}
-          }
-          body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, Avenir Next, Avenir,
-              Helvetica, sans-serif;
-            position: relative;
-            min-height: 100vh;
-            overflow-x: hidden;
-          }
-          .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border-width: 0;
-          }
-        `}
-      </style>
       <Container>
         <Navigation />
         <Component {...pageProps} />
