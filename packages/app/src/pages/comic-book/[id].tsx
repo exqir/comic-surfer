@@ -7,6 +7,7 @@ import {
   InferGetStaticPropsType,
 } from 'next'
 
+import { styled } from 'stitches.config'
 import {
   query as releasesQuery,
   fetcher as releasesFetcher,
@@ -74,8 +75,7 @@ const ComicBook = ({
         </Heading>
         <Stack align="center" space="large">
           <div className="card">
-            <img
-              className="cover"
+            <Cover
               src={comicBook.coverImgUrl ?? undefined}
               alt={comicBook.title}
               width={160}
@@ -108,7 +108,14 @@ const ComicBook = ({
           </Stack>
         ) : null}
         <Heading>Other Issues</Heading>
-        <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
+        <Tiles
+          // @initial is not applied when it has the same value as another breakpoint
+          // https://github.com/modulz/stitches/issues/896
+          // To mitigate this we also set the value same value for s so it should apply
+          // in most cases.
+          columns={{ '@initial': 2, '@s': 2, '@m': 4, '@l': 2 }}
+          space="large"
+        >
           {comicBook.comicSeries
             ? comicBook.comicSeries.singleIssues.map((comicBook) => (
                 <Link
@@ -123,15 +130,15 @@ const ComicBook = ({
             : null}
         </Tiles>
       </Stack>
-      <style jsx>{`
-        .cover {
-          border-radius: ${token('borderRadius')};
-          overflow: hidden;
-          border: 1px solid #cbd5e0;
-        }
-      `}</style>
     </div>
   )
 }
 
 export default ComicBook
+
+// TODO: Usage Image component instead of img tag
+const Cover = styled('img', {
+  borderRadius: '$m',
+  overflow: 'hidden',
+  border: '1px solid #cbd5e0',
+})

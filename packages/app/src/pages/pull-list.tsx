@@ -7,9 +7,8 @@ import { Stack } from 'components/Stack'
 import { Heading } from 'components/Heading'
 import { ComicBook } from 'components/ComicBook'
 import { usePullList } from 'hooks/usePullList'
-import { token } from 'lib/tokens'
 
-const Home = () => {
+const PullList = () => {
   const { pullList, isLoading } = usePullList()
   return (
     <div className="stack">
@@ -19,7 +18,7 @@ const Home = () => {
         <Heading as="h1" variant="h1">
           PullList{' '}
         </Heading>
-        <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
+        <Tiles columns={{ '@initial': 2, '@m': 4, '@l': 2 }} space="large">
           {pullList ? (
             pullList.list.map((comicSeries) => (
               <Link
@@ -41,14 +40,8 @@ const Home = () => {
           )}
         </Tiles>
       </Stack>
-      <style jsx>{`
-        .month {
-          color: ${token('colorPrimary')};
-          font-size: 24px;
-        }
-      `}</style>
     </div>
   )
 }
 
-export default Home
+export default PullList

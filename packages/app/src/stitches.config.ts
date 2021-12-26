@@ -36,9 +36,9 @@ export const {
     },
   },
   media: {
-    s: '(min-width: 320px)',
-    m: '(min-width: 720px)',
-    l: '(min-width: 1024px)',
+    s: '(320px <= width < 720px)',
+    m: '(720px <= width < 1024px)',
+    l: '(1024px <= width)',
   },
 })
 

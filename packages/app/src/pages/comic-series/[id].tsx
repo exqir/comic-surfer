@@ -7,7 +7,6 @@ import {
   InferGetStaticPropsType,
 } from 'next'
 import { responseInterface } from 'swr'
-import styled from '@emotion/styled'
 
 import { GetPullListQuery } from 'types/graphql-client-schema'
 import { query, fetcher } from 'data/getComicSeries'
@@ -75,11 +74,6 @@ export const getStaticProps = async ({
   }
 }
 
-const Center = styled.div`
-  display: flex;
-  justify-content: center;
-`
-
 type ComicSeriesProps = InferGetStaticPropsType<typeof getStaticProps> & {
   className?: string
 }
@@ -127,7 +121,14 @@ const ComicSeries: React.FC<ComicSeriesProps> = ({
           )}
         </Stack>
         <Heading>Single Issues</Heading>
-        <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
+        <Tiles
+          // @initial is not applied when it has the same value as another breakpoint
+          // https://github.com/modulz/stitches/issues/896
+          // To mitigate this we also set the value same value for s so it should apply
+          // in most cases.
+          columns={{ '@initial': 2, '@s': 2, '@m': 4, '@l': 2 }}
+          space="large"
+        >
           {comicSeries.singleIssues.map((comicBook) => (
             <Link
               key={comicBook._id}
@@ -140,7 +141,14 @@ const ComicSeries: React.FC<ComicSeriesProps> = ({
           ))}
         </Tiles>
         <Heading>Collections</Heading>
-        <Tiles columns={{ default: 2, tablet: 4, desktop: 2 }} space="large">
+        <Tiles
+          // @initial is not applied when it has the same value as another breakpoint
+          // https://github.com/modulz/stitches/issues/896
+          // To mitigate this we also set the value same value for s so it should apply
+          // in most cases.
+          columns={{ '@initial': 2, '@s': 2, '@m': 4, '@l': 2 }}
+          space="large"
+        >
           {comicSeries.collections.map((comicBook) => (
             <Link
               key={comicBook._id}

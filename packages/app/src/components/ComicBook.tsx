@@ -1,86 +1,10 @@
 import React, { forwardRef } from 'react'
-import { css } from '@emotion/core'
-import styled from '@emotion/styled'
-import clsx from 'clsx'
 
 import type { Maybe } from 'types/graphql-client-schema'
+import { styled } from 'stitches.config'
 import { Card } from 'components/Card'
 import { Heading } from 'components/Heading'
-import { token } from 'lib/tokens'
-import { mq } from 'lib/responsiveProps'
 
-const comicBook = css`
-  &.comic-book {
-    width: 160px;
-    height: 245px;
-    transition: transform 0.3s ease;
-    background-size: cover;
-    background-position: top center;
-    background-repeat: no-repeat;
-  }
-  &.comic-book:hover {
-    transform: scale(1.03);
-  }
-  ${mq('desktop')} {
-    &.comic-book {
-      display: flex;
-      width: auto;
-    }
-  }
-  &.link {
-    display: inline-block;
-    text-decoration: none;
-    color: ${token('colorText')};
-  }
-  ${mq('desktop')} {
-    &.link {
-      display: initial;
-    }
-  }
-  .content {
-    position: absolute;
-    padding: ${token('spaceM')};
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: ${token('background')};
-  }
-  ${mq('desktop')} {
-    .content {
-      position: relative;
-      padding: ${token('spaceL')};
-    }
-  }
-  .title {
-    border-bottom: 1px solid ${token('colorPrimary')};
-  }
-  .issue {
-    font-size: 14px;
-    font-weight: normal;
-    color: #cbd5e0;
-    padding-left: ${token('spaceS')};
-  }
-  .cover {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: 0;
-  }
-  ${mq('desktop')} {
-    .cover {
-      position: relative;
-    }
-  }
-  .release-date {
-    display: none;
-  }
-  ${mq('desktop')} {
-    .release-date {
-      display: block;
-    }
-  }
-`
 type ComicBookProps = {
   _id: string
   title: string
@@ -91,53 +15,112 @@ type ComicBookProps = {
   className?: string
 }
 
-export const ComicBook: React.FC<ComicBookProps> = styled<
-  React.FC<ComicBookProps>
->(
+export const ComicBook: React.FC<ComicBookProps> =
   // eslint-disable-next-line react/display-name
   forwardRef<HTMLAnchorElement, ComicBookProps>(
-    (
-      { _id, title, issueNo, coverImgUrl, releaseDate, href, className },
-      ref,
-    ) => {
+    ({ _id, title, issueNo, coverImgUrl, releaseDate, href }, ref) => {
       const isLink = href !== undefined
 
       const content = (
-        <Card className={clsx('comic-book', className)}>
+        <ComicBookCard>
           {coverImgUrl ? (
-            <img className="cover" src={coverImgUrl} width={160} height={245} />
+            // TODO: Use image component instead of img tag
+            <CoverImage src={coverImgUrl} width={160} height={245} />
           ) : null}
-          <div className="content">
-            <Heading component="h3" className="title">
+          <CardContent>
+            <ComicTitle as="h3">
               {title}
-              {issueNo ? <span className="issue">#{issueNo}</span> : null}
-            </Heading>
+              {issueNo ? <IssueNumber>#{issueNo}</IssueNumber> : null}
+            </ComicTitle>
             {releaseDate ? (
-              <p className="release-date">
+              <ReleaseDate>
                 {new Intl.DateTimeFormat('en-GB', {
                   day: '2-digit',
                   month: '2-digit',
                   year: 'numeric',
                 }).format(new Date(releaseDate))}
-              </p>
+              </ReleaseDate>
             ) : null}
-          </div>
-        </Card>
+          </CardContent>
+        </ComicBookCard>
       )
 
       return isLink ? (
-        <a className={clsx('link', className)} href={href} ref={ref}>
+        <ComicBookLink href={href} ref={ref}>
           {content}
-        </a>
+        </ComicBookLink>
       ) : (
         content
       )
     },
-  ),
-)(
-  () => css`
-    ${comicBook}
-  `,
-)
+  )
 
-ComicBook.displayName = 'ComicBook'
+const ComicBookCard = styled(Card, {
+  width: '160px',
+  height: '245px',
+  transition: 'transform 0.3s ease',
+  backgroundSize: 'cover',
+  backgroundPosition: 'top center',
+  backgroundRepeat: 'no-repeat',
+
+  '&:hover': {
+    transform: 'scale(1.03)',
+  },
+
+  '@l': {
+    display: 'flex',
+    width: 'auto',
+  },
+})
+
+const ComicBookLink = styled('a', {
+  display: 'inline-block',
+  textDecoration: 'none',
+  color: '$text',
+
+  '@l': {
+    display: 'initial',
+  },
+})
+
+const CardContent = styled('div', {
+  position: 'absolute',
+  padding: '$m',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  background: '$background',
+
+  '@l': {
+    position: 'relative',
+    padding: '$l',
+  },
+})
+
+const ComicTitle = styled(Heading, {
+  borderBottom: '1px solid $colors$primary',
+})
+
+const IssueNumber = styled('span', {
+  fontSize: '14px',
+  fontWeight: 'normal',
+  color: '#cbd5e0',
+  paddingLeft: '$s',
+})
+
+const CoverImage = styled('img', {
+  position: 'absolute',
+  inset: 0,
+
+  '@l': {
+    position: 'relative',
+  },
+})
+
+const ReleaseDate = styled('p', {
+  display: 'none',
+
+  '@l': {
+    display: 'block',
+  },
+})

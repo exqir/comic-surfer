@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { ChangeEvent, FormEvent, useState } from 'react'
 
+import { styled, srOnly } from 'stitches.config'
 import { useSearch } from 'hooks/useSearch'
 import { token } from 'lib/tokens'
 import { query, fetcher } from 'data/addToPullList'
@@ -18,88 +19,92 @@ export const Search: React.FC = () => {
   const [searchQuery, setSeachQuery] = useState('')
   const { search, isLoading } = useSearch({ searchQuery })
   return (
-    <div className="container">
-      <form
-        onSubmit={(event) => {
+    <Container>
+      <Form
+        onSubmit={(event: FormEvent<HTMLFormElement>) => {
           event.preventDefault()
           setSeachQuery(input)
         }}
       >
-        <label htmlFor="seach-query" className="sr-only">
-          Search
-        </label>
-        <input
-          className="input"
+        <SearchLabel htmlFor="seach-query">Search</SearchLabel>
+        <SearchInput
           id="search-query"
           name="search-query"
           type="text"
           value={input}
-          onChange={(event) => {
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
             setInput(event.target.value)
           }}
         />
         <Button type="submit">
           <SearchIcon />
         </Button>
-      </form>
+      </Form>
       {isLoading ? <div>Loading...</div> : null}
       {search ? (
-        <div className="search-results">
-          <Stack component="ul" space="medium">
+        <SearchResultsContainer>
+          <Stack as="ul" space="medium">
             {search.map(({ title, url, inPullList }) => (
-              <div key={url} className="search-item">
-                <span>{title}</span>
-                {inPullList ? null : (
-                  <Button onClick={addToPullList(url)}>Add</Button>
-                )}
-              </div>
+              <li key={url}>
+                <SearchResultItem>
+                  <SearchResultItemTitle>{title}</SearchResultItemTitle>
+                  {inPullList ? null : (
+                    <Button onClick={addToPullList(url)}>Add</Button>
+                  )}
+                </SearchResultItem>
+              </li>
             ))}
           </Stack>
-          <ul></ul>
-        </div>
+        </SearchResultsContainer>
       ) : null}
-      <style jsx>{`
-        .container {
-          z-index: 10000;
-          position: fixed;
-          top: 50%;
-          left: 0;
-          right: 0;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          transform: translateY(-50%);
-        }
-        form {
-          width: 90%;
-          display: flex;
-          border-radius: ${token('borderRadius')};
-          box-shadow: ${token('shadowSmall')};
-          background-color: #fff;
-          overflow: hidden;
-        }
-        .input {
-          box-sizing: border-box;
-          width: 100%;
-          height: calc(2 * ${token('spaceXL')});
-          border-width: 0;
-          padding: 0 ${token('spaceL')};
-        }
-        .search-results {
-          margin-top: ${token('spaceM')};
-          width: 90%;
-        }
-        .search-item {
-          display: flex;
-          justify-content: space-between;
-          background-color: ${token('background')};
-          border-radius: ${token('borderRadius')};
-          overflow: hidden;
-        }
-        span {
-          padding: ${token('spaceM')} ${token('spaceM')};
-        }
-      `}</style>
-    </div>
+    </Container>
   )
 }
+
+const Container = styled('div', {
+  zIndex: 10000,
+  position: 'fixed',
+  top: '50%',
+  left: 0,
+  right: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  transform: 'translateY(-50%)',
+})
+
+const Form = styled('form', {
+  width: '90%',
+  display: 'flex',
+  borderRadius: '$m',
+  boxShadow: '$s',
+  backgroundColor: '#fff',
+  overflow: 'hidden',
+})
+
+const SearchLabel = styled('label', srOnly)
+
+const SearchInput = styled('input', {
+  boxSizing: 'border-box',
+  width: '100%',
+  height: 'calc(2 * $space$xl)',
+  borderWidth: 0,
+  padding: '0 $l',
+})
+
+const SearchResultsContainer = styled('div', {
+  marginTop: '$m',
+  width: '90%',
+})
+
+const SearchResultItem = styled('div', {
+  display: 'flex',
+  justifyContent: 'space-between',
+  backgroundColor: '$background',
+  borderRadius: '$m',
+  overflow: 'hidden',
+})
+
+const SearchResultItemTitle = styled('span', {
+  padding: '$m',
+})
