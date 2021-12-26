@@ -11,14 +11,21 @@ import { usePullList } from 'hooks/usePullList'
 const PullList = () => {
   const { pullList, isLoading } = usePullList()
   return (
-    <div className="stack">
+    <div>
       <Head title="PullList" />
 
       <Stack space="large">
         <Heading as="h1" variant="h1">
           PullList{' '}
         </Heading>
-        <Tiles columns={{ '@initial': 2, '@m': 4, '@l': 2 }} space="large">
+        <Tiles
+          // @initial is not applied when it has the same value as another breakpoint
+          // https://github.com/modulz/stitches/issues/896
+          // To mitigate this we also set the value same value for s so it should apply
+          // in most cases.
+          columns={{ '@initial': 2, '@s': 2, '@m': 4, '@l': 2 }}
+          space="large"
+        >
           {pullList ? (
             pullList.list.map((comicSeries) => (
               <Link

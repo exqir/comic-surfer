@@ -12,7 +12,7 @@ const redirectScript = `
 
 const Home = () => {
   return (
-    <div className="stack">
+    <div>
       <Head title="Home" />
       <NextHead>
         <script

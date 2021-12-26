@@ -24,7 +24,6 @@ export const ComicBook: React.FC<ComicBookProps> =
       const content = (
         <ComicBookCard>
           {coverImgUrl ? (
-            // TODO: Use image component instead of img tag
             <CoverImage src={coverImgUrl} width={160} height={245} />
           ) : null}
           <CardContent>
@@ -108,6 +107,7 @@ const IssueNumber = styled('span', {
   paddingLeft: '$s',
 })
 
+// TODO: Use image component instead of img tag
 const CoverImage = styled('img', {
   position: 'absolute',
   inset: 0,

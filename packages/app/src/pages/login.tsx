@@ -3,7 +3,7 @@ import Router from 'next/router'
 import { Magic } from 'magic-sdk'
 import { mutate } from 'swr'
 
-import { token } from 'lib/tokens'
+import { styled } from 'stitches.config'
 import { query, fetcher } from 'data/loginUser'
 import { Head } from 'components/Head'
 import { Stack } from 'components/Stack'
@@ -58,40 +58,35 @@ const Login = () => {
   }
 
   return (
-    <div className="login">
+    <Container>
       <Head title="Login" protected={false} />
       <form onSubmit={handleSubmit}>
         <Stack space="large">
-          <input
-            className="input"
-            name="email"
-            type="email"
-            placeholder="Email Adress"
-          />
+          <EmailInput name="email" type="email" placeholder="Email Adress" />
           <Button type="submit" isFullWidth>
             Login
           </Button>
         </Stack>
       </form>
-      <style jsx>{`
-        .login {
-          max-width: 21rem;
-          margin: 0 auto;
-          padding: 1rem;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-        }
-        .input {
-          box-sizing: border-box;
-          width: 100%;
-          height: calc(2 * ${token('spaceXL')});
-          border-width: 0;
-          border-bottom: 1px solid #ccc;
-          padding: 0 ${token('spaceM')};
-        }
-      `}</style>
-    </div>
+    </Container>
   )
 }
 
 export default Login
+
+const Container = styled('div', {
+  maxWidth: '21rem',
+  margin: '0 auto',
+  padding: '1rem',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+})
+
+const EmailInput = styled('input', {
+  boxSizing: 'border-box',
+  width: '100%',
+  height: 'calc(2 * $space$xl)',
+  borderWidth: 0,
+  borderBottom: '1px solid #ccc',
+  padding: '0 $m',
+})
