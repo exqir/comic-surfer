@@ -13,7 +13,6 @@ import {
   fetcher as releasesFetcher,
 } from 'data/getCurrentComicBookReleases'
 import { query, fetcher } from 'data/getComicBook'
-import { token } from 'lib/tokens'
 import { Head } from 'components/Head'
 import { Stack } from 'components/Stack'
 import { Tiles } from 'components/Tiles'

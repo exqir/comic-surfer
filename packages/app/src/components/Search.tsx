@@ -2,7 +2,6 @@ import React, { ChangeEvent, FormEvent, useState } from 'react'
 
 import { styled, srOnly } from 'stitches.config'
 import { useSearch } from 'hooks/useSearch'
-import { token } from 'lib/tokens'
 import { query, fetcher } from 'data/addToPullList'
 import { Stack } from 'components/Stack'
 import { Button } from 'components/Button'
