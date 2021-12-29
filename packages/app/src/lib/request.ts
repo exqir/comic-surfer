@@ -9,7 +9,10 @@ export type RequestError =
   | Error[]
   | undefined
 
-const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT || ''
+// Use on absolute URL for server side requests
+const API_ENDPOINT = `${
+  typeof window === 'undefined' ? process.env.API_HOST : ''
+}/graphql`
 
 const options = {
   credentials: 'include',
@@ -17,7 +20,7 @@ const options = {
   headers: {
     'apollographql-client-name': 'nextjs',
     'apollographql-client-version':
-      process.env.VERCEL_GITHUB_COMMIT_SHA || 'develop',
+      process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || 'develop',
   },
 } as const
 
