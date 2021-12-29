@@ -9,10 +9,12 @@ export type RequestError =
   | Error[]
   | undefined
 
-// Use on absolute URL for server side requests
+// Use an absolute URL for server side requests
 const API_ENDPOINT = `${
   typeof window === 'undefined' ? process.env.API_HOST : ''
 }/graphql`
+
+console.log({ API_ENDPOINT })
 
 const options = {
   credentials: 'include',

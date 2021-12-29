@@ -1,10 +1,7 @@
 module.exports = {
   swcMinify: true,
   env: {
-    API_HOST:
-      process.env.NEXT_PUBLIC_VERCEL_URL ||
-      process.env.NEXT_PUBLIC_API_HOST ||
-      '',
+    API_HOST: process.env.VERCEL_URL || process.env.API_HOST || '',
   },
   async rewrites() {
     return [

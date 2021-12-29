@@ -30,6 +30,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
     return { paths, fallback: true }
   } catch (error) {
+    console.error(error)
     return { paths: [], fallback: true }
   }
 }
@@ -46,6 +47,7 @@ export const getStaticProps = async ({
       },
     }
   } catch (error) {
+    console.error(error)
     return {
       props: { comicBook: null },
     }
