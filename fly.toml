@@ -1,0 +1,54 @@
+# fly.toml file generated for comic-surfer-api on 2021-12-29T16:59:34+01:00
+
+app = "comic-surfer-api"
+
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[env]
+  NODE_ENV = "production"
+  PORT = "8080"
+  DB_NAME="riddler"
+  COMIXOLOGY_BASE_URL="https://m.comixology.eu"
+  APOLLO_GRAPH_VARIANT="current"
+  APOLLO_SCHEMA_REPORTING="true"
+
+[experimental]
+  allowed_public_ports = []
+  auto_rollback = true
+
+[[services]]
+  internal_port = 8080
+  processes = ["app"]
+  protocol = "tcp"
+  script_checks = []
+
+  [services.concurrency]
+    hard_limit = 25
+    soft_limit = 20
+    type = "connections"
+
+  [[services.ports]]
+    handlers = ["http"]
+    port = 80
+
+  [[services.ports]]
+    handlers = ["tls", "http"]
+    port = 443
+
+  [[services.tcp_checks]]
+    grace_period = "10s"
+    interval = "15s"
+    restart_limit = 6
+    timeout = "2s"
+
+  [[services.http_checks]]
+    interval = 10000
+    grace_period = "5s"
+    method = "get"
+    path = "/.well-known/apollo/server-health"
+    protocol = "http"
+    timeout = 2000
+    tls_skip_verify = false
+    [services.http_checks.headers]

@@ -57,8 +57,10 @@ const apolloServer = new ApolloServer({
           }),
         ]
       : undefined,
+  introspection: true,
+  playground: true,
 })
 
 apolloServer
-  .listen(5000)
+  .listen(process.env.PORT ?? 5000, '0.0.0.0')
   .then(({ url }) => logger.log(`GraphQL Server started at: ${url}`)())
