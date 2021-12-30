@@ -68,7 +68,6 @@ export const getStaticProps = async ({
       },
     }
   } catch (error) {
-    console.error(error)
     return {
       props: { comicSeries: null },
     }

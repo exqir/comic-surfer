@@ -14,8 +14,6 @@ const API_ENDPOINT = `${
   typeof window === 'undefined' ? process.env.API_HOST : ''
 }/graphql`
 
-console.log({ API_ENDPOINT })
-
 const options = {
   credentials: 'include',
   mode: 'cors',
