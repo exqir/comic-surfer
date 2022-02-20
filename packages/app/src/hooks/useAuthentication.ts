@@ -1,4 +1,7 @@
+import { cache } from 'swr'
+
+import { query } from 'data/loginUser'
+
 export function useAuthentication() {
-  if (typeof window === 'undefined') return false
-  return document.cookie.indexOf('authenticated') > -1
+  return !!cache.get(query)
 }

@@ -1,6 +1,7 @@
 export { Button } from './Button'
 export { Card } from './Card'
-export { Container } from './Container'
 export { Heading } from './Heading'
 export { Stack } from './Stack'
+export { Inline } from './Inline'
 export { Tiles } from './Tiles'
+export { Box } from './Box'

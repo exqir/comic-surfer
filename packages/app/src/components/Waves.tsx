@@ -45,7 +45,7 @@ const BottomWaves = styled('div', {
   bottom: 0,
   left: 0,
   right: 0,
-  zIndex: -1,
+  zIndex: '$bg',
   marginLeft: 'calc(-50vw + 50%)',
   marginRight: 'calc(-50vw + 50%)',
 })
@@ -67,7 +67,7 @@ const TopWaves = styled('div', {
   top: 0,
   left: 0,
   right: 0,
-  zIndex: -1,
+  zIndex: '$bg',
   marginLeft: 'calc(-50vw + 50%)',
   marginRight: 'calc(-50vw + 50%)',
   fill: 'url(#wave-gradient) $colors$primary',

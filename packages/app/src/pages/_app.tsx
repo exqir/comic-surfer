@@ -1,3 +1,5 @@
+import type { ReactElement, ReactNode } from 'react'
+import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import type { GraphQLError } from 'graphql-request/dist/types'
 import { AuthenticationError } from 'apollo-server'
@@ -5,9 +7,7 @@ import { SWRConfig, ConfigInterface, mutate } from 'swr'
 import Router from 'next/router'
 
 import { globalCss } from 'stitches.config'
-import { Navigation } from 'components/Nav'
-import { Container } from 'components/Container'
-import { Waves } from 'components/Waves'
+import { LoggedInLayout } from 'layouts'
 
 if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
   require('../mocks')
@@ -31,7 +31,6 @@ const swrConfig: ConfigInterface<
       )
     ) {
       mutate(key, null, false)
-      document.cookie = 'authenticated=;Max-Age=-1'
       // When not on the login page, redirect to it while
       // preserving the page coming from to redirect back
       // to it once the user is authenticated again.
@@ -62,19 +61,27 @@ const globalStyles = globalCss({
     position: 'relative',
     minHeight: '100vh',
     overflowX: 'hidden',
+    backgroundColor: '$bg',
   },
 })
 
-export default function App({ Component, pageProps }: AppProps) {
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
   globalStyles()
 
-  return (
+  const getLayout =
+    Component.getLayout ?? ((page) => <LoggedInLayout>{page}</LoggedInLayout>)
+
+  return getLayout(
     <SWRConfig value={swrConfig}>
-      <Container>
-        <Navigation />
-        <Component {...pageProps} />
-      </Container>
-      <Waves />
-    </SWRConfig>
+      <Component {...pageProps} />
+    </SWRConfig>,
   )
 }

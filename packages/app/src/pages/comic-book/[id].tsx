@@ -18,6 +18,7 @@ import { Stack } from 'components/Stack'
 import { Tiles } from 'components/Tiles'
 import { Heading } from 'components/Heading'
 import { ComicBook as ComicBookComponent } from 'components/ComicBook'
+import { Box, Card } from 'components'
 
 export const getStaticPaths: GetStaticPaths = async () => {
   try {
@@ -68,35 +69,42 @@ const ComicBook = ({
   return (
     <div>
       <Head title={`${comicBook.title} - ${comicBook.issueNo}`} />
+      <Box
+        css={{
+          marginTop: -16,
+          marginLeft: -16,
+          marginRight: -16,
+          width: 'calc(100% + 32px)',
+          height: 400,
+          backgroundImage: `url(${comicBook.coverImgUrl})`,
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+        }}
+      />
       <Stack space="large">
-        <Heading as="h1" variant="h1">
-          {comicBook.title} #{comicBook.issueNo}
-        </Heading>
-        <Stack align="center" space="large">
-          <div className="card">
-            <Cover
-              src={comicBook.coverImgUrl ?? undefined}
-              alt={comicBook.title}
-              width={160}
-              height={245}
-            />
-          </div>
-          {comicBook.releaseDate ? (
-            <span>
-              Release date:{' '}
-              {new Intl.DateTimeFormat('en-GB', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-              }).format(new Date(comicBook.releaseDate))}
-            </span>
-          ) : null}
-          {comicBook.comicSeries ? (
-            <Link href={`/comic-series/${comicBook.comicSeries._id}`}>
-              <a>Series</a>
-            </Link>
-          ) : null}
-        </Stack>
+        <Card css={{ padding: '$m', marginTop: -64 }}>
+          <Stack space="large">
+            <Heading as="h1" variant="h1" css={{ fontSize: '2rem' }}>
+              {comicBook.title} <IssueNumber>#{comicBook.issueNo}</IssueNumber>
+            </Heading>
+            {comicBook.releaseDate ? (
+              <span>
+                Release date:{' '}
+                {new Intl.DateTimeFormat('en-GB', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
+                }).format(new Date(comicBook.releaseDate))}
+              </span>
+            ) : null}
+            {comicBook.comicSeries ? (
+              <Link href={`/comic-series/${comicBook.comicSeries._id}`}>
+                <a>Series</a>
+              </Link>
+            ) : null}
+          </Stack>
+        </Card>
         {comicBook.description ? (
           <Stack space="medium">
             <Heading>Description</Heading>
@@ -140,4 +148,10 @@ const Cover = styled('img', {
   borderRadius: '$m',
   overflow: 'hidden',
   border: '1px solid #cbd5e0',
+})
+
+const IssueNumber = styled('span', {
+  fontWeight: 'normal',
+  color: '$subtle',
+  paddingLeft: '$s',
 })

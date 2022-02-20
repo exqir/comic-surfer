@@ -1,3 +1,16 @@
+import {
+  gray,
+  blue,
+  red,
+  green,
+  amber,
+  sand,
+  whiteA,
+  grayDark,
+  blueDark,
+  redDark,
+  greenDark,
+} from '@radix-ui/colors'
 import { createStitches } from '@stitches/react'
 
 export const {
@@ -12,9 +25,15 @@ export const {
 } = createStitches({
   theme: {
     colors: {
-      primary: '#f1c32d',
-      text: '#1A202C',
+      // Semantic
+      primary: amber.amber9,
+      subtle: sand.sand8,
+      text: sand.sand12,
       background: '#fff',
+      bg: sand.sand2,
+
+      // Palette
+      ...whiteA,
     },
     space: {
       s: '4px',
@@ -33,6 +52,11 @@ export const {
     },
     radii: {
       m: '5px',
+    },
+    zIndices: {
+      bg: -1,
+      modal: 900,
+      max: 1000,
     },
   },
   media: {

@@ -120,46 +120,54 @@ const ComicSeries: React.FC<ComicSeriesProps> = ({
             </Button>
           )}
         </Stack>
-        <Heading>Single Issues</Heading>
-        <Tiles
-          // @initial is not applied when it has the same value as another breakpoint
-          // https://github.com/modulz/stitches/issues/896
-          // To mitigate this we also set the value same value for s so it should apply
-          // in most cases.
-          columns={{ '@initial': 2, '@s': 2, '@m': 4, '@l': 2 }}
-          space="large"
-        >
-          {comicSeries.singleIssues.map((comicBook) => (
-            <Link
-              key={comicBook._id}
-              href="/comic-book/[id]"
-              as={`/comic-book/${comicBook._id}`}
-              passHref
+        {comicSeries.singleIssues.length > 0 ? (
+          <>
+            <Heading>Single Issues</Heading>
+            <Tiles
+              // @initial is not applied when it has the same value as another breakpoint
+              // https://github.com/modulz/stitches/issues/896
+              // To mitigate this we also set the value same value for s so it should apply
+              // in most cases.
+              columns={{ '@initial': 2, '@s': 2, '@m': 4, '@l': 2 }}
+              space="large"
             >
-              <ComicBook {...comicBook} />
-            </Link>
-          ))}
-        </Tiles>
-        <Heading>Collections</Heading>
-        <Tiles
-          // @initial is not applied when it has the same value as another breakpoint
-          // https://github.com/modulz/stitches/issues/896
-          // To mitigate this we also set the value same value for s so it should apply
-          // in most cases.
-          columns={{ '@initial': 2, '@s': 2, '@m': 4, '@l': 2 }}
-          space="large"
-        >
-          {comicSeries.collections.map((comicBook) => (
-            <Link
-              key={comicBook._id}
-              href="/comic-book/[id]"
-              as={`/comic-book/${comicBook._id}`}
-              passHref
+              {comicSeries.singleIssues.map((comicBook) => (
+                <Link
+                  key={comicBook._id}
+                  href="/comic-book/[id]"
+                  as={`/comic-book/${comicBook._id}`}
+                  passHref
+                >
+                  <ComicBook {...comicBook} />
+                </Link>
+              ))}
+            </Tiles>
+          </>
+        ) : null}
+        {comicSeries.collections.length > 0 ? (
+          <>
+            <Heading>Collections</Heading>
+            <Tiles
+              // @initial is not applied when it has the same value as another breakpoint
+              // https://github.com/modulz/stitches/issues/896
+              // To mitigate this we also set the value same value for s so it should apply
+              // in most cases.
+              columns={{ '@initial': 2, '@s': 2, '@m': 4, '@l': 2 }}
+              space="large"
             >
-              <ComicBook {...comicBook} />
-            </Link>
-          ))}
-        </Tiles>
+              {comicSeries.collections.map((comicBook) => (
+                <Link
+                  key={comicBook._id}
+                  href="/comic-book/[id]"
+                  as={`/comic-book/${comicBook._id}`}
+                  passHref
+                >
+                  <ComicBook {...comicBook} />
+                </Link>
+              ))}
+            </Tiles>
+          </>
+        ) : null}
       </Stack>
     </div>
   )

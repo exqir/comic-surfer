@@ -4,9 +4,7 @@ import Link from 'next/link'
 import { styled } from 'stitches.config'
 import { Head } from 'components/Head'
 import { ComicBook } from 'components/ComicBook'
-import { Tiles } from 'components/Tiles'
-import { Stack } from 'components/Stack'
-import { Heading } from 'components/Heading'
+import { Stack, Heading, Tiles } from 'components'
 import { useReleases } from 'hooks/useReleases'
 
 const Releases = () => {

@@ -24,7 +24,7 @@ export const handlers = [
           ],
         },
       }
-      return res(context.cookie('auth', '123'), ctx.data(data))
+      return res(context.cookie('token', '123'), ctx.data(data))
     }
 
     return res(
@@ -48,7 +48,7 @@ export const handlers = [
     const data: LogoutUserMutation = {
       logout: true,
     }
-    return res(context.cookie('auth', '', { maxAge: -1 }), ctx.data(data))
+    return res(context.cookie('token', '', { maxAge: -1 }), ctx.data(data))
   }),
   graphql.mutation('subscribeToComicSeries', (req, res, ctx) => {
     const url = req.variables.comicSeriesUrl

@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from 'react'
+import React, { useState, FormEvent, ReactElement } from 'react'
 import Router from 'next/router'
 import { Magic } from 'magic-sdk'
 import { mutate } from 'swr'
@@ -6,8 +6,8 @@ import { mutate } from 'swr'
 import { styled } from 'stitches.config'
 import { query, fetcher } from 'data/loginUser'
 import { Head } from 'components/Head'
-import { Stack } from 'components/Stack'
-import { Button } from 'components/Button'
+import { Heading, Button, Stack } from 'components'
+import { AnonymousUserLayout } from 'layouts'
 
 const getToken = (email: string) => {
   if (process.env.NODE_ENV !== 'production') {
@@ -34,12 +34,6 @@ const Login = () => {
       const didToken = await getToken(email)
       if (didToken) {
         await mutate(query, fetcher(didToken, query))
-        // Set cookie with the same `Max-Age` as the session to check for
-        // authentication status without having to use the API and redirect
-        // earlier.
-        // If the status in the cookie is not correct, an authentication error
-        // by the API will still prevent data to be accessed when not loged in
-        document.cookie = `authenticated=true;Max-Age=${60 * 60 * 8}`
         // Replace route with the page coming from or `/releases`
         // after successful login. Use replace instead of push here
         // so that the user will not go back to `/login` through browser back.
@@ -58,25 +52,39 @@ const Login = () => {
   }
 
   return (
-    <Container>
-      <Head title="Login" protected={false} />
-      <form onSubmit={handleSubmit}>
-        <Stack space="large">
-          <EmailInput name="email" type="email" placeholder="Email Adress" />
-          <Button type="submit" isFullWidth>
-            Login
-          </Button>
-        </Stack>
-      </form>
-    </Container>
+    <>
+      <Head title="Login" />
+      <Stack space="large">
+        <Heading as="h1" variant="h1">
+          Login
+        </Heading>
+        <Container>
+          <form onSubmit={handleSubmit}>
+            <Stack space="large">
+              <EmailInput
+                name="email"
+                type="email"
+                placeholder="Email Adress"
+              />
+              <Button type="submit" isFullWidth>
+                Login
+              </Button>
+            </Stack>
+          </form>
+        </Container>
+      </Stack>
+    </>
   )
 }
 
 export default Login
 
+Login.getLayout = (page: ReactElement) => {
+  return <AnonymousUserLayout>{page}</AnonymousUserLayout>
+}
+
 const Container = styled('div', {
   maxWidth: '21rem',
-  margin: '0 auto',
   padding: '1rem',
   border: '1px solid #ccc',
   borderRadius: '4px',
@@ -89,4 +97,5 @@ const EmailInput = styled('input', {
   borderWidth: 0,
   borderBottom: '1px solid #ccc',
   padding: '0 $m',
+  background: 'transparent',
 })

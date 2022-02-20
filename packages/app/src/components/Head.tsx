@@ -1,8 +1,6 @@
 import React from 'react'
 import NextHead from 'next/head'
 
-import { redirectScript, redirectKey } from 'lib/redirect'
-
 const defaultDescription = ''
 const defaultOGURL = ''
 const defaultOGImage = ''
@@ -12,20 +10,10 @@ type HeadProps = {
   description?: string
   url?: string
   ogImage?: string
-  protected?: boolean
 }
 
-export const Head: React.FunctionComponent<HeadProps> = ({
-  protected: protectedPage = true,
-  ...props
-}) => (
+export const Head = (props: HeadProps) => (
   <NextHead>
-    {protectedPage ? (
-      <script
-        dangerouslySetInnerHTML={{ __html: redirectScript }}
-        key={redirectKey}
-      />
-    ) : null}
     <meta charSet="UTF-8" />
     <title>
       {props.title ? `${props.title} - Comic-Surfer` : 'Comic-Surfer'}

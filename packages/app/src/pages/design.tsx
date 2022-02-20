@@ -16,7 +16,7 @@ const placeholder: React.CSSProperties = {
 const Design = () => {
   return (
     <div>
-      <Head title="Design" protected={false} />
+      <Head title="Design" />
       <Heading as="h1" variant="h1">
         Design
       </Heading>
